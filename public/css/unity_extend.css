@@ -1,0 +1,165 @@
+body {
+	min-width: 1200px;
+}
+
+.bg-unity-1 {
+	min-height: 100vh; 
+	background: linear-gradient( to bottom, #eaecf0 0px, #eaecf0 300px, #fff 301px);
+}
+
+.bg-unity-3 {
+	min-height: 100vh;
+	background: linear-gradient(to bottom, #304F65 0px, #304F65 235px, #fff 236px);
+}
+
+.form-label-unity {
+	font-size: 11px;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.error-text-unity {
+	font-size: 11px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	line-height: 150%;
+}
+
+
+.form-label-unity-v2 {
+        font-size: 11px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        display: block;
+        line-height: 150%;
+}
+
+.error-text-unity-v2 {
+        font-size: 10px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        line-height: 150%;
+        min-height: 15px;
+}
+
+.border-unity-start {
+	border-left: none; 
+}
+
+.border-unity-lg-start {
+	border-left: none; 
+}
+
+@media (min-width: 768px)
+{
+.border-unity-start {
+	border-left: 1px solid #dee2e6; 
+}
+}
+
+@media (min-width: 992px)
+{
+.border-unity-lg-start {
+	border-left: 1px solid #dee2e6; 
+}
+}
+
+.unity-blur {
+	filter: opacity(75%);
+}
+
+.ratio-2x1 {
+	--bs-aspect-ratio: 50%;
+}
+
+.ratio-3x4 {
+	--bs-aspect-ratio: 133.333%;
+}
+
+
+.btn {
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	height: 40px;
+	font-size: 14px;
+}
+
+.btn-sm {
+	height: 32px;
+}
+
+
+.fs-8-unity {
+	font-size: 8px;
+}
+
+.fs-10-unity {
+	font-size: 10px;
+}
+
+.fs-12-unity {
+	font-size: 12px;
+}
+
+.fs-14-unity {
+	font-size: 14px;
+}
+
+.fs-16-unity {
+	font-size: 16px;
+}
+
+.fs-18-unity {
+	font-size: 18px;
+}
+
+.fs-20-unity {
+	font-size: 20px;
+}
+
+.fs-24-unity {
+	font-size: 24px;
+}
+
+/* for animation */
+.flash_object {
+	animation-duration: 1s;
+	animation-delay: 0s;
+	animation-iteration-count: infinite;
+}
+
+.flash_object:hover {
+	animation-play-state: paused; 
+}
+
+
+/* for snackbox */
+
+.snackbox {
+	position: fixed; 
+	z-index: 1031; 
+	left: 185px; 	
+	top: 60px;
+
+	display: block;
+	animation-duration: 0.5s;
+	animation-delay: 0s;
+	animation-iteration-count: infinite;
+}
+
+.snackbox:hover {
+	animation-play-state: paused; 
+}
+
+
+.popover {
+	--bs-popover-max-width: 400px;
+}
+
+

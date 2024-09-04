@@ -1,0 +1,23 @@
+{
+	"xxx_serviceURLBase" : "http://localhost:3400/kswitch",
+	"serviceURLBase" : "https://sandbox01.craniumventures.com/app21_api/kswitch",
+	"xxx_serviceURLBase" : "https://sandbox01.craniumventures.com/app21_api_2/kswitch",
+	"xxx_serviceURLBase" : "https://canada.sandbox.craniumventures.com/toronto/kswitch",
+
+	"serviceURLBase2" : "https://sandbox01.craniumventures.com/synap/dev",
+	"xxx_serviceURLBase2" : "https://sandbox01.craniumventures.com/synap/chengal",
+	"xxx_serviceURLBase2" : "https://sandbox01.craniumventures.com/synap/toronto",
+	"xxx_serviceURLBase2" : "http://ec2-3-99-248-10.ca-central-1.compute.amazonaws.com:9010",
+	"xxx_serviceURLBase2" : "https://canada.sandbox.craniumventures.com/synap",
+
+	"appURLBase" : "https://sandbox01.craniumventures.com/rapp_configuration", 
+
+	"debugMode": false,
+	"skipCheck4Right": true,
+
+	"dbType": "MYSQL",
+	"dbType4KAUTH": "MYSQL",
+	"connectorPath": "$KSHARE_DIR/klib/config/kconnector.cfg",
+
+	"end": "dummy"
+}
