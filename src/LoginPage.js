@@ -262,7 +262,7 @@ export function LoginPage({ debugMode = true }) {
                     </div>
                     <div className="col-6">
                         <div className="sticky-top" style={{ top: "32px" }}>
-                            <img src="images/login-img.svg" style={{ width: "100%", height: "calc(100vh - 64px)", minHeight: "calc(720px - 64px)", objectFit: "cover", borderRadius: "16px" }} />
+                            <img src="images/login_image1.png" style={{ width: "100%", height: "calc(100vh - 64px)", minHeight: "calc(720px - 64px)", objectFit: "cover", borderRadius: "16px" }} />
                         </div>
                     </div>
                 </div>

@@ -49,7 +49,7 @@ export function LanguageDialogBox({ debugMode = true }) {
     const componentName = "LanguageDialogBox";
 
     if (debugMode) console.log(`${componentName} component start ...`);
-    const { config, localData, gsl, updateApplicationLanguage } = react.useContext(globalContext);
+    const { config, localData, gsl, applicationLanguage } = react.useContext(globalContext);
     let sl = tBox.getStringLabel(gsl, componentName);
 
     const ref4Div = react.useRef();
@@ -88,7 +88,9 @@ export function LanguageDialogBox({ debugMode = true }) {
         if (debugMode) console.log(`Run ${componentName} on effect for build field state`);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
-    }, []);
+
+        formObject.valid = ref4Form.current.checkValidity();
+    }, [redraw]);
 
     function callback4Hide(e) {
         // 0 and 2 for cancel, only 1 for ok
@@ -171,7 +173,7 @@ export function LanguageDialogBox({ debugMode = true }) {
                                 <div className="col-12" >
                                     <label className="form-label mb-1">{sl.l_application_language}</label>
                                     <select className="form-select" name="applicationLanguage"
-                                        value={inputData.applicationLanguage || ""}
+                                        value={inputData.applicationLanguage || "English"}
                                         onChange={change4Input} >
                                         {
                                             languageList.map((record, index) => {

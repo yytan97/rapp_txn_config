@@ -1,0 +1,12 @@
+{
+	"serviceURLBase" : "https://canada.sandbox.craniumventures.com/toronto/kswitch",
+
+	"serviceURLBase2" : "https://canada.sandbox.craniumventures.com/synap",
+
+	"appURLBase" : "https://sandbox01.craniumventures.com/rapp_configuration", 
+
+	"debugMode": false,
+	"skipCheck4Right": true,
+
+	"end": "dummy"
+}

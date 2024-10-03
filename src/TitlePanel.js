@@ -56,10 +56,13 @@ export function TitlePanel({ debugMode = true }) {
         let message = sl?.m_confirm_logout?.replace("__parameter_1", user.username);
         showConfirmDialogBox(message, async () => {
             let result = await apiBox.logout(getSessionToken());
+            /*
             if (result.flag) {
                 updateUser(undefined);
-                // navigate("/login");
             }
+            */
+            updateUser(undefined);
+
         });
 
         return
