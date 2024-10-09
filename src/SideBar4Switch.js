@@ -4,11 +4,11 @@ import * as reactRouter from "react-router-dom";
 import * as tBox from "./tBox.js";
 import { globalContext } from "./globalContext.js";
 
-import { cleanUp as clenaUp4SwitchInstitution } from "./SwitchInstitutionControlPage.js";
-import { cleanUp as clenaUp4SwitchLink } from "./SwitchLinkControlPage.js";
-import { cleanUp as clenaUp4SwitchTransaction } from "./SwitchTransactionControlPage.js";
-import { cleanUp as clenaUp4SwitchServer } from "./SwitchServerControlPage.js";
-import { cleanUp as clenaUp4ProcessControl } from "./ProcessControlPage.js";
+import { cleanUp as cleanUp4SwitchInstitution } from "./SwitchInstitutionControlPage.js";
+import { cleanUp as cleanUp4SwitchLink } from "./SwitchLinkControlPage.js";
+import { cleanUp as cleanUp4SwitchTransaction } from "./SwitchTransactionControlPage.js";
+import { cleanUp as cleanUp4SwitchServer } from "./SwitchServerControlPage.js";
+import { cleanUp as cleanUp4ProcessControl } from "./ProcessControlPage.js";
 
 import "./SideBar.css";
 
@@ -67,7 +67,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4SwitchInstitution();
+        cleanUp4SwitchInstitution();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
@@ -80,7 +80,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4SwitchLink();
+        cleanUp4SwitchLink();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
@@ -93,7 +93,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4SwitchTransaction();
+        cleanUp4SwitchTransaction();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
@@ -106,7 +106,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4SwitchServer();
+        cleanUp4SwitchServer();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
@@ -120,7 +120,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4ProcessControl();
+        cleanUp4ProcessControl();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;

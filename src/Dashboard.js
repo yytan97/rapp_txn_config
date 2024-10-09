@@ -12,9 +12,9 @@ import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
 import { FooterPanel } from "./FooterPanel.js";
 
-import { cleanUp as clenaUp4CryptogramManagement } from "./CryptogramManagementPage.js";
-import { cleanUp as clenaUp4TimerManagement } from "./TimerManagementPage.js";
-import { cleanUp as clenaUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
+import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
+import { cleanUp as cleanUp4TimerManagement } from "./TimerManagementPage.js";
+import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
 
 
 // Map loaded lib here ...
@@ -98,7 +98,7 @@ export function Dashboard({ debugMode = false }) {
     function callback4CryptogramManagement(e) {
         if (debugMode) console.log("Callback for cryptogram management", e);
 
-        clenaUp4CryptogramManagement();
+        cleanUp4CryptogramManagement();
         navigate("/cryptogramManagement");
         return;
     };
@@ -106,7 +106,7 @@ export function Dashboard({ debugMode = false }) {
     function callback4TimerManagement(e) {
         if (debugMode) console.log("Callback for timer management", e);
 
-        clenaUp4TimerManagement();
+        cleanUp4TimerManagement();
         navigate("/timerManagement");
         return;
     };
@@ -114,7 +114,7 @@ export function Dashboard({ debugMode = false }) {
     function callback4BINPrefixManagement(e) {
         if (debugMode) console.log("Callback for BIN prefix management", e);
 
-        clenaUp4BINPrefixManagement();
+        cleanUp4BINPrefixManagement();
         navigate("/binPrefixManagement");
         return;
     };

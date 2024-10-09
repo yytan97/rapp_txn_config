@@ -4,10 +4,10 @@ import * as reactRouter from "react-router-dom";
 import * as tBox from "./tBox.js";
 import { globalContext } from "./globalContext.js";
 
-import { cleanUp as clenaUp4InstitutionManagement } from "./InstitutionManagementPage.js";
-import { cleanUp as clenaUp4CryptogramManagement } from "./CryptogramManagementPage.js";
-import { cleanUp as clenaUp4TableListManagement } from "./TableListManagementPage.js";
-import { cleanUp as clenaUp4ConfigurationFileManagement } from "./ConfigurationFileManagementPage.js";
+import { cleanUp as cleanUp4InstitutionManagement } from "./InstitutionManagementPage.js";
+import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
+import { cleanUp as cleanUp4TableListManagement } from "./TableListManagementPage.js";
+import { cleanUp as cleanUp4ConfigurationFileManagement } from "./ConfigurationFileManagementPage.js";
 
 import "./SideBar.css";
 
@@ -66,7 +66,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4InstitutionManagement();
+        cleanUp4InstitutionManagement();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
@@ -79,7 +79,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4CryptogramManagement();
+        cleanUp4CryptogramManagement();
         navigate(target);
         return;
     };
@@ -91,7 +91,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4TableListManagement();
+        cleanUp4TableListManagement();
         navigate(target);
         return;
     };
@@ -103,7 +103,7 @@ export function SideBar({ debugMode = false }) {
             return;
         }
 
-        clenaUp4ConfigurationFileManagement();
+        cleanUp4ConfigurationFileManagement();
         navigate(target);
         return;
     };
