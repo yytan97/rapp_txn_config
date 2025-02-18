@@ -42,7 +42,7 @@ export function InfoDialogBox({ debugMode = false }) {
             if (modal !== undefined) {
                 console.log(`Clean up for ${componentName}`);
                 window.removeEventListener("showInfoDialogBox", callback4Show);
-                ref4Div.current.removeEventListener('hidden.bs.modal', callback4Hide);
+                ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
                 modal = undefined;

@@ -72,7 +72,7 @@ export async function loadConfiguration4Label(lang = "English") {
     let defaultLabel = await getJSONHostFile(url4DefaultLabel);
     let langLabel = {};
 
-    if (lang != "English") {
+    if (lang !== "English") {
         let url = `./conf/label_${lang}.conf`;
         langLabel = await getJSONHostFile(url);
     }
@@ -82,9 +82,9 @@ export async function loadConfiguration4Label(lang = "English") {
     let obj = { ...defaultLabel };
 
     for (let key1 in obj) {
-        if (langLabel[key1] == undefined) continue;
+        if (langLabel[key1] === undefined) continue;
         for (let key2 in obj[key1]) {
-            if (langLabel[key1][key2] == undefined) continue;
+            if (langLabel[key1][key2] === undefined) continue;
             obj[key1][key2] = langLabel[key1][key2];
         }
     }
@@ -127,10 +127,11 @@ export function getAppLocalData() {
 };
 
 export function updateAppLocalData(fieldName, value) {
-    if (fieldName == undefined) return;
+    if (fieldName === undefined) return;
     let key = key4AppLocalData;
     let obj = getLocalData(key);
 
+    if (obj === null || obj === undefined) obj = {};
     // update with new value
     obj[fieldName] = value;
 
@@ -147,7 +148,7 @@ export function clearAppLocalData() {
 
 export function getStringLabel(gsl, name) {
     if (gsl === undefined) return {};
-    
+
     let obj1 = gsl['main'];
     let obj2 = gsl[name];
 
@@ -166,12 +167,24 @@ export function snake2Camel(s) {
     return s.replace(/[^a-zA-Z0-9]+(.)/g, (m, c) => c.toUpperCase());
 }
 
-export function getClass4IsInvalid(valid, dirty = false, required = false) {
+export function getClass4IsInvalid1(valid, dirty = false, required = false) {
     console.debug("Class for is invalid", valid, dirty, required);
 
     if (!dirty) return "";
     else if (valid === undefined && required) return "is-invalid";
     else if (valid === undefined && !required) return "";
+    else if (valid) return "";
+    else return "is-invalid";
+};
+
+export function getClass4IsInvalid2(name, pageObject) {
+    console.debug("Class for is invalid", name, pageObject);
+
+    let dirty = pageObject?.dirty;
+    let valid = pageObject?.fieldState?.[name]?.valid;
+
+    if (!dirty) return "";
+    else if (valid === undefined) return "";
     else if (valid) return "";
     else return "is-invalid";
 };
@@ -208,10 +221,21 @@ export function buildFormFieldState(target) {
     return obj1;
 };
 
-export function getFieldErrorMessage(name, sl, fieldState = {}, formState = {}) {
+export function getFieldErrorMessage1(name, sl, fieldState = {}, formState = {}) {
     console.debug("Build error element for field", name);
-    if (!formState.dirty || fieldState[name] === undefined || fieldState[name]["valid"]) {
-        console.debug("Not dirty, state not found or state is fine; No need to build error message element");
+
+    if (!formState?.dirty) {
+        console.debug("Not dirty; No need to build error message element");
+        return "";
+    }
+
+    if (fieldState?.[name] === undefined) {
+        console.debug("Field state not found; No need to build error message element");
+        return "";
+    }
+
+    if (fieldState?.[name]?.valid) {
+        console.debug("Field state is valid; No need to build error message element");
         return "";
     }
 
@@ -219,7 +243,22 @@ export function getFieldErrorMessage(name, sl, fieldState = {}, formState = {}) 
         let s = "required";
         let key1 = "e_" + name + "_" + s;
         let key2 = "e_" + s + "_" + name;
-        let message = sl[key1] || sl[key2] || sl["e_field_required"] || undefined;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || sl["e_field_required"] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    if (fieldState[name]["customError"]) {
+        let s = "custom";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
         console.debug("Message", s, message);
         if (message !== undefined) return message;
     }
@@ -228,7 +267,10 @@ export function getFieldErrorMessage(name, sl, fieldState = {}, formState = {}) 
         let s = "bad";
         let key1 = "e_" + name + "_" + s;
         let key2 = "e_" + s + "_" + name;
-        let message = sl[key1] || sl[key2] || undefined;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
         console.debug("Message", s, message);
         if (message !== undefined) return message;
     }
@@ -237,22 +279,111 @@ export function getFieldErrorMessage(name, sl, fieldState = {}, formState = {}) 
         let s = "pattern";
         let key1 = "e_" + name + "_" + s;
         let key2 = "e_" + s + "_" + name;
-        let message = sl[key1] || sl[key2] || undefined;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
         console.debug("Message", s, message);
-        if (message != undefined) return message;
+        if (message !== undefined) return message;
     }
 
     if (!fieldState[name]["valid"]) {
         let s = "invalid";
         let key1 = "e_" + name + "_" + s;
         let key2 = "e_" + s + "_" + name;
-        let message = sl[key1] || sl[key2] || undefined;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
         console.debug("Message", s, message);
-        if (message != undefined) return message;
+        if (message !== undefined) return message;
     }
 
     return "";
 };
+
+export function getFieldErrorMessage2(name, sl, formObject) {
+    console.debug("Build error element for field", name);
+    let fieldState = formObject?.fieldState || {};
+
+    if (!formObject?.dirty) {
+        console.debug("Not dirty; No need to build error message element");
+        return "";
+    }
+
+    if (fieldState?.[name] === undefined) {
+        console.debug("Field state not found; No need to build error message element");
+        return "";
+    }
+
+    if (fieldState?.[name]?.["valid"]) {
+        console.debug("Field state is valid; No need to build error message element");
+        return "";
+    }
+
+    if (fieldState[name]["valueMissing"]) {
+        let s = "required";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || sl["e_field_required"] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    if (fieldState[name]["customError"]) {
+        let s = "custom";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    if (fieldState[name]["badInput"]) {
+        let s = "bad";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    if (fieldState[name]["patternMismatch"]) {
+        let s = "pattern";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    if (!fieldState[name]["valid"]) {
+        let s = "invalid";
+        let key1 = "e_" + name + "_" + s;
+        let key2 = "e_" + s + "_" + name;
+        let key3 = "e_" + camel2Snake(name) + "_" + s;
+        let key4 = "e_" + s + "_" + camel2Snake(name);
+        let message = sl[key1] || sl[key2] || sl[key3] || sl[key4] || undefined;
+
+        console.debug("Message", s, message);
+        if (message !== undefined) return message;
+    }
+
+    return "";
+};
+
 
 export function getErrorMessage(e, sl) {
     let message = "";
@@ -279,9 +410,10 @@ export function getErrorMessage(e, sl) {
         console.debug("Application error handling");
 
         // sample code e_invalid_format, e_permission_denied
-        let key = `e_${e.errorCode}`;
+        let key1 = `e_${e.errorCode}`;
+        let key2 = `e_code_${e.errorCode}`;
 
-        message = sl[key] || e.errorMessage || sl['e_standard_message'];
+        message = sl[key1] || sl[key2] || e.errorMessage || sl['e_standard_message'];
     }
     else if (typeof e === 'string' || e instanceof String) {
         console.debug("Runtime string message handling");
@@ -318,7 +450,134 @@ export function buildFilterText(obj) {
 };
 
 export function getLastUpdatedDate(dt) {
-    if (dt == undefined) dt = new Date();
-    let s = moment(dt).format("DD MMM YYYY hh:mm A")
+    if (dt === undefined) dt = new Date();
+    let s = moment(dt).format("DD MMM YYYY hh:mm A");
+    return s;
+};
+
+export function formatDate(dt) {
+    if (dt === undefined) return "";
+    let s = moment(dt).format("DD MMM YYYY hh:mm A");
+    return s;
+};
+
+export function formatDate2Host(dt) {
+    if (dt === undefined) dt = new Date();
+    let s = moment(dt).format("YYYY-MM-DD hh:mm:ss");
+    return s;
+};
+
+export function parseFilePath(path) {
+    let parts = (/^(.*[\\/])?(.*?)(\.[^.]*?|)$/gi).exec(path);
+    return {
+        path: parts[0] || "",
+        directoryPath: parts[1] || "",
+        namePath: parts[2] || "",
+        filename: parts[2] + parts[3],
+        extension: parts[3] || "",
+    };
+};
+
+export function getLabel(sl, value, prefix = "") {
+    if (debugMode) console.log("Get label ", value, prefix);
+    let key = prefix + value;
+    let s = sl[key];
+    return s;
+};
+
+export function formatAmount(value, n = 2) {
+    if (debugMode) console.log("Format amount", value, n);
+    if (value === undefined) return "";
+    
+    let s = new Intl.NumberFormat('en-US', { minimumFractionDigits: n }).format(value);
+    return s;
+};
+
+export function getCurrencyRecord(list, code) {
+    if (debugMode) console.log("Get currency record ", code);
+
+    let record1 = list.find((record2) => {
+        if (record2.isoNumericCode == code) return true;
+        return false;
+    });
+
+    return record1;
+};
+
+export function getCurrencyAlphaCode(list, code) {
+    if (debugMode) console.log("Get currency record ", code);
+
+    let record1 = list.find((record2) => {
+        if (record2.isoNumericCode == code) return true;
+        return false;
+    });
+
+    return record1?.isoAlpha3Code || "";
+};
+
+export function getCurrencyMinorUnit(list, code) {
+    if (debugMode) console.log("Get currency record ", code);
+
+    let record1 = list.find((record2) => {
+        if (record2.isoNumericCode == code) return true;
+        return false;
+    });
+
+    return record1?.minorUnits || 2;
+};
+
+export function formatProcessingCode(code) {
+    let s = code;
+
+    if (s === undefined) return "";
+    if (code.length == 1) s = "00000" + code;
+    if (code.length == 2) s = "0000" + code;
+    if (code.length == 3) s = "000" + code;
+    if (code.length == 4) s = "00" + code;
+    if (code.length == 5) s = "0" + code;
+    return s;
+};
+
+export function processingCode2Description(code) {
+
+    let pcode = formatProcessingCode(code);
+    let desc = pcode;
+    if (pcode.substr(0, 2) == "00") desc = "Purchase";
+    else if (pcode.substr(0, 2) == "20") desc = "Refund";
+
+    return desc;
+};
+
+export function formatResponseCode(code) {
+    let s = code;
+    if (code.length == 1) s = "0" + code;
+    else s = code;
+    return s;
+};
+
+export function responseCode2Description(code) {
+    let s = "";
+    if (code == "0") s = "Approved";
+    else s = "Declined";
+    return s;
+};
+
+export function buildSearchString(fieldList, v, dbType) {
+    if (debugMode) console.log("Build search string", v, dbType);
+
+    if (v === undefined || v === "") return undefined;
+
+    let list = fieldList;
+    let s = "";
+    for (let n = 0; n < list.length; n++) {
+        let name = list[n].name;
+
+        if (s !== "") s += " or ";
+
+        if (dbType === "POSTGRESQL") s += `CAST(${name} as TEXT) ILIKE '%${v}%'`;
+        else s += `${name} LIKE '%${v}%'`;
+
+    }
+    if (debugMode) console.log("Search string", s);
     return s;
 };

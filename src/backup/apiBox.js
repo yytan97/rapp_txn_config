@@ -1,3 +1,5 @@
+const moment = window.moment;
+
 export let debugMode = true;
 export let wait4 = 1000 * 60;
 
@@ -16,8 +18,14 @@ export function setDebugMode(flag) {
     debugMode = flag;
 };
 
+export function formatDate(dt) {
+    if (dt === undefined) dt = new Date();
+    let s = moment(dt).format("YYYY-MM-DD hh:mm:ss");
+    return s;
+};
+
 export async function command2Host(url, data, token, method = "POST") {
-    if (debugMode) console.log("Command to host");
+    if (debugMode) console.log("Command to host", data);
     let result = {};
 
     try {
@@ -137,6 +145,92 @@ export async function getUserAccessRight(username, token) {
     return result;
 };
 
+export async function getUserContact(username) {
+    if (debugMode) console.log("Get user contact", username);
+
+    let url = serviceURLBase2 + "/command/user.contact.query.without.session";
+    let data = {
+        "filters": {
+            "user": {
+                "name": username,
+            },
+        },
+    };
+    let result = await command2Host(url, data, undefined, "POST");
+    return result;
+};
+
+export async function requestResetPasswordLink(username, contactId) {
+    if (debugMode) console.log("Request reset password link", username);
+
+    let url = serviceURLBase2 + "/command/password.reset.request.token";
+    let data = {
+        "user": {
+            "name": username
+        },
+        "contact": {
+            "identifier": contactId
+        },
+        "location": {
+            "name": "portal",
+            "currentTimestamp": formatDate(),
+        },
+        "application": {
+            "identifier": "SYNAP_WEB_APP"
+        }
+    };
+    let result = await command2Host(url, data, undefined, "POST");
+    return result;
+};
+
+export async function verifyResetPasswordToken(token) {
+    if (debugMode) console.log("Verify reset password token", token);
+
+    let url = serviceURLBase2 + "/command/password.reset.verify.token";
+    let data = {
+        user: {
+            passwordResetToken: token,
+        }
+    };
+    let result = await command2Host(url, data, undefined, "POST");
+    return result;
+};
+
+export async function resetPassword(password, token) {
+    if (debugMode) console.log("Reset password with token", password, token);
+
+    let url = serviceURLBase2 + "/command/password.reset";
+    let data = {
+        "user": {
+            "newPassword": password,
+            "passwordResetToken": token,
+        },
+        "location": {
+            "name": "portal",
+        }
+    };
+    let result = await command2Host(url, data, undefined, "POST");
+    return result;
+};
+
+export async function getTransactionHistoryList(token, filterSegment) {
+    if (debugMode) console.log("Get transaction history list", token);
+
+    let url = serviceURLBase2 + "/command/GetTransactionHistory";
+    let data = {
+        "filters": {
+        },
+        "cursor": {
+            "recordOffset": 0,
+            "recordCount": 10
+        }
+    };
+
+    if (filterSegment) data.filters = filterSegment;
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
 export async function getCountryList() {
     if (debugMode) console.log("Get country list");
 
@@ -173,7 +267,7 @@ export async function getCurrencyList() {
 
     let list = [];
     if (result.flag && result.data) {
-        list = result.data.currencies;
+        list = result.data?.currencies;
     }
     return list;
 };
@@ -186,6 +280,43 @@ export async function getTableList(token, databaseName = "kdb") {
         "sql": {
             "databaseName": databaseName,
             "executionMode": "execute",
+        }
+    };
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getConfigurationFileList(token) {
+    if (debugMode) console.log("Get configuration list");
+
+    let url = serviceURLBase2 + "/command/GetConfigurationFile";
+    let data = {
+        file: { name: "*" }
+    };
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function readConfigurationFile(token, filename) {
+    if (debugMode) console.log("Read configuration list", filename);
+
+    let url = serviceURLBase2 + "/command/ReadConfigurationFile";
+    let data = {
+        file: { name: filename }
+    };
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+
+export async function writeConfigurationFile(token, filename, content) {
+    if (debugMode) console.log("Write configuration list", filename);
+
+    let url = serviceURLBase2 + "/command/WriteConfigurationFile";
+    let data = {
+        file: {
+            name: filename,
+            content: content,
         }
     };
     let result = await command2Host(url, data, token, "POST");
@@ -266,7 +397,7 @@ export async function describeTable(token, databaseName = "kdb", tableName) {
 
 export async function getRecord(token, databaseName = "kdb", tableName, selector) {
     if (debugMode) console.log("Get record", databaseName, tableName, selector);
-        
+
     let url = serviceURLBase2 + "/command/sql.select";
     let data = {
         "sql": {
@@ -285,7 +416,7 @@ export async function getRecord(token, databaseName = "kdb", tableName, selector
 
 export async function addRecord(token, databaseName = "kdb", tableName, record) {
     if (debugMode) console.log("Add record", databaseName, tableName);
-        
+
     let url = serviceURLBase2 + "/command/sql.insert";
     let data = {
         "sql": {
@@ -300,20 +431,49 @@ export async function addRecord(token, databaseName = "kdb", tableName, record) 
     return result;
 };
 
+
+export async function updateRecord(token, databaseName = "kdb", tableName, selector, record) {
+    if (debugMode) console.log("Update record with ID", databaseName, tableName, selector);
+
+    if (!selector) {
+        console.warn("Selector not provide", selector);
+        return { flag: false, errorMessage: 'Selector not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/sql.update";
+    let record1 = {
+        ...record
+    };
+
+    let data = {
+        "sql": {
+            "tableName": tableName,
+            "databaseName": databaseName,
+            "executionMode": "execute",
+        },
+        "records": [record1],
+    };
+
+    data.sql.selector = selector;
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
 export async function updateRecordWithId(token, databaseName = "kdb", tableName, rowId, record) {
     if (debugMode) console.log("Update record with ID", databaseName, tableName, rowId);
 
-    if (!rowId) 
-    {
+    if (!rowId) {
         console.warn("Row ID not provide", rowId);
         return { flag: false, errorMessage: 'Row ID not provided' };
     }
-        
+
     let url = serviceURLBase2 + "/command/sql.update";
     let record1 = {
-        ...record,
-        rowId: undefined				
+        ...record
     };
+
+    if (record1.rowId !== undefined) delete record1.rowId;
 
     let data = {
         "sql": {
@@ -326,7 +486,29 @@ export async function updateRecordWithId(token, databaseName = "kdb", tableName,
 
     data.sql.selector = `rowId = ${rowId}`;
 
-    console.log("Post data", data);
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+
+export async function deleteRecord(token, databaseName = "kdb", tableName, selector) {
+    if (debugMode) console.log("Delete record with ID", databaseName, tableName, selector);
+
+    if (!selector) {
+        console.warn("Selector not provide", selector);
+        return { flag: false, errorMessage: 'Selector not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/sql.delete";
+    let data = {
+        "sql": {
+            "tableName": tableName,
+            "databaseName": databaseName,
+            "executionMode": "execute",
+        }
+    };
+
+    data.sql.selector = selector;
 
     let result = await command2Host(url, data, token, "POST");
     return result;
@@ -335,12 +517,11 @@ export async function updateRecordWithId(token, databaseName = "kdb", tableName,
 export async function deleteRecordWithId(token, databaseName = "kdb", tableName, rowId) {
     if (debugMode) console.log("Delete record with ID", databaseName, tableName, rowId);
 
-    if (!rowId) 
-    {
+    if (!rowId) {
         console.warn("Row ID not provide", rowId);
         return { flag: false, errorMessage: 'Row ID not provided' };
     }
-        
+
     let url = serviceURLBase2 + "/command/sql.delete";
     let data = {
         "sql": {
@@ -447,5 +628,180 @@ export async function uploadAvatar(username, file, token) {
     };
 
     console.log("Result", result);
+    return result;
+};
+
+export async function command4InstitutionList(token) {
+    if (debugMode) console.log("command for institution list");
+
+    let url = serviceURLBase2 + "/command/kswitch.institutions";
+    let data = {};
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4Institution(token, action, name) {
+    if (debugMode) console.log("command for institution", action, name);
+
+    let url = serviceURLBase2;
+
+    if (action == 'add') url += "/command/kswitch.institution.add";
+    else if (action == 'remove') url += "/command/kswitch.institution.remove";
+    else if (action == 'enable') url += "/command/kswitch.institution.enable";
+    else if (action == 'disable') url += "/command/kswitch.institution.disable";
+    else url += "/command/kswitch.institution.disable";
+
+    let data = {
+        institution: {
+            identifier: name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4LinkList(token) {
+    if (debugMode) console.log("command for link list");
+
+    let url = serviceURLBase2 + "/command/kswitch.links";
+    let data = {};
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4Link(token, action, name) {
+    if (debugMode) console.log("command for link", action, name);
+
+    let url = serviceURLBase2;
+
+    if (action == 'add') url += "/command/kswitch.link.add";
+    else if (action == 'remove') url += "/command/kswitch.link.remove";
+    else if (action == 'enable') url += "/command/kswitch.link.enable";
+    else if (action == 'disable') url += "/command/kswitch.link.disable";
+    else url += "/command/kswitch.link.disable";
+
+    let data = {
+        link: {
+            name: name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4Route(token, action, name) {
+    if (debugMode) console.log("command for route", action, name);
+
+    let url = serviceURLBase2;
+
+    if (action == 'add') url += "/command/kswitch.route.add";
+    else if (action == 'remove') url += "/command/kswitch.route.remove";
+    else if (action == 'enable') url += "/command/kswitch.route.enable";
+    else if (action == 'disable') url += "/command/kswitch.route.disable";
+    else url += "/command/kswitch.route.disable";
+
+    let data = {
+        route: {
+            name: name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4TransactionList(token) {
+    if (debugMode) console.log("command for transaction list");
+
+    let url = serviceURLBase2 + "/command/kswitch.transaction.list";
+    let data = {
+        "transaction": {
+            "name": ""
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4Transaction(token, action, name) {
+    if (debugMode) console.log("command for transaction", action, name);
+
+    let url = serviceURLBase2;
+
+    if (action == 'add') url += "/command/kswitch.transaction.add";
+    else if (action == 'remove') url += "/command/kswitch.transaction.remove";
+    else if (action == 'enable') url += "/command/kswitch.transaction.enable";
+    else if (action == 'disable') url += "/command/kswitch.transaction.disable";
+    else url += "/command/kswitch.transaction.disable";
+
+    let data = {
+        transaction: {
+            name: name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4ServerStat(token) {
+    if (debugMode) console.log("command for server stat");
+
+    let url = serviceURLBase2 + "/command/kswitch.server.statistics";
+    let data = {};
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4ProcessList(token) {
+    if (debugMode) console.log("command for process list");
+
+    let url = serviceURLBase2 + "/command/kswitch.process.list";
+    let data = {};
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4Process(token, action, name) {
+    if (debugMode) console.log("command for process", action, name);
+
+    let url = serviceURLBase2;
+
+    if (action == 'enable') url += "/command/kswitch.process.enable";
+    else if (action == 'disable') url += "/command/kswitch.process.disable";
+    else if (action == 'start') url += "/command/kswitch.process.start";
+    else if (action == 'stop') url += "/command/kswitch.process.stop";
+    else if (action == 'restart') url += "/command/kswitch.process.restart";
+    else url += "/command/kswitch.process.restart";
+
+    let data = {
+        process: {
+            name: name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function command4ProcessServer(token, action) {
+    if (debugMode) console.log("command for process server", action);
+
+    let url = serviceURLBase2;
+
+    if (action == 'start') url += "/command/kswitch.server.start";
+    else if (action == 'stop') url += "/command/kswitch.server.stop";
+    else url += "/command/kswitch.server.status";
+
+    let data = { };
+
+    let result = await command2Host(url, data, token, "POST");
     return result;
 };

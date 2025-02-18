@@ -77,7 +77,6 @@ export function SettingPage({ debugMode = true }) {
     async function click4UploadAvatar(e) {
         if (debugMode) console.log("Click for upload avatar ", e, user);
         showStateDialogBox();
-        await tBox.sleep(1000 * 1);
 
         try {
             let result = await apiBox.uploadAvatar(user.username, uploadFile, undefined);
@@ -140,19 +139,21 @@ export function SettingPage({ debugMode = true }) {
 
                         <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_setting}</div>
 
-                        <div className="mt-3 px-3 py-4 bg-white shadow"
+                        <div className="mt-3 p-4 bg-white shadow"
                             style={{ border: "1px solid #f3f3f3", borderRadius: "16px", minHeight: "calc(100vh - 160px)" }}>
                             <div className="d-flex flex-column">
 
-                                <div className="col-12 pe-3">
+                                <div className="col-12">
                                     <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                                         {sl.l_reset_local_storage_setting}
                                     </div>
 
-                                    <div className="mt-3 d-flex justify-content-between align-items-center">
+                                    <div className="mt-3 d-flex justify-content-between align-items-center px-3">
                                         <div style={{ fontSize: "14px" }}>{sl.l_clear_the_user_local_session}</div>
                                         <div>
-                                            <button className="btn btn-danger text-white" onClick={click4ClearSession}>
+                                            <button className="btn btn-danger text-white"
+                                                style={{ width: "120px" }}
+                                                onClick={click4ClearSession}>
                                                 <span className="material-icons-outlined fs-24-unity pe-2 ">clear</span>
                                                 {sl.b_clear}
                                             </button>
@@ -162,16 +163,16 @@ export function SettingPage({ debugMode = true }) {
                                 </div>
 
                                 <hr />
-                                <div className="col-12 pe-3">
+                                <div className="col-12">
                                     <div style={{ fontSize: "16px", fontWeight: "bold" }}>{sl.l_user_avatar_setting}</div>
 
-                                    <div className="mt-3 d-flex justify-content-between align-items-center">
+                                    <div className="mt-3 d-flex justify-content-between align-items-center px-3">
                                         <div style={{ fontSize: "14px" }}>
 
                                             <div className="position-relative">
 
-                                                <img src={avatar}
-                                                    onError={() => this.src = 'images/avatar0002.png'}
+                                                <img src={avatar ? avatar : 'images/avatar0002.png'}
+                                                    onError={(e) => e.target.src = 'images/avatar0002.png'}
                                                     className="border border-3 rounded-circle"
                                                     style={{ width: "128px", height: "128px", objectFit: "cover" }} />
 
@@ -192,7 +193,8 @@ export function SettingPage({ debugMode = true }) {
 
                                         </div>
                                         <div>
-                                            <button className="btn btn-primary "
+                                            <button className="btn btn-primary"
+                                                style={{ width: "120px" }}
                                                 onClick={click4UploadAvatar}
                                                 disabled={(uploadFile === null)}>
                                                 <span className="material-icons-outlined fs-24-unity pe-2 ">upload_file</span>

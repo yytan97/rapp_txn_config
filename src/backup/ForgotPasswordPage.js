@@ -15,6 +15,8 @@ import { DumpPanel } from "./DumpPanel.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showLanguageDialogBox } from "./LanguageDialogBox.js";
+import { showInputUserContactDialogBox, InputUserContactDialogBox } from "./InputUserContactDialogBox.js";
+
 
 // Map loaded lib here ...
 // const uuidv4 = window.uuidv4;
@@ -37,8 +39,8 @@ export function cleanUp() {
     return;
 };
 
-export function LoginPage({ debugMode = true }) {
-    const componentName = "LoginPage";
+export function ForgotPasswordPage({ debugMode = true }) {
+    const componentName = "ForgotPasswordPage";
     console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
@@ -101,46 +103,47 @@ export function LoginPage({ debugMode = true }) {
         return;
     };
 
-    async function click4ForgotPassword(e) {
-        if (debugMode) console.log("Click for forgot password", e);
-        navigate("/forgotPassword");
+    async function callback4OK(data) {
+        console.log("Callback for ok", data);
+        showStateDialogBox();
+
+        try {
+
+            let result = await apiBox.requestResetPasswordLink(inputData.username, data.contactId);
+            if (result?.flag) {
+                let message = sl.m_success_request_passowrd_link;
+                showInfoDialogBox(message, () => {
+                    navigate("/login");
+                });
+            }
+            else throw result;
+        }
+        catch (e) {
+            console.warn("Error", e);
+            let message = tBox.getErrorMessage(e, sl);
+            showInfoDialogBox(message);
+
+        }
+        finally {
+            closeStateDialogBox();
+        }
+
+        return;
     };
 
-    async function click4SignIn(e) {
-        console.log("Click for sign in ", e);
+    async function click4Submit(e) {
+        console.log("Click for submit", e);
         showStateDialogBox();
         let record = undefined;
 
         try {
-
-            let result = await apiBox.login(inputData.username, inputData.password);
-            if (result.flag) {
-                console.log("Successfully login", result);
-                // post login processing, get user detail, check group and load access rigth ...
-                record = result.data;
-                record.username = record.user.name;
+            let result = await apiBox.getUserContact(inputData.username);
+            if (result?.flag && result?.data?.emails) {
+                let list = result.data.emails;
+                console.log("Email list", list);
+                showInputUserContactDialogBox(sl.l_select_target_contact, list, callback4OK);
             }
-            else {
-                console.warn("Login failed", result);
-                throw result;
-            }
-
-            let result1 = await postLogin(record);
-            if (!result1.flag) throw (result1);
-
-            // navigate to dashboard or home; give the update user some time ...
-            setTimeout(() => {
-                if (debugMode) console.log("Navigate to home");
-                navigate("/home");
-            }, 100 * 2);
-
-            /*
-            setTimeout(() => {
-                if (debugMode) console.warn("Simulate session timeout");
-                updateUser(undefined);
-            }, 1000 * 60);  
-            */
-
+            else throw result;
         }
         catch (e) {
             console.warn("Error", e);
@@ -166,7 +169,7 @@ export function LoginPage({ debugMode = true }) {
 
         formObject.dirty = true;
         formObject.valid = ref4Form.current.checkValidity();
-
+        // formObject.fieldState[e.target.name] = tBox.buildFieldState(e.target);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
 
@@ -207,43 +210,21 @@ export function LoginPage({ debugMode = true }) {
                                             />
                                             <ErrorLine message={tBox.getFieldErrorMessage2('username', sl, formObject)} />
                                         </div>
-                                        <div className="col-12">
-                                            <InputLabel label={sl.l_password} required />
-                                            <div className="input-group mb-0">
-                                                <input name="password"
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    className={`form-control ${tBox.getClass4IsInvalid2('password', formObject)}`}
-                                                    placeholder={sl.p_password}
-                                                    maxLength={12}
-                                                    value={inputData.password || ""}
-                                                    onChange={change4Record}
-                                                    required={true}
-                                                />
-                                                <button className="btn btn-outline-primary" type="button" onClick={toggle4ShowPassword}>
-                                                    {
-                                                        showPassword ?
-                                                            <i className="fas fa-solid fa-eye fa-fw"></i>
-                                                            :
-                                                            <i className="fas fa-solid fa-eye-slash fa-fw"></i>
-                                                    }
-                                                </button>
-                                            </div>
-                                            <ErrorLine message={tBox.getFieldErrorMessage2('password', sl, formObject)} />
-                                        </div>
-
-                                        <div className="col-12 text-end" >
-                                            <span className="text-primary" role="button" onClick={click4ForgotPassword}>
-                                                {sl.l_forgot_password}
-                                            </span>
-                                        </div>
 
                                         <div className="col-12 my-5">
                                             <button
                                                 type="button"
                                                 className="btn btn-outline-primary col-12"
-                                                onClick={click4SignIn} disabled={!formObject.valid || !formObject.dirty}>
-                                                {sl.b_sign_in}
+                                                onClick={click4Submit} disabled={!formObject.valid || !formObject.dirty}>
+                                                {sl.b_submit}
                                             </button>
+
+                                            <div className="mt-3 text-center" >
+                                                <a className="text-decoration-none" href="#/login">
+                                                    <i className='fas fa-chevron-left'></i> {sl.l_back}
+                                                </a>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </form>
@@ -268,6 +249,8 @@ export function LoginPage({ debugMode = true }) {
                 </div>
 
             </div>
+
+            <InputUserContactDialogBox debugMode={debugMode}></InputUserContactDialogBox>
         </>
     );
 }

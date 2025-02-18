@@ -4,10 +4,11 @@ import * as reactRouter from "react-router-dom";
 import * as tBox from "./tBox.js";
 import { globalContext } from "./globalContext.js";
 
-import { cleanUp as cleanUp4InstitutionManagement } from "./InstitutionManagementPage.js";
-import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
-import { cleanUp as cleanUp4TableListManagement } from "./TableListManagementPage.js";
-import { cleanUp as cleanUp4ConfigurationFileManagement } from "./ConfigurationFileManagementPage.js";
+import { cleanUp as cleanUp4SwitchInstitution } from "./SwitchInstitutionControlPage.js";
+import { cleanUp as cleanUp4SwitchLink } from "./SwitchLinkControlPage.js";
+import { cleanUp as cleanUp4SwitchTransaction } from "./SwitchTransactionControlPage.js";
+import { cleanUp as cleanUp4SwitchServer } from "./SwitchServerControlPage.js";
+import { cleanUp as cleanUp4ProcessControl } from "./ProcessControlPage.js";
 
 import "./SideBar.css";
 
@@ -59,52 +60,69 @@ export function SideBar({ debugMode = false }) {
         return;
     };
 
-    function click4InstitutionManagement(e) {
-        let target = "/institutionManagement";
+    function click4SwitchInstitution(e) {
+        let target = "/switchInstitution";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
         }
 
-        cleanUp4InstitutionManagement();
+        cleanUp4SwitchInstitution();
         navigate(target);
         // setAppRedraw((v) => v + 1);
         return;
     };
 
-    function click4CryptogramManagement(e) {
-        let target = "/cryptogramManagement";
+    function click4SwitchLink(e) {
+        let target = "/switchLink";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
         }
 
-        cleanUp4CryptogramManagement();
+        cleanUp4SwitchLink();
         navigate(target);
+        // setAppRedraw((v) => v + 1);
         return;
     };
 
-    function click4Table(e) {
-        let target = "/tableListManagement";
+    function click4SwitchTransaction(e) {
+        let target = "/switchTransaction";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
         }
 
-        cleanUp4TableListManagement();
+        cleanUp4SwitchTransaction();
         navigate(target);
+        // setAppRedraw((v) => v + 1);
         return;
     };
 
-    function click4Configuration(e) {
-        let target = "/configurationFileManagement";
+    function click4SwitchServer(e) {
+        let target = "/switchServer";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
         }
 
-        cleanUp4ConfigurationFileManagement();
+        cleanUp4SwitchServer();
         navigate(target);
+        // setAppRedraw((v) => v + 1);
+        return;
+    };
+
+
+    function click4ProcessControl(e) {
+        let target = "/processControl";
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        cleanUp4ProcessControl();
+        navigate(target);
+        // setAppRedraw((v) => v + 1);
         return;
     };
 
@@ -135,52 +153,62 @@ export function SideBar({ debugMode = false }) {
                     </a>
                 </div>
 
-                <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Home}>
-                    <span className="material-icons-outlined fs-24-unity">home</span>
-                    <span className="ms-3 long-mode-label">{sl.l_home}</span>
+                <div className={`my-link ${class4Active('/switchInstitution')}`}
+                    role="button"
+                    onClick={click4SwitchInstitution}>
+                    <span className="material-icons-outlined fs-24-unity">business</span>
+                    <span className="ms-3 long-mode-label">{sl.l_institution}</span>
                 </div>
 
                 {
-                    check4Right('webapp_configuration_access', 'institution_management.access') ?
+                    check4Right('webapp_switch_service_access', 'switch_link_control.access') ?
                         (
-                            <div className={`my-link ${class4Active('/institutionManagement')}`} role="button" onClick={click4InstitutionManagement}>
-                                <span className="material-icons-outlined fs-24-unity">apartment</span>
-                                <span className="ms-3 long-mode-label">{sl.l_institution_management}</span>
-                            </div>
-                        ) : null
-                }
-
-                {
-                    check4Right('webapp_configuration_access', 'crypto_management.access') ?
-                        (
-                            <div className={`my-link ${class4Active('/cryptogramManagement')}`} role="button" onClick={click4CryptogramManagement}>
-                                <span className="material-icons-outlined fs-24-unity">key</span>
-                                <span className="ms-3 long-mode-label">{sl.l_cryptogram_management}</span>
-                            </div>
-                        ) : null
-                }
-
-                {
-                    check4Right('webapp_configuration_access', 'table.access') ?
-                        (
-                            <div className={`my-link ${class4Active('/tableListManagement')}`} role="button" onClick={click4Table}>
-                                <span className="material-icons-outlined fs-24-unity">table_view</span>
-                                <span className="ms-3 long-mode-label">{sl.l_table}</span>
-                            </div>
-                        ) : null
-                }
-
-                {
-                    check4Right('webapp_configuration_access', 'configuration.access') ?
-                        (
-                            <div className={`my-link ${class4Active('/configurationFileManagement')}`}
+                            <div className={`my-link ${class4Active('/switchLink')}`}
                                 role="button"
-                                onClick={click4Configuration}>
-                                <span className="material-icons-outlined fs-24-unity">tune</span>
-                                <span className="ms-3 long-mode-label">{sl.l_configuration}</span>
+                                onClick={click4SwitchLink}>
+                                <span className="material-icons-outlined fs-24-unity">route</span>
+                                <span className="ms-3 long-mode-label">{sl.l_link}</span>
                             </div>
                         ) : null
                 }
+
+                {
+                    check4Right('webapp_switch_service_access', 'switch_transaction_control.access') ?
+                        (
+                            <div className={`my-link ${class4Active('/switchTransaction')}`}
+                                role="button"
+                                onClick={click4SwitchTransaction}>
+                                <span className="material-icons-outlined fs-24-unity">source</span>
+                                <span className="ms-3 long-mode-label">{sl.l_transaction}</span>
+                            </div>
+                        ) : null
+                }
+
+                {
+                    check4Right('webapp_switch_service_access', 'switch_server_control.access') ?
+                        (
+                            <div className={`my-link ${class4Active('/switchServer')}`}
+                                role="button"
+                                onClick={click4SwitchServer}>
+                                <span className="material-icons-outlined fs-24-unity">dns</span>
+                                <span className="ms-3 long-mode-label">{sl.l_server}</span>
+                            </div>
+                        ) : null
+                }
+
+                {
+                    check4Right('webapp_switch_service_access', 'process_control.access') ?
+                        (
+                            <div className={`my-link ${class4Active('/processControl')}`}
+                                role="button"
+                                onClick={click4ProcessControl}>
+                                <span className="material-icons-outlined fs-24-unity">widgets</span>
+                                <span className="ms-3 long-mode-label">{sl.l_process}</span>
+                            </div>
+                        ) : null
+                }
+
+
 
             </div>
 

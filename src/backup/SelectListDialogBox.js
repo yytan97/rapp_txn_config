@@ -2,7 +2,14 @@ import * as react from "react";
 // import * as reactRouter from "react-router-dom";
 
 import * as tBox from "./tBox.js";
+import * as apiBox from "./apiBox.js";
+
 import { globalContext } from "./globalContext.js";
+
+import { ErrorLine } from "./ErrorLine.js";
+import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
+import { showInfoDialogBox } from "./InfoDialogBox.js";
+
 
 
 // Map loaded lib here ...
@@ -13,7 +20,7 @@ const bootstrap = window.bootstrap;
 let modal = undefined;
 let action = 0;
 
-let data = "";
+let data = {};
 let title = "";
 let callback4OK = undefined;
 let callback4Cancel = undefined;
@@ -21,11 +28,7 @@ let callback4Cancel = undefined;
 let label4OK = undefined;
 let label4Cancel = undefined;
 
-let languageList = [
-    { language: 'English', label: 'English' },
-    { language: 'Chinese', label: '中文' },
-    // { language: 'Malay', label: 'Melayu' },
-];
+let dataList = [];
 
 // input variable
 let inputData = {};
@@ -45,15 +48,16 @@ export function cleanUp() {
     return;
 };
 
-export function LanguageDialogBox({ debugMode = true }) {
-    const componentName = "LanguageDialogBox";
+export function SelectListDialogBox({ debugMode = true }) {
+    const componentName = "SelectListDialogBox";
 
     if (debugMode) console.log(`${componentName} component start ...`);
-    const { config, localData, gsl, applicationLanguage } = react.useContext(globalContext);
+    const { gsl, getSessionToken } = react.useContext(globalContext);
     let sl = tBox.getStringLabel(gsl, componentName);
 
     const ref4Div = react.useRef();
     const ref4Form = react.useRef();
+    const ref4Input = react.useRef();
 
     const [redraw, setRedraw] = react.useState(0);
 
@@ -65,7 +69,7 @@ export function LanguageDialogBox({ debugMode = true }) {
             if (debugMode) console.log("Create modal instance");
 
             ref4Div.current.addEventListener('hidden.bs.modal', callback4Hide);
-            window.addEventListener("showLanguageDialogBox", callback4Show);
+            window.addEventListener("showSelectListDialogBox", callback4Show);
         }
 
         // clean up
@@ -73,7 +77,7 @@ export function LanguageDialogBox({ debugMode = true }) {
             console.log(`Unmount ${componentName}`);
             if (modal !== undefined) {
                 console.log(`Clean up for ${componentName}`);
-                window.removeEventListener("showLanguageDialogBox", callback4Show);
+                window.removeEventListener("showSelectListDialogBox", callback4Show);
                 ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
@@ -105,11 +109,12 @@ export function LanguageDialogBox({ debugMode = true }) {
     };
 
     function callback4Show(e) {
-        console.log("Receive event 'showLanguageDialogBox'", e.detail);
+        console.log("Receive event 'showSelectListDialogBox'", e.detail);
         let detail = e.detail;
 
-        title = detail.title;
-        // setMessage(detail.message);
+        // title = detail.title;
+        title = detail.data?.title;
+        dataList = detail.data?.dataList || [];
         data = detail.data;
         callback4OK = detail.callback4OK;
         callback4Cancel = detail.callback4Cancel;
@@ -120,6 +125,14 @@ export function LanguageDialogBox({ debugMode = true }) {
         action = 0;
 
         if (data !== undefined) inputData = { ...data };
+
+        // reset form before start show
+        formObject = {
+            dirty: false,
+            valid: false,
+            fieldState: {},
+        };
+
         setRedraw((v) => v + 1);
 
         setTimeout(showModal, 100);
@@ -131,11 +144,15 @@ export function LanguageDialogBox({ debugMode = true }) {
 
         formObject.dirty = true;
         formObject.valid = ref4Form.current.checkValidity();
-        // formObject.fieldState[e.target.name] = tBox.buildFieldState(e.target);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
 
         inputData[e.target.name] = e.target.value;
+        if (debugMode) console.log("Input data", inputData);
+
+        // add custom validation
+   
+        console.log("Form state", formObject)
         setRedraw((v) => v + 1);
     };
 
@@ -167,28 +184,40 @@ export function LanguageDialogBox({ debugMode = true }) {
                 <div className="modal-dialog modal-dialog-centered" role="document">
                     <div className="modal-content ">
 
-                        <div className="modal-body justify-content-center text-center">
+                        <div className="modal-body">
+                            <div className="fs-1 text-primary text-center">
+                                <span className="material-icons fs-1">help</span>
+                            </div>
+                            <div className="fw-bold text-center mb-3">{title}</div>
 
-                            <form className="row mt-3" ref={ref4Form} autoComplete="off" noValidate>
-                                <div className="col-12" >
-                                    <label className="form-label mb-1">{sl.l_application_language}</label>
-                                    <select className="form-select" name="applicationLanguage"
-                                        value={inputData.applicationLanguage || "English"}
-                                        onChange={change4Input} >
-                                        {
-                                            languageList.map((record, index) => {
-                                                return (
-                                                    <option key={index} value={record.language} >{record.label}</option>
-                                                );
-                                            })
-                                        }
-                                    </select>
-                                </div>
+                            <form className="col-12 mt-2" ref={ref4Form} autoComplete="off" noValidate>
+
+                                <select name="selectValue"
+                                    className={`form-select ${tBox.getClass4IsInvalid2('selectValue', formObject)}`}
+                                    value={inputData?.selectValue || ""}
+                                    onChange={change4Input}
+                                    disabled={false}
+                                    required={true} >
+                                    <option value="">{sl.l_select_from_list}</option>
+                                    {
+                                        dataList?.map((record, index) => {
+                                            return (
+                                                <option key={index} value={record.value} >
+                                                    {record.label}
+                                                </option>
+                                            );
+                                        })
+                                    }
+
+                                </select>
+
                             </form>
                         </div>
 
                         <div className="modal-footer justify-content-center text-center border-top-0">
-                            <button className="btn btn-unity " onClick={click4OK} >
+                            <button className="btn btn-unity "
+                                onClick={click4OK}
+                                disabled={!formObject?.valid || !formObject?.dirty}>
                                 {label4OK || sl.b_confirm}
                             </button>
                             <button className="btn btn-outline-unity " onClick={click4Cancel} >
@@ -196,25 +225,25 @@ export function LanguageDialogBox({ debugMode = true }) {
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div >
+            </div >
 
         </>
     );
 };
 
-export function showLanguageDialogBox(language, callback4OK, label4OK, callback4Cancel, label4Cancel) {
-    console.log("Show language dialog box");
+export function showSelectListDialogBox(data, callback4OK, label4OK, callback4Cancel, label4Cancel) {
+    console.log("Show select list dialog box");
 
     let detail = {
-        data: { applicationLanguage: language },
+        data: { ...data },
         callback4OK: callback4OK,
         callback4Cancel: callback4Cancel,
         label4OK: label4OK,
         label4Cancel: label4Cancel
     };
 
-    let e = new CustomEvent("showLanguageDialogBox", {
+    let e = new CustomEvent("showSelectListDialogBox", {
         detail: detail
     });
     window.dispatchEvent(e);

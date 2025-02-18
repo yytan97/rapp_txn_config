@@ -37,9 +37,7 @@ export function ConfirmDialogBox({ debugMode = true }) {
         if (modal === undefined) {
             modal = new bootstrap.Modal(ref4Div.current, { backdrop: "static" });
             if (debugMode) console.log("Create modal instance");
-
             ref4Div.current.addEventListener('hidden.bs.modal', callback4Hide);
-
             window.addEventListener("showConfirmDialogBox", callback4Show);
         }
 
@@ -49,7 +47,7 @@ export function ConfirmDialogBox({ debugMode = true }) {
             if (modal !== undefined) {
                 console.log(`Clean up for ${componentName}`);
                 window.removeEventListener("showConfirmDialogBox", callback4Show);
-                ref4Div.current.removeEventListener('hidden.bs.modal', callback4Hide);
+                ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
                 modal = undefined;

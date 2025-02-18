@@ -46,7 +46,7 @@ export function StateDialogBox({ debugMode = false }) {
                 console.log(`Clean up for ${componentName}`);
                 window.removeEventListener("showStateDialogBox", callback4Show);
                 window.removeEventListener("closeStateDialogBox", callback4Close);
-                ref4Div.current.removeEventListener('hidden.bs.modal', callback4Hide);
+                ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
                 modal = undefined;

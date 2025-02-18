@@ -5,16 +5,7 @@ import * as tBox from "./tBox.js";
 import * as apiBox from "./apiBox.js";
 
 import { globalContext } from "./globalContext.js";
-
-import { Home, homeLoader } from "./Home.js";
 import { Fallback } from "./Fallback.js";
-import { RootErrorBoundary } from "./RootErrorBoundary.js";
-
-import { LoginPage } from "./LoginPage.js";
-import { SettingPage } from "./SettingPage.js";
-
-import { TestFormPage } from "./TestFormPage.js";
-import { TestDialogBoxPage } from "./TestDialogBoxPage.js";
 
 import { LanguageDialogBox } from "./LanguageDialogBox.js";
 import { UserProfileDialogBox } from "./UserProfileDialogBox.js";
@@ -23,12 +14,7 @@ import { InfoDialogBox } from "./InfoDialogBox.js";
 import { ConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { StateDialogBox } from "./StateDialogBox.js";
 
-import { TableListOverviewPage } from "./TableListOverviewPage.js";
-import { CryptogramManagementPage } from "./CryptogramManagementPage.js";
-import { CryptogramDetailPage } from "./CryptogramDetailPage.js";
-import { TestMonacoPage } from "./TestMonacoPage.js";
-import { EditCryptogramPage } from "./EditCryptogramPage.js";
-
+import { appRouterDefination } from "./appRouter.js";
 
 
 // Map loaded lib here ...
@@ -72,10 +58,24 @@ export function Layout({ debugMode = true }) {
         document.title = location.pathname;
     }, [location]);
     */
-   
+
     react.useEffect(() => {
         console.log("Location change", location.pathname, window.history.state?.idx);
-        if (!isLogin && location.pathname != "/login") navigate("/login");
+        // if (!isLogin && location.pathname != "/login") navigate("/login");
+
+        if (!isLogin) {
+            if (location.pathname === "/login" ||
+                location.pathname === "/forgotPassword" ||
+                location.pathname === "/resetPassword" || location.pathname === "/cpwt") {
+                console.warn("Not yet login but no redirect");
+            }
+            else {
+                console.warn("Redirect to login page ");
+                navigate("/login");
+            }
+        }
+
+
         window.scrollTo(0, 0);
     }, [location, isLogin]);
 
@@ -126,7 +126,7 @@ export default function App() {
         config = await tBox.loadConfiguration4Parameter();
         if (debugMode) console.log("Configuration", config);
 
-        let lang = localData.applicationLanguage;
+        let lang = localData?.applicationLanguage || "English";
         gsl = await tBox.loadConfiguration4Label(lang);
         setApplicationLanguage(lang);
         if (debugMode) console.log("Global string label", gsl);
@@ -151,7 +151,7 @@ export default function App() {
         }
 
         // postLogin here, here don't show or popup any message
-        user = localData.user;
+        user = localData?.user;
         if (user !== undefined) {
             await postLogin(user);
         }
@@ -301,15 +301,13 @@ export default function App() {
         else mode = 0;
 
         updateSideBar(mode);
-
-        // setAppData({ ...appData, menuMode: menuMode });
         setMenuMode(mode);
         return;
     };
 
     function check4Right(objectName, actionName) {
         if (skipCheck4Right) {
-            if (debugMode) console.warn("Skip check for right", objectName, actionName);
+            if (debugMode) console.log("Skip check for right", objectName, actionName);
             return true;
         }
 
@@ -332,6 +330,30 @@ export default function App() {
         return false;
     };
 
+    async function getCurrencyList() {
+        if (debugMode) console.log("Get currecny list");
+
+        let list = [];
+        try {
+            if (dataset.currencyList === undefined) {
+                if (debugMode) console.log("From host database");
+
+                list = await apiBox.getCurrencyList();
+                if (list) {
+                    dataset.currencyList = list;
+                }
+            }
+            else {
+                if (debugMode) console.log("From memory");
+                list = dataset.currencyList;
+            }
+        }
+        catch (e) {
+            console.warn("Error", e);
+        }
+        return list;
+    };
+
     return (
         <globalContext.Provider value={{
             config,
@@ -349,7 +371,8 @@ export default function App() {
             getSessionToken, getUsername,
             postLogin,
             toggleMenuMode,
-            check4Right
+            check4Right,
+            getCurrencyList
         }}>
 
             {
@@ -366,83 +389,11 @@ export default function App() {
             <InfoDialogBox debugMode={debugMode} />
             <ConfirmDialogBox debugMode={debugMode} />
 
-
         </globalContext.Provider>
     );
 };
 
-let router = reactRouter.createHashRouter([
-    {
-        path: "/",
-        Component: Layout,
-        loader: layoutLoader,
-        errorElement: <RootErrorBoundary />,
-        children: [
-            {
-                index: true,
-                loader: homeLoader,
-                Component: Home,
-            },
-            {
-                path: "login",
-                Component: LoginPage,
-            },
-            {
-                path: "setting",
-                Component: SettingPage,
-            },
-            {
-                path: "tableListOverview",
-                Component: TableListOverviewPage,
-            },
-            {
-                path: "cryptogramManagement",
-                Component: CryptogramManagementPage,
-            },
-            {
-                path: "cryptogramDetail",
-                Component: CryptogramDetailPage,
-            },
-            {
-                path: "editCryptogram",
-                Component: EditCryptogramPage,
-            },
-            {
-                path: "testForm",
-                Component: TestFormPage,
-            },
-            {
-                path: "testDialogBox",
-                Component: TestDialogBoxPage,
-            },
-            {
-                path: "testMonaco",
-                Component: TestMonacoPage,
-            },
-            {
-                path: "/home",
-                element: <reactRouter.Navigate to="/" />,
-            },
-            {
-                path: "/dashboard",
-                element: <reactRouter.Navigate to="/" />,
-            },
-        ],
-    },
-]);
-
-/*
-let router = reactRouter.createHashRouter(
-    reactRouter.createRoutesFromElements(
-        <reactRouter.Route path="/" element={<Layout />}>
-            <reactRouter.Route index element={<Home />} />
-            <reactRouter.Route path="login" element={<LoginPage />} />
-            <reactRouter.Route path="testForm" element={<TestFormPage />} action={() => reactRouter.json({ ok: true })}/> 
-            <reactRouter.Route path="testDialogBox" element={<TestDialogBoxPage />} /> 
-        </reactRouter.Route>
-    )
-);
-*/
+let router = reactRouter.createHashRouter(appRouterDefination);
 
 if (import.meta.hot) {
     console.warn("META HOT")

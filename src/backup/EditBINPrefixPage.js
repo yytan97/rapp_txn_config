@@ -24,11 +24,11 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchbinprefix";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "bin_prefix_management";
 
 let dataRecord = undefined;
 
@@ -58,8 +58,8 @@ export function cleanUp() {
     return;
 };
 
-export function EditCryptogramPage({ debugMode = true }) {
-    const componentName = "EditCryptogramPage";
+export function EditBINPrefixPage({ debugMode = true }) {
+    const componentName = "EditBINPrefixPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const {
@@ -273,7 +273,7 @@ export function EditCryptogramPage({ debugMode = true }) {
     function click4AddRecord(e) {
         if (debugMode) console.log("Click for add record", e);
         let message = sl.m_confirm_create_record;
-        message = message.replace("__parameter_1", inputData.ownerId + " (" + inputData.keyFunction + ")");
+        message = message.replace("__parameter_1", inputData.institutionId);
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
@@ -418,17 +418,17 @@ export function EditCryptogramPage({ debugMode = true }) {
                             }
 
                             <div>
-                                <InputLabel label={sl.l_owner_id} required />
-                                <input name="ownerId"
+                                <InputLabel label={sl.l_institution_id} required />
+                                <input name="institutionId"
                                     type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('ownerId', formObject)}`}
-                                    placeholder={sl.p_owner_id}
-                                    value={inputData?.ownerId || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
+                                    placeholder={sl.p_institution_id}
+                                    value={inputData?.institutionId || ""}
                                     onChange={change4Input}
                                     disabled={editMode === 1}
                                     required />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                             </div>
 
                             <div >
@@ -448,102 +448,65 @@ export function EditCryptogramPage({ debugMode = true }) {
                             </div>
 
                             <div >
-                                <InputLabel label={sl.l_key_function} required />
-                                <input name="keyFunction"
+                                <InputLabel label={sl.l_prefix} required />
+                                <input name="prefix"
                                     type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
-                                    placeholder={sl.p_key_function}
-                                    value={inputData?.keyFunction || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('prefix', formObject)}`}
+                                    placeholder={sl.p_prefix}
+                                    value={inputData?.prefix || ""}
                                     onChange={change4Input}
-                                    list="datalist4KeyFunction"
                                     required />
 
-                                <datalist id="datalist4KeyFunction">
-                                    <option value="BDK"></option>
-                                    <option value="BDK2"></option>
-                                    <option value="BDK3"></option>
-                                    <option value="CVK"></option>
-                                    <option value="DEK"></option>
-                                    <option value="FPE"></option>
-                                    <option value="IPEK"></option>
-
-                                    <option value="KEK"></option>
-                                    <option value="LMK"></option>
-                                    <option value="MKAC"></option>
-                                    <option value="PVK"></option>
-
-                                    <option value="TAK"></option>
-                                    <option value="TEK"></option>
-                                    <option value="TMK"></option>
-                                    <option value="TPK"></option>
-
-                                    <option value="ZAK"></option>
-                                    <option value="ZEK"></option>
-                                    <option value="ZPK"></option>
-                                </datalist>
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('prefix', sl, formObject)} />
 
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_key_algo} />
-                                <input name="keyAlgo"
+                                <InputLabel label={sl.l_description} />
+                                <input name="description"
+                                    type="text"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('description', formObject)}`}
+                                    placeholder={sl.p_description}
+                                    value={inputData?.description || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('description', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_filename} />
+                                <input name="filename"
+                                    type="text"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('filename', formObject)}`}
+                                    placeholder={sl.p_filename}
+                                    value={inputData?.filename || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('filename', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_product_code} />
+                                <input name="productCode"
+                                    type="text"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('productCode', formObject)}`}
+                                    placeholder={sl.p_product_code}
+                                    value={inputData?.productCode || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('productCode', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_priority} />
+                                <input name="priority"
                                     type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
-                                    placeholder={sl.p_key_algo}
-                                    value={inputData?.keyAlgo || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('priority', formObject)}`}
+                                    placeholder={sl.p_priority}
+                                    value={inputData?.priority || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_bit_size} />
-                                <input name="bitSize"
-                                    type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
-                                    placeholder={sl.p_bit_size}
-                                    value={inputData?.bitSize || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_iv} />
-                                <input name="iv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
-                                    placeholder={sl.p_iv}
-                                    value={inputData?.iv || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_cryptogram} />
-                                <input name="cryptogram"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
-                                    placeholder={sl.p_cryptogram}
-                                    value={inputData?.cryptogram || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_kcv} />
-                                <input name="kcv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
-                                    placeholder={sl.p_kcv}
-                                    value={inputData?.kcv || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('priority', sl, formObject)} />
                             </div>
 
                         </div>

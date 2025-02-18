@@ -10,6 +10,10 @@ import { DumpPanel } from "./DumpPanel.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
+import { InputCryptoIdDialogBox, showInputCryptoIdDialogBox } from "./InputCryptoIdDialogBox.js";
+import { InputTimerIdDialogBox, showInputTimerIdDialogBox } from "./InputTimerIdDialogBox.js";
+import { InputRoutingRecordDialogBox, showInputRoutingRecordDialogBox } from "./InputRoutingRecordDialogBox.js";
+
 
 // Map loaded lib here ...
 // const uuidv4 = window.uuidv4;
@@ -19,7 +23,7 @@ export function TestDialogBoxPage({ debugMode = true }) {
     const componentName = "TestDialogBoxPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
-    const { config, localData, 
+    const { config, localData,
         gsl, applicationLanguage,
         updateApplicationLanguage,
     } = react.useContext(globalContext);
@@ -65,7 +69,7 @@ export function TestDialogBoxPage({ debugMode = true }) {
             console.log(`Back to test page with ok ${n}`);
             return;
         };
-       
+
         showInfoDialogBox(`${n}. ${sl.e_standard_message}`, callback4OK, sl.b_dismiss);
 
         return;
@@ -97,6 +101,63 @@ export function TestDialogBoxPage({ debugMode = true }) {
 
         await tBox.sleep(1000 * 2);
         closeStateDialogBox();
+        return;
+    };
+
+    function click4ShowCryptoIdDialogBox(e) {
+        if (debugMode) console.log("Click for show dialog box ", e);
+
+        let n = tBox.rand();
+        let callback4OK = (data) => {
+            console.log(`Back to test page with ok ${n}`, data);
+            return;
+        };
+
+        let callback4Cancel = (data) => {
+            console.log(`Back to test page with cancel ${n}`, data);
+            return;
+        };
+
+        let data = { randomId: n };
+        showInputCryptoIdDialogBox(data, callback4OK, undefined, callback4Cancel, sl.b_dismiss);
+        return;
+    };
+
+    function click4ShowTimerIdDialogBox(e) {
+        if (debugMode) console.log("Click for show dialog box ", e);
+
+        let n = tBox.rand();
+        let callback4OK = (data) => {
+            console.log(`Back to test page with ok ${n}`, data);
+            return;
+        };
+
+        let callback4Cancel = (data) => {
+            console.log(`Back to test page with cancel ${n}`, data);
+            return;
+        };
+
+        let data = { randomId: n };
+        showInputTimerIdDialogBox(data, callback4OK, undefined, callback4Cancel, sl.b_dismiss);
+        return;
+    };
+
+    function click4ShowInputRoutingRecordDialogBox(e) {
+        if (debugMode) console.log("Click for show dialog box ", e);
+
+        let n = tBox.rand();
+        let callback4OK = (data) => {
+            console.log(`Back to test page with ok ${n}`, data);
+            return;
+        };
+
+        let callback4Cancel = (data) => {
+            console.log(`Back to test page with cancel ${n}`, data);
+            return;
+        };
+
+        let data = { randomId: n };
+        showInputRoutingRecordDialogBox(data, [], callback4OK, undefined, callback4Cancel, sl.b_dismiss);
         return;
     };
 
@@ -134,33 +195,36 @@ export function TestDialogBoxPage({ debugMode = true }) {
                             {sl.b_state}
                         </button>
                     </div>
+
+                    <div className="col-12 my-2">
+                        <button type="button" className="btn btn-outline-primary col-12 "
+                            onClick={click4ShowCryptoIdDialogBox} >
+                            {sl.b_input_crypto_id}
+                        </button>
+                    </div>
+
+                    <div className="col-12 my-2">
+                        <button type="button" className="btn btn-outline-primary col-12 "
+                            onClick={click4ShowTimerIdDialogBox} >
+                            {sl.b_input_timer_id}
+                        </button>
+                    </div>
+
+                    <div className="col-12 my-2">
+                        <button type="button" className="btn btn-outline-primary col-12 "
+                            onClick={click4ShowInputRoutingRecordDialogBox} >
+                            {sl.b_input_routing_record}
+                        </button>
+                    </div>
                 </div>
 
             </div>
 
-            {/*
-            <InfoDialogBox message="Hello from information dialog box"
-                show={showInfo}
-                callback4OK={(m) => { setShowInfo(false) }}
-                debugMode={debugMode} />
-
-            <ConfirmDialogBox message="Confirm delete record from table ?"
-                show={showConfirm}
-                callback4OK={(m) => { setShowConfirm(false) }}
-                callback4Cancel={(m) => { setShowConfirm(false) }}
-                debugMode={debugMode} />
-
-            <StateDialogBox message="Loading ..."
-                show={showState}
-                debugMode={debugMode} />
-            */}
+            <InputCryptoIdDialogBox debugMode={debugMode} />
+            <InputTimerIdDialogBox debugMode={debugMode} />
+            <InputRoutingRecordDialogBox debugMode={debugMode} />
 
             <DumpPanel dataList={[
-                // { name: "record", data: record },
-                // { name: "formState", data: formState },
-                // { name: "fieldState", data: fieldState },
-                // { name: "localData", data: localData },
-                // { name: "config", data: config },
                 { name: "sl", data: sl },
             ]} debugMode={debugMode} />
         </>

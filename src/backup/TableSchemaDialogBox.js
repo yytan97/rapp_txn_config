@@ -10,15 +10,13 @@ import { globalContext } from "./globalContext.js";
 // const moment = window.moment;
 const bootstrap = window.bootstrap;
 
-let avatar = undefined;
-let message = undefined;
+let schema = undefined;
 let callback4OK = undefined;
 let modal = undefined;
 let label4OK = undefined;
-let data = {};
 
-export function UserProfileDialogBox({ debugMode = false }) {
-    const componentName = "UserProfileDialogBox";
+export function TableSchemaDialogBox({ debugMode = false }) {
+    const componentName = "TableSchemaDialogBox";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const { config, localData, gsl, user, dataset, updateApplicationLanguage } = react.useContext(globalContext);
@@ -26,7 +24,6 @@ export function UserProfileDialogBox({ debugMode = false }) {
 
     const ref4Div = react.useRef();
     const [redraw, setRedraw] = react.useState(0);
-
 
     react.useEffect(() => {
         if (debugMode) console.log(`Show ${componentName} component`);
@@ -36,7 +33,7 @@ export function UserProfileDialogBox({ debugMode = false }) {
             modal = new bootstrap.Modal(ref4Div.current, { backdrop: "static" });
 
             ref4Div.current.addEventListener('hidden.bs.modal', callback4Hide);
-            window.addEventListener("showUserProfileDialogBox", callback4Show);
+            window.addEventListener("showTableSchemaDialogBox", callback4Show);
         }
 
         // clean up
@@ -44,8 +41,8 @@ export function UserProfileDialogBox({ debugMode = false }) {
             console.log(`Unmount ${componentName}`);
             if (modal !== undefined) {
                 console.log(`Clean up for ${componentName}`);
-                window.removeEventListener("showUserProfileDialogBox", callback4Show);
-                ref4Div.current.removeEventListener('hidden.bs.modal', callback4Hide);
+                window.removeEventListener("showTableSchemaDialogBox", callback4Show);
+                ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
                 modal = undefined;
@@ -56,24 +53,15 @@ export function UserProfileDialogBox({ debugMode = false }) {
 
     function callback4Hide(e) {
         if (callback4OK != undefined)
-            callback4OK(message);
+            callback4OK();
     };
 
     function callback4Show(e) {
-        console.log("Receive event 'showUserProfileDialogBox'", e.detail);
+        console.log("Receive event 'showTableSchemaDialogBox'", e.detail);
         let detail = e.detail;
 
-        data = detail.data;
-        if (data === undefined) {
-            console.log("No user information from parameter; Get it from context");
-            data = user;
-        }
-
-        avatar = detail.avatar;
-        if (avatar === undefined) {
-            console.log("No avatar from parameter; Get it from context");
-            avatar = dataset.avatar;
-        }
+        schema = detail.schema;
+        
         callback4OK = detail.callback4OK;
         label4OK = detail.label4OK;
 
@@ -98,42 +86,41 @@ export function UserProfileDialogBox({ debugMode = false }) {
     return (
         <>
             <div className="modal" ref={ref4Div} tabIndex="-1" role="dialog" >
-                <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
 
                     <div className="modal-content ">
 
                         <div className="modal-body justify-content-center text-center">
 
-                            <div>
-                                <img className="rounded-circle border"
-                                    src={avatar ? avatar : "images/avatar0002.png"}
-                                    style={{ width: "128px", height: "128px", objectFit: "cover" }} />
+                            <div className="text-primary">
+                                <span className="material-icons fs-1">info</span>
                             </div>
 
                             <div className="mt-3 table-responsive text-start">
                                 <table className="table table-striped">
+                                    <thead>
+                                        <tr >
+                                            <th >{sl.h_no}</th>
+                                            <th >{sl.h_name}</th>
+                                            <th >{sl.h_type}</th>
+                                            <th className="text-end">{sl.h_size}</th>
+                                        </tr>
+                                    </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>{sl.l_username}</td>
-                                            <td>{data?.username}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>{sl.l_email}</td>
-                                            <td>
-                                                {data?.extraInfo?.email?.address || data?.extraInfo?.record?.emailAddress}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>{sl.l_organization_name}</td>
-                                            <td>
-                                                {data?.user?.organization?.name || data?.organizationName}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>{sl.l_last_login}</td>
-                                            <td>{tBox.formatDate(data?.user?.lastLogin)}</td>
-                                        </tr>
+                                        {
+                                            schema?.map((record, index) => {
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
+                                                        <td>{record.name}</td>
+                                                        <td>{record.type}</td>
+                                                        <td className="text-end">{record.size}</td>
+                                                    </tr>
+                                                );
+                                            })
+                                        }
                                     </tbody>
+
                                 </table>
                             </div>
 
@@ -153,14 +140,13 @@ export function UserProfileDialogBox({ debugMode = false }) {
     );
 }
 
-export function showUserProfileDialogBox(user, avatar) {
+export function showTableSchemaDialogBox(schema) {
     console.log("Show user profile dialog box");
     let detail = {
-        data: user,
-        avatar: avatar
+        schema: schema
     };
 
-    let e = new CustomEvent("showUserProfileDialogBox", {
+    let e = new CustomEvent("showTableSchemaDialogBox", {
         detail: detail
     });
     window.dispatchEvent(e);

@@ -24,7 +24,7 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchinstitution_timers";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
@@ -58,8 +58,8 @@ export function cleanUp() {
     return;
 };
 
-export function EditCryptogramPage({ debugMode = true }) {
-    const componentName = "EditCryptogramPage";
+export function EditTimerPage({ debugMode = true }) {
+    const componentName = "EditTimerPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const {
@@ -148,7 +148,7 @@ export function EditCryptogramPage({ debugMode = true }) {
             }
 
             // fetch data 
-            
+
             // other reference data can be load on this section
 
             if (editMode === 1) {
@@ -273,7 +273,7 @@ export function EditCryptogramPage({ debugMode = true }) {
     function click4AddRecord(e) {
         if (debugMode) console.log("Click for add record", e);
         let message = sl.m_confirm_create_record;
-        message = message.replace("__parameter_1", inputData.ownerId + " (" + inputData.keyFunction + ")");
+        message = message.replace("__parameter_1", inputData.institutionId);
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
@@ -418,17 +418,17 @@ export function EditCryptogramPage({ debugMode = true }) {
                             }
 
                             <div>
-                                <InputLabel label={sl.l_owner_id} required />
-                                <input name="ownerId"
+                                <InputLabel label={sl.l_institution_id} required />
+                                <input name="institutionId"
                                     type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('ownerId', formObject)}`}
-                                    placeholder={sl.p_owner_id}
-                                    value={inputData?.ownerId || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
+                                    placeholder={sl.p_institution_id}
+                                    value={inputData?.institutionId || ""}
                                     onChange={change4Input}
                                     disabled={editMode === 1}
                                     required />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                             </div>
 
                             <div >
@@ -437,7 +437,7 @@ export function EditCryptogramPage({ debugMode = true }) {
                                     className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
                                     value={inputData?.recordStatus || ""}
                                     onChange={change4Input}
-                                    required>
+                                    required >
                                     <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
                                     <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
                                     <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
@@ -448,105 +448,199 @@ export function EditCryptogramPage({ debugMode = true }) {
                             </div>
 
                             <div >
-                                <InputLabel label={sl.l_key_function} required />
-                                <input name="keyFunction"
+                                <InputLabel label={sl.l_chrono_unit} required />
+                                <input name="chronoUnit"
                                     type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
-                                    placeholder={sl.p_key_function}
-                                    value={inputData?.keyFunction || ""}
-                                    onChange={change4Input}
-                                    list="datalist4KeyFunction"
-                                    required />
+                                    className={`form-control ${tBox.getClass4IsInvalid2('chronoUnit', formObject)}`}
+                                    placeholder={sl.p_chrono_unit}
+                                    value={inputData?.chronoUnit || ""}
+                                    onChange={change4Input} />
 
-                                <datalist id="datalist4KeyFunction">
-                                    <option value="BDK"></option>
-                                    <option value="BDK2"></option>
-                                    <option value="BDK3"></option>
-                                    <option value="CVK"></option>
-                                    <option value="DEK"></option>
-                                    <option value="FPE"></option>
-                                    <option value="IPEK"></option>
-
-                                    <option value="KEK"></option>
-                                    <option value="LMK"></option>
-                                    <option value="MKAC"></option>
-                                    <option value="PVK"></option>
-
-                                    <option value="TAK"></option>
-                                    <option value="TEK"></option>
-                                    <option value="TMK"></option>
-                                    <option value="TPK"></option>
-
-                                    <option value="ZAK"></option>
-                                    <option value="ZEK"></option>
-                                    <option value="ZPK"></option>
-                                </datalist>
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('chronoUnit', sl, formObject)} />
 
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_key_algo} />
-                                <input name="keyAlgo"
+                                <InputLabel label={sl.l_timer_0} />
+                                <input name="timer0"
                                     type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
-                                    placeholder={sl.p_key_algo}
-                                    value={inputData?.keyAlgo || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer0', formObject)}`}
+                                    placeholder={sl.p_timer_0}
+                                    value={inputData?.timer0 || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer0', sl, formObject)} />
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_bit_size} />
-                                <input name="bitSize"
+                                <InputLabel label={sl.l_timer_A} />
+                                <input name="timerA"
                                     type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
-                                    placeholder={sl.p_bit_size}
-                                    value={inputData?.bitSize || ""}
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timerA', formObject)}`}
+                                    placeholder={sl.p_timer_A}
+                                    value={inputData?.timerA || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timerA', sl, formObject)} />
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_iv} />
-                                <input name="iv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
-                                    placeholder={sl.p_iv}
-                                    value={inputData?.iv || ""}
+                                <InputLabel label={sl.l_timer_K} />
+                                <input name="timerK"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timerK', formObject)}`}
+                                    placeholder={sl.p_timer_K}
+                                    value={inputData?.timerK || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timerK', sl, formObject)} />
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_cryptogram} />
-                                <input name="cryptogram"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
-                                    placeholder={sl.p_cryptogram}
-                                    value={inputData?.cryptogram || ""}
+                                <InputLabel label={sl.l_timer_1} />
+                                <input name="timer1"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer1', formObject)}`}
+                                    placeholder={sl.p_timer_1}
+                                    value={inputData?.timer1 || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer1', sl, formObject)} />
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_kcv} />
-                                <input name="kcv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
-                                    placeholder={sl.p_kcv}
-                                    value={inputData?.kcv || ""}
+                                <InputLabel label={sl.l_timer_1220} />
+                                <input name="timer1220"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer1220', formObject)}`}
+                                    placeholder={sl.p_timer_1220}
+                                    value={inputData?.timer1220 || ""}
                                     onChange={change4Input} />
 
-                                <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer1220', sl, formObject)} />
                             </div>
 
-                        </div>
+                            <div>
+                                <InputLabel label={sl.l_timer_2} />
+                                <input name="timer2"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer2', formObject)}`}
+                                    placeholder={sl.p_timer_2}
+                                    value={inputData?.timer2 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer2', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_3} />
+                                <input name="timer3"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer3', formObject)}`}
+                                    placeholder={sl.p_timer_3}
+                                    value={inputData?.timer3 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer3', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_4} />
+                                <input name="timer4"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer4', formObject)}`}
+                                    placeholder={sl.p_timer_4}
+                                    value={inputData?.timer4 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer4', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_5} />
+                                <input name="timer5"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer5', formObject)}`}
+                                    placeholder={sl.p_timer_5}
+                                    value={inputData?.timer5 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer5', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_6} />
+                                <input name="timer6"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer6', formObject)}`}
+                                    placeholder={sl.p_timer_6}
+                                    value={inputData?.timer6 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer6', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_7} />
+                                <input name="timer7"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer7', formObject)}`}
+                                    placeholder={sl.p_timer_7}
+                                    value={inputData?.timer7 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer7', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_8} />
+                                <input name="timer8"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer8', formObject)}`}
+                                    placeholder={sl.p_timer_8}
+                                    value={inputData?.timer8 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer8', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_9} />
+                                <input name="timer9"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer9', formObject)}`}
+                                    placeholder={sl.p_timer_9}
+                                    value={inputData?.timer9 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer9', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_10} />
+                                <input name="timer10"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer10', formObject)}`}
+                                    placeholder={sl.p_timer_10}
+                                    value={inputData?.timer10 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer10', sl, formObject)} />
+                            </div>
+
+                            <div>
+                                <InputLabel label={sl.l_timer_11} />
+                                <input name="timer11"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('timer11', formObject)}`}
+                                    placeholder={sl.p_timer_11}
+                                    value={inputData?.timer11 || ""}
+                                    onChange={change4Input} />
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('timer11', sl, formObject)} />
+                            </div>
+
+                        </div>  {/* end of field inner panel */}
 
                     </div>
 

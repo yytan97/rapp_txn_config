@@ -20,20 +20,27 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 
+import { showTableSchemaDialogBox, TableSchemaDialogBox } from "./TableSchemaDialogBox.js";
+
+
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let tableName = "kswitchcryptograms";
+let tableName = undefined;
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
 const accessActionPrefix = "cryptogram_management";
 
 let dataRecord = undefined;
+let fieldList = [];
 
 // parameter
 let rowId = undefined;
+let key = undefined;
+let value = undefined;
+
 let editMode = 0;
 
 // input variable
@@ -45,6 +52,10 @@ let formObject = {
 };
 
 export function cleanUp() {
+    tableName = undefined;
+    databaseName = "kdb";
+
+    fieldList = [];
     dataRecord = undefined;
     rowId = undefined;
     editMode = 0;
@@ -58,8 +69,8 @@ export function cleanUp() {
     return;
 };
 
-export function EditCryptogramPage({ debugMode = true }) {
-    const componentName = "EditCryptogramPage";
+export function EditTablePage({ debugMode = true }) {
+    const componentName = "EditTablePage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const {
@@ -87,12 +98,17 @@ export function EditCryptogramPage({ debugMode = true }) {
         const sp = new URLSearchParams(location.search);
         rowId = sp.get('rowId');
         editMode = parseInt(sp.get('editMode'));
+        tableName = sp.get('tableName');
+        databaseName = sp.get('databaseName');
+        key = sp.getAll('key');
+        value = sp.getAll('value');
 
         console.log("Row ID", rowId);
+        console.log("Key", key);
+        console.log("Value", value);
         console.log("Edit mode", editMode);
 
         let timer = setTimeout(async () => {
-            // load data list will base on edit mode to provide the input record value
             await loadDataList();
         }, 100);
 
@@ -110,7 +126,7 @@ export function EditCryptogramPage({ debugMode = true }) {
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
         formObject.valid = ref4Form.current.checkValidity();
-    }, [redraw]);     // if having custom validation than need to add redraw to effect state list
+    }, [redraw]);
 
     // check for route blocker 
     console.log("Location", location);
@@ -131,6 +147,7 @@ export function EditCryptogramPage({ debugMode = true }) {
             showConfirmDialogBox(sl.m_changes_not_saved,
                 callback4BlockerProceed, sl.b_discard,
                 callback4BlockerReset);
+
         }, 100);
     }
 
@@ -147,12 +164,20 @@ export function EditCryptogramPage({ debugMode = true }) {
                 throw { errorCode: "permission_denied" };
             }
 
-            // fetch data 
-            
-            // other reference data can be load on this section
+            let result1 = await apiBox.describeTable(getSessionToken(), databaseName, tableName);
+            if (result1.flag && result1.data) {
+                fieldList = result1.data?.fields;
+            }
+            else throw (result1);
 
+            // fetch data 
             if (editMode === 1) {
-                let result4 = await apiBox.getRecord(getSessionToken(), databaseName, tableName, `rowId = ${rowId}`);
+                let selector = `rowId = ${rowId}`;;
+                if (rowId === undefined || rowId === null) {
+                    selector = buildSelector(key, value);
+                }
+                console.log("Selector", selector);
+                let result4 = await apiBox.getRecord(getSessionToken(), databaseName, tableName, selector);
 
                 if (result4.flag) {
                     let list1 = result4.data.records;
@@ -167,12 +192,9 @@ export function EditCryptogramPage({ debugMode = true }) {
                     inputData = dataRecord;
                 }
                 else throw (result4);
-
-            } else {
-                // provide default value for add mode
-                dataRecord = {
-                    recordStatus: 'A'
-                };
+            }
+            else {
+                dataRecord = {};
                 inputData = dataRecord;
             }
 
@@ -188,6 +210,39 @@ export function EditCryptogramPage({ debugMode = true }) {
             window.scrollTo(0, 0);
             setRedraw((v) => v + 1);
         }
+
+    };
+
+    function buildSelector(key, value) {
+
+        let s = "";
+
+        if (Array.isArray(key)) {
+            for (let n = 0; n < key.length; n++) {
+                let k1 = key[n];
+                let v1 = value[n];
+
+                if (s != "") s += " and ";
+                s += `${k1} = '${v1}'`;
+            }
+            return s;
+        }
+
+        if (key.indexOf(',') >= 0) {
+            let a = key.split(',');
+            let v = value.split(',');
+            for (let n = 0; n < a.length; n++) {
+                let k1 = a[n];
+                let v1 = v[n];
+
+                if (s != "") s += " and ";
+                s += `${k1} = '${v1}'`;
+            }
+            return s;
+        }
+
+        s += `${key} = '${value}'`;
+        return s;
 
     };
 
@@ -272,16 +327,14 @@ export function EditCryptogramPage({ debugMode = true }) {
 
     function click4AddRecord(e) {
         if (debugMode) console.log("Click for add record", e);
-        let message = sl.m_confirm_create_record;
-        message = message.replace("__parameter_1", inputData.ownerId + " (" + inputData.keyFunction + ")");
+        let message = sl.m_add_current_record;
+
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
-
                 let result1 = await apiBox.addRecord(getSessionToken(), databaseName, tableName, inputData);
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
-
                     let message = sl.m_record_created;
                     showInfoDialogBox(message, () => navigate(-1));
                 }
@@ -304,16 +357,27 @@ export function EditCryptogramPage({ debugMode = true }) {
 
     function click4UpdateRecord(e) {
         if (debugMode) console.log("Click for update record", e);
-        let message = sl.m_confirm_update_record;
-        message = message.replace("__parameter_1", inputData.rowId);
+        let message = sl.m_update_current_record;
+        let selector = "";
+        let data = { ...inputData, rowId: undefined };  // fix the bug on host update error, remove row Id
+
+        if (rowId === undefined || rowId === null) {
+            selector = buildSelector(key, value);
+        }
+        else {
+            message = sl.m_confirm_update_record;
+            message = message.replace("__parameter_1", rowId);
+            selector = `rowId = ${rowId}`;
+        }
+
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
+                console.warn("Data", inputData);
 
-                let result1 = await apiBox.updateRecordWithId(getSessionToken(), databaseName, tableName, inputData.rowId, inputData);
+                let result1 = await apiBox.updateRecord(getSessionToken(), databaseName, tableName, selector, data);
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
-
                     let message = sl.m_record_updated;
                     showInfoDialogBox(message, () => navigate(-1));
                 }
@@ -334,8 +398,51 @@ export function EditCryptogramPage({ debugMode = true }) {
         return;
     };
 
-    function click4Echo(e, record, index) {
-        if (debugMode) console.log("Click for echo ", e, record, index);
+    function click4DeleteRecord(e) {
+        if (debugMode) console.log("Click for delete record", e);
+
+        let message = sl.m_delete_current_record;
+        let selector = "";
+        if (rowId === undefined || rowId === null) {
+            selector = buildSelector(key, value);
+        }
+        else {
+            message = sl.m_confirm_delete_record;
+            message = message.replace("__parameter_1", rowId);
+            selector = `rowId = ${rowId}`;
+        }
+
+        showConfirmDialogBox(message, async () => {
+            if (debugMode) console.log("Callback for confirm");
+            showStateDialogBox();
+            try {
+                let result1 = await apiBox.deleteRecord(getSessionToken(), databaseName, tableName, selector);
+                if (result1 && result1.flag) {
+                    formObject.dirty = false;
+                    let message = sl.m_record_deleted;
+                    showInfoDialogBox(message, () => {
+                        navigate(-1);
+                    });
+                }
+                else throw result1;
+            }
+            catch (e) {
+                console.warn("Error", e);
+                let message = tBox.getErrorMessage(e, sl);
+                showInfoDialogBox(message);
+                if (tBox.isBlockErrorCode(e)) updateUser(undefined);
+            }
+            finally {
+                closeStateDialogBox();
+            }
+        });
+        return;
+    };
+
+    function click4ShowSchema(e) {
+        if (debugMode) console.log("Click for show schema ", e);
+
+        showTableSchemaDialogBox(fieldList);
         return;
     };
 
@@ -350,13 +457,13 @@ export function EditCryptogramPage({ debugMode = true }) {
                     <i className="fas fa-arrow-left fa-fw me-2 ms-1"></i> {sl.l_previous_page}
                 </div>
 
-                <div>
+                <div >
                     {
                         (editMode === 0 && check4Right(accessObjectName, `${accessActionPrefix}.add`)) ? (
                             <button className="ms-1 btn btn-ghost-unity "
                                 type="button"
                                 onClick={click4AddRecord}
-                                title={sl.t_add}
+                                title={sl.t_add_record}
                                 disabled={!formObject?.valid || !formObject?.dirty} >
                                 <span className="material-icons-outlined fs-24-unity">add</span>
                             </button>
@@ -369,12 +476,30 @@ export function EditCryptogramPage({ debugMode = true }) {
                             <button className="ms-1 btn btn-ghost-unity "
                                 type="button"
                                 onClick={click4UpdateRecord}
-                                title={sl.t_update}
+                                title={sl.t_update_record}
                                 disabled={!formObject?.valid || !formObject?.dirty} >
                                 <span className="material-icons-outlined fs-24-unity">upload_file</span>
                             </button>
                         ) : null
                     }
+
+                    {
+                        (editMode === 1 && check4Right(accessObjectName, `${accessActionPrefix}.delete`)) ? (
+                            <button className="ms-1 btn btn-ghost-unity "
+                                type="button"
+                                onClick={click4DeleteRecord}
+                                title={sl.t_delete_record}>
+                                <span className="material-icons-outlined fs-24-unity">delete</span>
+                            </button>
+                        ) : null
+                    }
+
+                    <button className="ms-1 btn btn-ghost-unity "
+                        type="button"
+                        title={sl.t_show_schema}
+                        onClick={click4ShowSchema}>
+                        <span className="material-icons-outlined fs-24-unity">fact_check</span>
+                    </button>
 
                 </div>
 
@@ -384,167 +509,45 @@ export function EditCryptogramPage({ debugMode = true }) {
                 <div className="col-8" style={{ minHeight: "50vh" }}>
 
                     <div className="pb-3 border-bottom">
+
                         <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
-                            {(editMode === 0) ? sl.l_add_cryptogram : sl.l_edit_cryptogram}
+                            {sl.l_table} {tableName || ' '}
                         </div>
 
                         <div style={{ color: "#76797B", fontSize: "12px" }}>
-                            {sl.l_desc}
+                            {(editMode === 0) ? sl.l_add_desc : sl.l_update_desc}
                         </div>
+
                     </div>
 
                     <div className="px-4 mt-4">
                         <div style={{ color: "#494D4F", fontSize: "16px", fontWeight: "bold" }} >
-                            {sl.l_cryptogram_information}
+                            {sl.l_record_detail}
                         </div>
 
                         <div className="my-3 px-3">
 
                             {
-                                (editMode === 1) ? (
-                                    <div>
-                                        <InputLabel label={sl.l_row_id} />
-                                        <input name="rowId"
-                                            type="text"
-                                            className={`form-control ${tBox.getClass4IsInvalid2('rowId', formObject)}`}
-                                            placeholder={sl.p_row_id}
-                                            value={inputData?.rowId || ""}
-                                            onChange={change4Input}
-                                            disabled={true} />
+                                fieldList.map((fieldRecord, fieldIndex) => {
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('rowId', sl, formObject)} />
-                                    </div>
-                                ) : null
+                                    return (
+                                        <div key={fieldIndex}>
+                                            <InputLabel label={fieldRecord.name} />
+                                            <input name={fieldRecord.name}
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2(fieldRecord.name, formObject)}`}
+                                                placeholder=""
+                                                value={inputData?.[fieldRecord.name] || ""}
+                                                onChange={change4Input}
+                                                disabled={(fieldRecord.name === 'rowId' ||
+                                                    fieldRecord.name === 'recordDate' ||
+                                                    fieldRecord.name === 'createDate') ? true : false} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2(fieldRecord.name, sl, formObject)} />
+                                        </div>
+                                    );
+                                })
                             }
-
-                            <div>
-                                <InputLabel label={sl.l_owner_id} required />
-                                <input name="ownerId"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('ownerId', formObject)}`}
-                                    placeholder={sl.p_owner_id}
-                                    value={inputData?.ownerId || ""}
-                                    onChange={change4Input}
-                                    disabled={editMode === 1}
-                                    required />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
-                            </div>
-
-                            <div >
-                                <InputLabel label={sl.l_record_status} required />
-                                <select name="recordStatus"
-                                    className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
-                                    value={inputData?.recordStatus || ""}
-                                    onChange={change4Input}
-                                    required>
-                                    <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
-                                    <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
-                                    <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
-                                    <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
-                                </select>
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
-                            </div>
-
-                            <div >
-                                <InputLabel label={sl.l_key_function} required />
-                                <input name="keyFunction"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
-                                    placeholder={sl.p_key_function}
-                                    value={inputData?.keyFunction || ""}
-                                    onChange={change4Input}
-                                    list="datalist4KeyFunction"
-                                    required />
-
-                                <datalist id="datalist4KeyFunction">
-                                    <option value="BDK"></option>
-                                    <option value="BDK2"></option>
-                                    <option value="BDK3"></option>
-                                    <option value="CVK"></option>
-                                    <option value="DEK"></option>
-                                    <option value="FPE"></option>
-                                    <option value="IPEK"></option>
-
-                                    <option value="KEK"></option>
-                                    <option value="LMK"></option>
-                                    <option value="MKAC"></option>
-                                    <option value="PVK"></option>
-
-                                    <option value="TAK"></option>
-                                    <option value="TEK"></option>
-                                    <option value="TMK"></option>
-                                    <option value="TPK"></option>
-
-                                    <option value="ZAK"></option>
-                                    <option value="ZEK"></option>
-                                    <option value="ZPK"></option>
-                                </datalist>
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
-
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_key_algo} />
-                                <input name="keyAlgo"
-                                    type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
-                                    placeholder={sl.p_key_algo}
-                                    value={inputData?.keyAlgo || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_bit_size} />
-                                <input name="bitSize"
-                                    type="number"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
-                                    placeholder={sl.p_bit_size}
-                                    value={inputData?.bitSize || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_iv} />
-                                <input name="iv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
-                                    placeholder={sl.p_iv}
-                                    value={inputData?.iv || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_cryptogram} />
-                                <input name="cryptogram"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
-                                    placeholder={sl.p_cryptogram}
-                                    value={inputData?.cryptogram || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
-                            </div>
-
-                            <div>
-                                <InputLabel label={sl.l_kcv} />
-                                <input name="kcv"
-                                    type="text"
-                                    className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
-                                    placeholder={sl.p_kcv}
-                                    value={inputData?.kcv || ""}
-                                    onChange={change4Input} />
-
-                                <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
-                            </div>
 
                         </div>
 
@@ -553,9 +556,12 @@ export function EditCryptogramPage({ debugMode = true }) {
                 </div >
             </form >
 
+            <TableSchemaDialogBox debugMode={debugMode} />
+
             <DumpPanel dataList={[
                 { name: "inputData", data: inputData },
                 { name: "formObject", data: formObject },
+                { name: "fieldList", data: fieldList },
                 { name: "sl", data: sl },
             ]} debugMode={debugMode} />
         </div >

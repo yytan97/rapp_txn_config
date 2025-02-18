@@ -21,11 +21,11 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchinstitution_timers";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "timer_management";
 
 let dataRecord = undefined;
 let rowId = undefined;
@@ -40,9 +40,9 @@ export function cleanUp() {
 };
 
 
-const componentName = "CryptogramDetailPage";
+const componentName = "TimerDetailPage";
 
-export function CryptogramDetailPage({ debugMode = true }) {
+export function TimerDetailPage({ debugMode = true }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
@@ -177,7 +177,7 @@ export function CryptogramDetailPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editTimer",
             search: sp.toString(),
         };
         navigate(path);
@@ -231,29 +231,39 @@ export function CryptogramDetailPage({ debugMode = true }) {
                                                 </div>
                                             </div>
                                             <div style={{ color: "#494D4F", fontSize: "32px", fontWeight: "bold" }} >
-                                                {dataRecord?.keyFunction}
+                                                {dataRecord?.institutionId}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <ClosablePanel name="cryptogram_information"
-                                        title={sl.l_cryptogram_information}
-                                        closeFlag={closePanel?.cryptogram_information}
+                                    <ClosablePanel name="timer_information"
+                                        title={sl.l_timer_information}
+                                        closeFlag={closePanel?.timer_information}
                                         callback4Toggle={callback4TogglePanel}>
                                         <div className="d-flex flex-column align-items-center justify-content-center border-top"
                                             style={{ minHeight: "168px" }} >
                                             <div className="px-5 py-1 w-100">
 
                                                 <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} />
-                                                <DisplayLine label={sl.l_owner_id} value={dataRecord?.ownerId} />
-                                                <DisplayLine label={sl.l_key_function} value={dataRecord?.keyFunction} />
-                                                <DisplayLine label={sl.l_key_algo} value={dataRecord?.keyAlgo} />
-                                                <DisplayLine label={sl.l_bit_size} value={dataRecord?.bitSize} />
-                                                <DisplayLine label={sl.l_iv} value={dataRecord?.iv} />
-                                                <DisplayLine label={sl.l_cryptogram} value={dataRecord?.cryptogram} />
-                                                <DisplayLine label={sl.l_kcv} value={dataRecord?.kcv} />
+                                                <DisplayLine label={sl.l_institution_id} value={dataRecord?.institutionId} />
+                                                <DisplayLine label={sl.l_chrono_unit} value={dataRecord?.chronoUnit} />
+                                                <DisplayLine label={sl.l_timer_0} value={dataRecord?.timer0} />
+                                                <DisplayLine label={sl.l_timer_A} value={dataRecord?.timerA} />
+                                                <DisplayLine label={sl.l_timer_K} value={dataRecord?.timerK} />
+                                                <DisplayLine label={sl.l_timer_1} value={dataRecord?.timer1} />
+                                                <DisplayLine label={sl.l_timer_1220} value={dataRecord?.timer1220} />
+                                                <DisplayLine label={sl.l_timer_2} value={dataRecord?.timer2} />
+                                                <DisplayLine label={sl.l_timer_3} value={dataRecord?.timer3} />
+                                                <DisplayLine label={sl.l_timer_4} value={dataRecord?.timer4} />
+                                                <DisplayLine label={sl.l_timer_5} value={dataRecord?.timer5} />
+                                                <DisplayLine label={sl.l_timer_6} value={dataRecord?.timer6} />
+                                                <DisplayLine label={sl.l_timer_7} value={dataRecord?.timer7} />
+                                                <DisplayLine label={sl.l_timer_8} value={dataRecord?.timer8} />
+                                                <DisplayLine label={sl.l_timer_9} value={dataRecord?.timer9} />
+                                                <DisplayLine label={sl.l_timer_10} value={dataRecord?.timer10} />
+                                                <DisplayLine label={sl.l_timer_11} value={dataRecord?.timer11} />
 
                                             </div>
                                         </div>

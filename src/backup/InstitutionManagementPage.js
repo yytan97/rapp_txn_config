@@ -18,7 +18,7 @@ import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
-import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
+import { cleanUp as cleanUp4Detail } from "./InstitutionDetailPage.js";
 
 
 // Map loaded lib here ...
@@ -28,7 +28,7 @@ const moment = window.moment;
 let dataList = [];
 let fieldList = [];
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchinstitution";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
@@ -44,6 +44,7 @@ let pageObject = {
 let searchObject = {
     searchText: ""
 };
+
 
 export function cleanUp() {
     dataList = [];
@@ -63,18 +64,18 @@ export function cleanUp() {
     return;
 };
 
-export function CryptogramManagementPage({ debugMode = true }) {
-    const componentName = "CryptogramManagementPage";
+export function InstitutionManagementPage({ debugMode = true }) {
+    const componentName = "InstitutionManagementPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
     const {
-        config, localData, gsl, dataset, 
-        user,
+        config, localData, gsl, dataset, user,
         applicationDebugMode, applicationLanguage,
         updateUser,
         getSessionToken, getUsername,
-        check4Right
+        check4Right,
+        appRedraw
     } = react.useContext(globalContext);
 
     // check from context
@@ -87,6 +88,14 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
 
     const navigate = reactRouter.useNavigate();
+
+    /*
+    react.useEffect(() => {
+        if (debugMode) console.log(`Run ${componentName} on effect for app redraw`);
+        setRefresh(true);
+
+    }, [appRedraw]);
+    */
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -199,7 +208,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
             let name = list[n].name;
 
             if (s !== "") s += " or ";
-            s += `${name} like '%${v}%'`;
+            s += `${name} like '%%${v}%%'`;
 
         }
         if (debugMode) console.log("Search string", s);
@@ -218,8 +227,8 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
         let s = "rounded-3 text-center fw-light text-capitalize text-white ";
 
-        if (v == "A") return s + "bg-success";
-        if (v == "P") return s + "bg-warning";
+        if (v == "1") return s + "bg-success";
+        if (v == "3") return s + "bg-warning";
         return s + "bg-danger";
     };
 
@@ -231,7 +240,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/cryptogramDetail",
+            pathname: "/institutionDetail",
             search: sp.toString(),
         };
 
@@ -248,7 +257,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editInstitution",
             search: sp.toString(),
         };
         navigate(path);
@@ -275,7 +284,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
     };
 
     function change4SearchText(e) {
-        if (debugMode) console.log("Change for search text ", e);
+        if (debugMode) console.log("Change for search text", e);
         searchObject.searchText = e.target.value;
         setRedraw((v) => v + 1);
         return;
@@ -302,14 +311,12 @@ export function CryptogramManagementPage({ debugMode = true }) {
         if (debugMode) console.log("Click for delete record", e, record, index);
 
         let message = sl.m_confirm_delete_record;
-        message = message.replace(/__parameter_1/, record.recordData.rowId);
+        message = message.replace(/__parameter_1/, record.recordData.institutionId);
 
         showConfirmDialogBox(message, async () => {
             if (debugMode) console.log("Callback for confirm");
             showStateDialogBox();
             try {
-                // await tBox.sleep(1000 * 1);
-
                 let result1 = await apiBox.deleteRecordWithId(getSessionToken(), databaseName, tableName, record.recordData.rowId);
                 if (result1 && result1.flag) {
 
@@ -389,22 +396,23 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                     <thead>
                                         <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
                                             <th className="">
-                                                {sl.h_row_id}
+                                                {sl.h_institution_id}
+                                            </th>
+
+                                            <th className="">
+                                                {sl.h_institution_timer_id}
+                                            </th>
+                                            <th className="" >
+                                                {sl.h_institution_crypto_id}
+                                            </th>
+                                            <th className="" >
+                                                {sl.h_institution_routing_id}
                                             </th>
                                             <th className="">
-                                                {sl.h_owner_id}
+                                                {sl.l_last_updated}
                                             </th>
                                             <th className="">
-                                                {sl.h_key_function}
-                                            </th>
-                                            <th className="text-end" >
-                                                {sl.h_key_algo}
-                                            </th>
-                                            <th className="text-end" >
-                                                {sl.h_bit_size}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_record_status}
+                                                {sl.h_status}
                                             </th>
                                             <th className="" style={{ width: "24px" }} >
                                             </th>
@@ -414,37 +422,36 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                     <tbody>
                                         {
                                             dataList.map((record, index) => {
-                                                console.log("Build row", record, index);
                                                 return (
                                                     <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                        <td className=" "
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.rowId}
+                                                            {record.recordData.institutionId}
                                                         </td>
-                                                        <td className=" "
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.ownerId}
+                                                            {record.recordData.institutionTimerId || "-"}
                                                         </td>
-                                                        <td className=" "
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyFunction || "-"}
+                                                            {record.recordData.institutionCryptoId || "-"}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyAlgo || "-"}
+                                                            {record.recordData.institutionRoutingId || "-"}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.bitSize || "-"}
+                                                            {record.recordData.recordDate || "-"}
                                                         </td>
-                                                        <td className=" "
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
+                                                            <div className={`${getStatusLabelClass(record.recordData.institutionStatus)}`}
                                                                 style={{ width: "110px", height: "24px" }} >
-                                                                {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
+                                                                {getLabel(sl, record.recordData.institutionStatus, "o_status_")}
                                                             </div>
                                                         </td>
-                                                        <td className=" " >
+                                                        <td >
 
                                                             <div className="dropdown dropstart ">
                                                                 <span className="d-inline-flex align-items-center " role="button"

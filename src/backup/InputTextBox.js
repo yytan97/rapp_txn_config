@@ -25,7 +25,7 @@ export function InputTextBox({ children, debugMode = true, sl, fieldState, formS
     // add dynamic class name here
     if (fieldState !== undefined && formState !== undefined && name !== undefined)
     {
-        let s = tBox.getClass4IsInvalid(fieldState[name]?.valid, formState.dirty, required);
+        let s = tBox.getClass4IsInvalid1(fieldState[name]?.valid, formState.dirty, required);
         className += " " + s;
         console.log(`${componentName} build placeholder from string label`, className);
     }

@@ -16,7 +16,9 @@ import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 // Map loaded lib here ...
 // const uuidv4 = window.uuidv4;
 // const moment = window.moment;
+const bootstrap = window.bootstrap;
 
+let popoverList = [];
 export function TestFormPage({ debugMode = true }) {
     const componentName = "TestFormPage";
     if (debugMode) console.log(`${componentName} component start ...`);
@@ -47,26 +49,47 @@ export function TestFormPage({ debugMode = true }) {
     console.log("Blocker", blocker);
     if (blocker.state === "blocked") {
         if (debugMode) console.log("Show confirm dialog box ");
-        showConfirmDialogBox(sl.m_changes_not_saved,
-            blocker4Proceed, sl.b_discard,
-            blocker4Reset, undefined);
+        setTimeout(() => {
+            showConfirmDialogBox(sl.m_changes_not_saved,
+                blocker4Proceed, sl.b_discard,
+                blocker4Reset, undefined);
+        }, 100);
+
     }
 
     react.useEffect(() => {
+        if (debugMode) console.log(`Run ${componentName} on effect`);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         setFieldState(obj);
     }, []);
+
+    react.useEffect(() => {
+        if (debugMode) console.log(`Run ${componentName} on effect for application language`);
+        try {
+            disposePopover();
+            createPopover();
+        }
+        catch (e) {
+            console.log(e);
+        }
+
+    }, [applicationLanguage]);
 
     // event handling function here ...
     function toggle4Language(e) {
         if (debugMode) console.log("Toggle for Language ", e);
 
-        let lang = applicationLanguage;
-        if (lang === "English") lang = "Chinese";
-        else lang = "English";
+        try {
+            let lang = applicationLanguage;
+            if (lang === "English") lang = "Chinese";
+            else lang = "English";
 
-        console.log("Toggle for Language ", lang);
-        updateApplicationLanguage(lang);
+            console.log("Toggle for Language ", lang);
+            updateApplicationLanguage(lang);
+        }
+        catch (e) {
+            console.warn(e);
+        }
 
         return;
     };
@@ -88,7 +111,7 @@ export function TestFormPage({ debugMode = true }) {
         return;
     };
 
-    function change4Record(e) {
+    function change4Input(e) {
         if (debugMode) console.log("Form", ref4Form.current.checkValidity());
         let obj1 = {
             dirty: true,
@@ -120,6 +143,29 @@ export function TestFormPage({ debugMode = true }) {
         return;
     };
 
+    function createPopover() {
+        try {
+            let list1 = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            let list2 = list1.map(function (element1) {
+                return new bootstrap.Popover(element1, { html: true, sanitize: false });
+                // return bootstrap.Popover.getOrCreateInstance(element1, { html: true, sanitize: false });
+            });
+            popoverList = list2;
+        }
+        catch (e) {
+            console.warn(e);
+        }
+    };
+
+    function disposePopover() {
+        if (popoverList) popoverList.map(function (obj1) {
+            // console.log("Popover object", obj1);
+            // obj1.dispose();
+            return;
+        });
+        popoverList = [];
+    };
+
     return (
         <>
             <div className="position-fixed" style={{ top: "16px", left: "16px" }}>
@@ -128,7 +174,7 @@ export function TestFormPage({ debugMode = true }) {
                 </span>
             </div>
             <div className="position-fixed" style={{ top: "16px", right: "16px" }}>
-                <span className="p-2" style={{ cursor: "pointer" }} onClick={toggle4Language} tabIndex="-1">
+                <span className="p-2" style={{ cursor: "pointer" }} onClick={(e) => toggle4Language(e)} tabIndex="-1">
                     <i className="fas fa-language fa-fw"></i>
                 </span>
             </div>
@@ -149,39 +195,44 @@ export function TestFormPage({ debugMode = true }) {
                                 name="fullName"
                                 maxLength={32}
                                 value={inputData.fullName || ""}
-                                onChange={change4Record}
+                                onChange={change4Input}
                                 sl={sl}
                                 fieldState={fieldState}
                                 formState={formState}
                             />
-                            <ErrorLine message={tBox.getFieldErrorMessage('fullName', sl, fieldState, formState)} />
+                            <ErrorLine message={tBox.getFieldErrorMessage1('fullName', sl, fieldState, formState)} />
 
                         </div>
 
                         <div className="col-12">
                             <label className="form-label mb-0">{sl.l_username}</label>
                             <input name="username" type="text"
-                                className={`form-control ${tBox.getClass4IsInvalid(fieldState['username']?.valid, formState.dirty, true)}`}
+                                className={`form-control ${tBox.getClass4IsInvalid1(fieldState['username']?.valid, formState.dirty, true)}`}
                                 placeholder={sl.p_username}
                                 maxLength={16}
                                 value={inputData.username || ""}
-                                onChange={change4Record}
+                                onChange={change4Input}
                                 required={true}
                             />
-                            <ErrorLine message={tBox.getFieldErrorMessage('username', sl, fieldState, formState)} />
+                            <ErrorLine message={tBox.getFieldErrorMessage1('username', sl, fieldState, formState)} />
 
                         </div>
 
                         <div className="col-12">
                             <label className="form-label mb-0">{sl.l_password}</label>
+                            <span className="ms-1 material-icons fs-16-unity text-dark" role="button"
+                                data-bs-toggle="popover" data-bs-trigger="hover focus" tabIndex="-1"
+                                data-bs-content={sl.l_desc}>
+                                info
+                            </span>
                             <div className="input-group mb-0">
                                 <input name="password"
                                     type={showPassword ? 'text' : 'password'}
-                                    className={`form-control ${tBox.getClass4IsInvalid(fieldState['password']?.valid, formState.dirty, true)}`}
+                                    className={`form-control ${tBox.getClass4IsInvalid1(fieldState['password']?.valid, formState.dirty, true)}`}
                                     placeholder={sl.p_password}
                                     maxLength={12}
                                     value={inputData.password || ""}
-                                    onChange={change4Record}
+                                    onChange={change4Input}
                                     required={true} />
                                 <button className="btn btn-outline-primary" type="button" onClick={toggle4ShowPassword}>
                                     {
@@ -192,20 +243,21 @@ export function TestFormPage({ debugMode = true }) {
                                     }
                                 </button>
                             </div>
-                            <ErrorLine message={tBox.getFieldErrorMessage('password', sl, fieldState, formState)} />
+                            <ErrorLine message={tBox.getFieldErrorMessage1('password', sl, fieldState, formState)} />
 
                         </div>
 
                         <div className="col-12">
                             <label className="form-label mb-0">{sl.l_confirm_password}</label>
+
                             <div className="input-group mb-0">
                                 <input name="confirmPassword"
                                     type={showPassword ? 'text' : 'password'}
-                                    className={`form-control ${tBox.getClass4IsInvalid(fieldState['confirmPassword']?.valid, formState.dirty, true)}`}
+                                    className={`form-control ${tBox.getClass4IsInvalid1(fieldState['confirmPassword']?.valid, formState.dirty, true)}`}
                                     placeholder={sl.p_confirm_password}
                                     maxLength={12}
                                     value={inputData.confirmPassword || ""}
-                                    onChange={change4Record}
+                                    onChange={change4Input}
                                     required={true} />
                                 <button className="btn btn-outline-primary" type="button" onClick={toggle4ShowPassword}>
                                     {
@@ -216,7 +268,7 @@ export function TestFormPage({ debugMode = true }) {
                                     }
                                 </button>
                             </div>
-                            <ErrorLine message={tBox.getFieldErrorMessage('password', sl, fieldState, formState)} />
+                            <ErrorLine message={tBox.getFieldErrorMessage1('password', sl, fieldState, formState)} />
 
                         </div>
 

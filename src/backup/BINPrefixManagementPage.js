@@ -28,11 +28,11 @@ const moment = window.moment;
 let dataList = [];
 let fieldList = [];
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchbinprefix";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "bin_prefix_management";
 
 let cursorId = undefined;
 let pageObject = {
@@ -63,8 +63,8 @@ export function cleanUp() {
     return;
 };
 
-export function CryptogramManagementPage({ debugMode = true }) {
-    const componentName = "CryptogramManagementPage";
+export function BINPrefixManagementPage({ debugMode = true }) {
+    const componentName = "BINPrefixManagementPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
@@ -231,7 +231,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/cryptogramDetail",
+            pathname: "/binPrefixDetail",
             search: sp.toString(),
         };
 
@@ -248,7 +248,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editBINPrefix",
             search: sp.toString(),
         };
         navigate(path);
@@ -392,16 +392,16 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                 {sl.h_row_id}
                                             </th>
                                             <th className="">
-                                                {sl.h_owner_id}
+                                                {sl.h_institution_id}
                                             </th>
                                             <th className="">
-                                                {sl.h_key_function}
+                                                {sl.h_prefix}
+                                            </th>
+                                            <th className="" >
+                                                {sl.h_description}
                                             </th>
                                             <th className="text-end" >
-                                                {sl.h_key_algo}
-                                            </th>
-                                            <th className="text-end" >
-                                                {sl.h_bit_size}
+                                                {sl.h_priority}
                                             </th>
                                             <th className="">
                                                 {sl.h_record_status}
@@ -423,19 +423,19 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.ownerId}
+                                                            {record.recordData.institutionId}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyFunction || "-"}
+                                                            {record.recordData.prefix || "-"}
+                                                        </td>
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.description || "-"}
                                                         </td>
                                                         <td className=" text-end"
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyAlgo || "-"}
-                                                        </td>
-                                                        <td className=" text-end"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.bitSize || "-"}
+                                                            {record.recordData.priority || "-"}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>

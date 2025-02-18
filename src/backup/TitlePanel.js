@@ -56,10 +56,13 @@ export function TitlePanel({ debugMode = true }) {
         let message = sl?.m_confirm_logout?.replace("__parameter_1", user.username);
         showConfirmDialogBox(message, async () => {
             let result = await apiBox.logout(getSessionToken());
+            /*
             if (result.flag) {
                 updateUser(undefined);
-                // navigate("/login");
             }
+            */
+            updateUser(undefined);
+
         });
 
         return
@@ -73,23 +76,17 @@ export function TitlePanel({ debugMode = true }) {
                 <div className="flex-fill d-flex justify-content-end align-items-center pe-3">
                     <div className="ms-3 dropdown ">
                         <span role="button" data-bs-toggle="dropdown" >
-                            {
-                                (dataset.avatar === undefined) ?
-                                    <img className="rounded-circle border" src="images/avatar0002.png" style={{ width: "32px", height: "32px", objectFit: "cover" }} />
-                                    :
-                                    <img className="rounded-circle border" src={dataset.avatar} style={{ width: "32px", height: "32px", objectFit: "cover" }} />
-                            }
+                            <img className="rounded-circle border"
+                                src={dataset.avatar ? dataset.avatar : "images/avatar0002.png"}
+                                style={{ width: "32px", height: "32px", objectFit: "cover" }} />
                         </span>
 
                         <div className="dropdown-menu fs-14-unity shadow p-0">
                             <div className="text-center border-bottom  ">
                                 <div className="d-flex justify-content-center align-items-center p-2">
-                                    {
-                                        (dataset.avatar === undefined) ?
-                                            <img className="rounded-circle border" src="images/avatar0002.png" style={{ width: "32px", height: "32px", objectFit: "cover" }} />
-                                            :
-                                            <img className="rounded-circle border" src={dataset.avatar} style={{ width: "32px", height: "32px", objectFit: "cover" }} />
-                                    }
+                                    <img className="rounded-circle border"
+                                        src={dataset.avatar ? dataset.avatar : "images/avatar0002.png"}
+                                        style={{ width: "32px", height: "32px", objectFit: "cover" }} />
                                     <div className="ms-2 fs-12-unity d-flex flex-column ">
                                         <div>{user?.username}</div>
                                     </div>

@@ -89,8 +89,6 @@ export function TestMonacoPage({ debugMode = true }) {
         showStateDialogBox();
 
         try {
-            await tBox.sleep(1000 * 1);
-
             let list = await apiBox.getCountryList();
             data = JSON.stringify(list, null, 4);
             // editor.getModel().setValue(data);

@@ -18,7 +18,7 @@ import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
-import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
+import { cleanUp as cleanUp4Detail } from "./TimerDetailPage.js";
 
 
 // Map loaded lib here ...
@@ -28,11 +28,11 @@ const moment = window.moment;
 let dataList = [];
 let fieldList = [];
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchinstitution_timers";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "timer_management";
 
 let cursorId = undefined;
 let pageObject = {
@@ -63,14 +63,13 @@ export function cleanUp() {
     return;
 };
 
-export function CryptogramManagementPage({ debugMode = true }) {
-    const componentName = "CryptogramManagementPage";
+export function TimerManagementPage({ debugMode = true }) {
+    const componentName = "TimerManagementPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
     const {
-        config, localData, gsl, dataset, 
-        user,
+        config, localData, gsl, dataset, user,
         applicationDebugMode, applicationLanguage,
         updateUser,
         getSessionToken, getUsername,
@@ -188,6 +187,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         return;
     };
 
+    /*
     function buildSearchString(v) {
         if (debugMode) console.log("Build search string", v);
 
@@ -199,12 +199,13 @@ export function CryptogramManagementPage({ debugMode = true }) {
             let name = list[n].name;
 
             if (s !== "") s += " or ";
-            s += `${name} like '%${v}%'`;
+            s += `${name} like '%%${v}%%'`;
 
         }
         if (debugMode) console.log("Search string", s);
         return s;
     };
+    */
 
     function getLabel(sl, value, prefix = "") {
         if (debugMode) console.log("Get label ", value, prefix);
@@ -231,7 +232,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/cryptogramDetail",
+            pathname: "/timerDetail",
             search: sp.toString(),
         };
 
@@ -248,7 +249,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editTimer",
             search: sp.toString(),
         };
         navigate(path);
@@ -391,17 +392,15 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                             <th className="">
                                                 {sl.h_row_id}
                                             </th>
+                                           
                                             <th className="">
-                                                {sl.h_owner_id}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_key_function}
+                                                {sl.h_institution_id}
                                             </th>
                                             <th className="text-end" >
-                                                {sl.h_key_algo}
+                                                {sl.h_chrono_unit}
                                             </th>
-                                            <th className="text-end" >
-                                                {sl.h_bit_size}
+                                            <th className="" >
+                                                {sl.h_record_date}
                                             </th>
                                             <th className="">
                                                 {sl.h_record_status}
@@ -423,20 +422,17 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.ownerId}
+                                                            {record.recordData.institutionId}
+                                                        </td>
+                                                        <td className=" text-end"
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.chronoUnit || "-"}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyFunction || "-"}
+                                                            {record.recordData.recordDate || "-"}
                                                         </td>
-                                                        <td className=" text-end"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyAlgo || "-"}
-                                                        </td>
-                                                        <td className=" text-end"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.bitSize || "-"}
-                                                        </td>
+                                                      
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}

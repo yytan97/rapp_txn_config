@@ -13,19 +13,13 @@ const bootstrap = window.bootstrap;
 let modal = undefined;
 let action = 0;
 
-let data = "";
+let data = {};
 let title = "";
 let callback4OK = undefined;
 let callback4Cancel = undefined;
 
 let label4OK = undefined;
 let label4Cancel = undefined;
-
-let languageList = [
-    { language: 'English', label: 'English' },
-    { language: 'Chinese', label: '中文' },
-    // { language: 'Malay', label: 'Melayu' },
-];
 
 // input variable
 let inputData = {};
@@ -45,11 +39,11 @@ export function cleanUp() {
     return;
 };
 
-export function LanguageDialogBox({ debugMode = true }) {
-    const componentName = "LanguageDialogBox";
+export function InputUserContactDialogBox({ debugMode = true }) {
+    const componentName = "InputUserContactDialogBox";
 
     if (debugMode) console.log(`${componentName} component start ...`);
-    const { config, localData, gsl, applicationLanguage } = react.useContext(globalContext);
+    const { config, localData, gsl, updateApplicationLanguage } = react.useContext(globalContext);
     let sl = tBox.getStringLabel(gsl, componentName);
 
     const ref4Div = react.useRef();
@@ -65,7 +59,7 @@ export function LanguageDialogBox({ debugMode = true }) {
             if (debugMode) console.log("Create modal instance");
 
             ref4Div.current.addEventListener('hidden.bs.modal', callback4Hide);
-            window.addEventListener("showLanguageDialogBox", callback4Show);
+            window.addEventListener("showInputUserContactDialogBox", callback4Show);
         }
 
         // clean up
@@ -73,7 +67,7 @@ export function LanguageDialogBox({ debugMode = true }) {
             console.log(`Unmount ${componentName}`);
             if (modal !== undefined) {
                 console.log(`Clean up for ${componentName}`);
-                window.removeEventListener("showLanguageDialogBox", callback4Show);
+                window.removeEventListener("showInputUserContactDialogBox", callback4Show);
                 ref4Div?.current?.removeEventListener('hidden.bs.modal', callback4Hide);
 
                 modal.dispose();
@@ -88,9 +82,7 @@ export function LanguageDialogBox({ debugMode = true }) {
         if (debugMode) console.log(`Run ${componentName} on effect for build field state`);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
-
-        formObject.valid = ref4Form.current.checkValidity();
-    }, [redraw]);
+    }, []);
 
     function callback4Hide(e) {
         // 0 and 2 for cancel, only 1 for ok
@@ -105,12 +97,12 @@ export function LanguageDialogBox({ debugMode = true }) {
     };
 
     function callback4Show(e) {
-        console.log("Receive event 'showLanguageDialogBox'", e.detail);
+        console.log("Receive event 'showInputUserContactDialogBox'", e.detail);
         let detail = e.detail;
 
         title = detail.title;
-        // setMessage(detail.message);
         data = detail.data;
+
         callback4OK = detail.callback4OK;
         callback4Cancel = detail.callback4Cancel;
 
@@ -131,7 +123,6 @@ export function LanguageDialogBox({ debugMode = true }) {
 
         formObject.dirty = true;
         formObject.valid = ref4Form.current.checkValidity();
-        // formObject.fieldState[e.target.name] = tBox.buildFieldState(e.target);
         let obj = tBox.buildFormFieldState(ref4Form.current);
         formObject.fieldState = obj;
 
@@ -169,26 +160,40 @@ export function LanguageDialogBox({ debugMode = true }) {
 
                         <div className="modal-body justify-content-center text-center">
 
+                            <div className="fs-1 text-primary text-center">
+                                <span className="material-icons fs-1">help</span>
+                            </div>
+                            <div className="fw-bold text-center">{title}</div>
+
                             <form className="row mt-3" ref={ref4Form} autoComplete="off" noValidate>
-                                <div className="col-12" >
-                                    <label className="form-label mb-1">{sl.l_application_language}</label>
-                                    <select className="form-select" name="applicationLanguage"
-                                        value={inputData.applicationLanguage || "English"}
-                                        onChange={change4Input} >
-                                        {
-                                            languageList.map((record, index) => {
-                                                return (
-                                                    <option key={index} value={record.language} >{record.label}</option>
-                                                );
-                                            })
-                                        }
-                                    </select>
+                                <div className="col-12 text-start" >
+
+                                    {
+                                        data?.emailList?.map((record, index) => {
+                                            return (
+                                                <div className="form-check" key={index}>
+                                                    <input className="form-check-input"
+                                                        type="radio"
+                                                        name="contactId"
+                                                        id={`contactId${index}`}
+                                                        value={record.identifier}
+                                                        onChange={change4Input}
+                                                        checked={inputData?.contactId == record.identifier}
+                                                        required />
+                                                    <label className="form-check-label" htmlFor={`contactId${index}`}>{record.maskedData}</label>
+                                                </div>
+                                            )
+                                        })
+                                    }
+
                                 </div>
                             </form>
                         </div>
 
                         <div className="modal-footer justify-content-center text-center border-top-0">
-                            <button className="btn btn-unity " onClick={click4OK} >
+                            <button className="btn btn-unity "
+                                onClick={click4OK}
+                                disabled={!formObject?.valid || !formObject?.dirty}>
                                 {label4OK || sl.b_confirm}
                             </button>
                             <button className="btn btn-outline-unity " onClick={click4Cancel} >
@@ -203,18 +208,21 @@ export function LanguageDialogBox({ debugMode = true }) {
     );
 };
 
-export function showLanguageDialogBox(language, callback4OK, label4OK, callback4Cancel, label4Cancel) {
-    console.log("Show language dialog box");
+export function showInputUserContactDialogBox(title, emailList, callback4OK, label4OK, callback4Cancel, label4Cancel) {
+    console.log("Show input user contact dialog box");
 
     let detail = {
-        data: { applicationLanguage: language },
+        title: title,
+        data: {
+            emailList: emailList,
+        },
         callback4OK: callback4OK,
         callback4Cancel: callback4Cancel,
         label4OK: label4OK,
         label4Cancel: label4Cancel
     };
 
-    let e = new CustomEvent("showLanguageDialogBox", {
+    let e = new CustomEvent("showInputUserContactDialogBox", {
         detail: detail
     });
     window.dispatchEvent(e);

@@ -21,11 +21,11 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let tableName = "kswitchcryptograms";
+let tableName = "kswitchbinprefix";
 let databaseName = "kdb";
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "bin_prefix_management";
 
 let dataRecord = undefined;
 let rowId = undefined;
@@ -40,9 +40,9 @@ export function cleanUp() {
 };
 
 
-const componentName = "CryptogramDetailPage";
+const componentName = "BINPrefixDetailPage";
 
-export function CryptogramDetailPage({ debugMode = true }) {
+export function BINPrefixDetailPage({ debugMode = true }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
@@ -177,7 +177,7 @@ export function CryptogramDetailPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editBINPrefix",
             search: sp.toString(),
         };
         navigate(path);
@@ -231,29 +231,28 @@ export function CryptogramDetailPage({ debugMode = true }) {
                                                 </div>
                                             </div>
                                             <div style={{ color: "#494D4F", fontSize: "32px", fontWeight: "bold" }} >
-                                                {dataRecord?.keyFunction}
+                                                {dataRecord?.institutionId}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
-                                    <ClosablePanel name="cryptogram_information"
-                                        title={sl.l_cryptogram_information}
-                                        closeFlag={closePanel?.cryptogram_information}
+                                    <ClosablePanel name="bin_prefix_information"
+                                        title={sl.l_bin_prefix_information}
+                                        closeFlag={closePanel?.bin_prefix_information}
                                         callback4Toggle={callback4TogglePanel}>
                                         <div className="d-flex flex-column align-items-center justify-content-center border-top"
                                             style={{ minHeight: "168px" }} >
                                             <div className="px-5 py-1 w-100">
 
                                                 <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} />
-                                                <DisplayLine label={sl.l_owner_id} value={dataRecord?.ownerId} />
-                                                <DisplayLine label={sl.l_key_function} value={dataRecord?.keyFunction} />
-                                                <DisplayLine label={sl.l_key_algo} value={dataRecord?.keyAlgo} />
-                                                <DisplayLine label={sl.l_bit_size} value={dataRecord?.bitSize} />
-                                                <DisplayLine label={sl.l_iv} value={dataRecord?.iv} />
-                                                <DisplayLine label={sl.l_cryptogram} value={dataRecord?.cryptogram} />
-                                                <DisplayLine label={sl.l_kcv} value={dataRecord?.kcv} />
+                                                <DisplayLine label={sl.l_institution_id} value={dataRecord?.institutionId} />
+                                                <DisplayLine label={sl.l_prefix} value={dataRecord?.prefix} />
+                                                <DisplayLine label={sl.l_description} value={dataRecord?.description} />
+                                                <DisplayLine label={sl.l_filename} value={dataRecord?.filename} />
+                                                <DisplayLine label={sl.l_product_code} value={dataRecord?.productCode} />
+                                                <DisplayLine label={sl.l_priority} value={dataRecord?.priority} />
 
                                             </div>
                                         </div>

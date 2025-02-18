@@ -18,7 +18,7 @@ import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
-import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
+// import { cleanUp as cleanUp4Detail } from "./EditTablePage.js";
 
 
 // Map loaded lib here ...
@@ -28,11 +28,11 @@ const moment = window.moment;
 let dataList = [];
 let fieldList = [];
 
-let tableName = "kswitchcryptograms";
-let databaseName = "kdb";
+let tableName = undefined;
+let databaseName = undefined;
 
 const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+const accessActionPrefix = "table_management";
 
 let cursorId = undefined;
 let pageObject = {
@@ -46,6 +46,9 @@ let searchObject = {
 };
 
 export function cleanUp() {
+    tableName = undefined;
+    databaseName = undefined;
+
     dataList = [];
     fieldList = [];
 
@@ -63,14 +66,13 @@ export function cleanUp() {
     return;
 };
 
-export function CryptogramManagementPage({ debugMode = true }) {
-    const componentName = "CryptogramManagementPage";
+export function TableManagementPage({ debugMode = true }) {
+    const componentName = "TableManagementPage";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     // let data = reactRouter.useLoaderData();
     const {
-        config, localData, gsl, dataset, 
-        user,
+        config, localData, gsl, dataset, user,
         applicationDebugMode, applicationLanguage,
         updateUser,
         getSessionToken, getUsername,
@@ -87,6 +89,17 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
 
     const navigate = reactRouter.useNavigate();
+    const location = reactRouter.useLocation();
+
+    console.log("Location", location);
+
+    react.useEffect(() => {
+        if (!refresh) {
+            setReset(true);
+            setRefresh(true);
+        }
+
+    }, [location.search]);
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -107,6 +120,12 @@ export function CryptogramManagementPage({ debugMode = true }) {
         showStateDialogBox();
 
         try {
+
+            // parse parameter 
+            const sp = new URLSearchParams(location.search);
+            tableName = sp.get('tableName');
+            databaseName = sp.get('databaseName');
+
             dataList = [];
 
             // check for user access right
@@ -130,7 +149,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 pageObject.totalRecord = 0;
 
                 // let s = buildSearchString(searchObject.searchText);
-                let s = tBox.buildSearchString(fieldList, searchObject.searchText, config.dbType);
+                let dbType = config.dbType;
+                if (databaseName === 'KAUTH') dbType = config.dbType4KAUTH;
+                let s = tBox.buildSearchString(fieldList, searchObject.searchText, dbType);
 
                 let result2 = await apiBox.createCursor(getSessionToken(), databaseName, tableName, s);
                 if (result2.flag && result2.data) {
@@ -188,6 +209,24 @@ export function CryptogramManagementPage({ debugMode = true }) {
         return;
     };
 
+    function check4RowId(list) {
+        if (list.find(element => element.name == 'rowId')) return true;
+        return false;
+    };
+
+    function getTableKey(name) {
+        if (name == "app_css_profile") return ["name"];
+        if (name == "app_css_profile_b4") return ["name"];
+        if (name == "app_default_value") return ["id"];
+        if (name == "app_user_image") return ["userName"];
+        if (name == "authorities") return ["username", "authority"];
+        if (name == "web_images") return ["id"];
+        if (name == "web_products") return ["id"];
+        if (name == "web_sequence") return ["name"];
+        if (name == "web_users") return ["username"];
+        return undefined;
+    };
+
     function buildSearchString(v) {
         if (debugMode) console.log("Build search string", v);
 
@@ -213,6 +252,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         return s;
     };
 
+    /*
     function getStatusLabelClass(v) {
         if (debugMode) console.log("Get status label class", v);
 
@@ -222,20 +262,42 @@ export function CryptogramManagementPage({ debugMode = true }) {
         if (v == "P") return s + "bg-warning";
         return s + "bg-danger";
     };
+    */
 
     function click4RecordDetail(e, record, index) {
         if (debugMode) console.log("Click for record detail", e, record, index);
 
-        let sp = new URLSearchParams({
-            rowId: record.recordData.rowId,
-        });
+        // build search parameter using array 
+        let a = [
+            ["editMode", 1],
+            ["tableName", tableName],
+            ["databaseName", databaseName]
+        ];
+
+        if (check4RowId(fieldList)) {
+            a.push(["rowId", record.recordData.rowId]);
+        }
+        else if (getTableKey(tableName)) {
+            let keyList = getTableKey(tableName);
+
+            for (let key of keyList) {
+                a.push(["key", key]);
+                a.push(["value", (record.recordData?.[key] || "")]);
+            }
+        }
+        else {
+            console.warn("Table no rowId or keys defined !");
+            return;
+        }
+
+        let sp = new URLSearchParams(a);
 
         let path = {
-            pathname: "/cryptogramDetail",
+            pathname: "/editTable",
             search: sp.toString(),
         };
 
-        cleanUp4Detail();
+        // cleanUp4Detail();
         navigate(path);
         return;
     };
@@ -244,11 +306,13 @@ export function CryptogramManagementPage({ debugMode = true }) {
         if (debugMode) console.log("Click for add record", e, record, index);
 
         let sp = new URLSearchParams({
-            editMode: 0
+            editMode: 0,
+            tableName: tableName,
+            databaseName: databaseName
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editTable",
             search: sp.toString(),
         };
         navigate(path);
@@ -276,7 +340,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
     function change4SearchText(e) {
         if (debugMode) console.log("Change for search text ", e);
-        searchObject.searchText = e.target.value;
+        let s = e.target.value;
+
+        searchObject.searchText = s;
         setRedraw((v) => v + 1);
         return;
     };
@@ -308,8 +374,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
             if (debugMode) console.log("Callback for confirm");
             showStateDialogBox();
             try {
-                // await tBox.sleep(1000 * 1);
-
                 let result1 = await apiBox.deleteRecordWithId(getSessionToken(), databaseName, tableName, record.recordData.rowId);
                 if (result1 && result1.flag) {
 
@@ -334,6 +398,8 @@ export function CryptogramManagementPage({ debugMode = true }) {
         return;
     };
 
+
+
     return (
         <div className="container-fluid px-0 bg-unity-1">
             <TitlePanel />
@@ -349,7 +415,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                             {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                         </div>
 
-                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_title} </div>
+                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_table} {tableName}</div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
                             <div className="d-flex justify-content-between align-items-center">
@@ -379,7 +445,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                             </button>
                                         ) : null
                                     }
-
                                 </div>
 
                             </div>
@@ -388,26 +453,17 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                 <table className="table table-hover mb-0">
                                     <thead>
                                         <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
-                                            <th className="">
-                                                {sl.h_row_id}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_owner_id}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_key_function}
-                                            </th>
-                                            <th className="text-end" >
-                                                {sl.h_key_algo}
-                                            </th>
-                                            <th className="text-end" >
-                                                {sl.h_bit_size}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_record_status}
-                                            </th>
-                                            <th className="" style={{ width: "24px" }} >
-                                            </th>
+
+                                            {
+                                                fieldList.map((fieldRecord, fieldIndex) => {
+                                                    return (
+                                                        <th key={fieldIndex} >
+                                                            {fieldRecord.name}
+                                                        </th>
+                                                    )
+                                                })
+                                            }
+
                                         </tr>
                                     </thead>
 
@@ -417,78 +473,19 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                 console.log("Build row", record, index);
                                                 return (
                                                     <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.rowId}
-                                                        </td>
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.ownerId}
-                                                        </td>
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyFunction || "-"}
-                                                        </td>
-                                                        <td className=" text-end"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.keyAlgo || "-"}
-                                                        </td>
-                                                        <td className=" text-end"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.bitSize || "-"}
-                                                        </td>
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
-                                                                style={{ width: "110px", height: "24px" }} >
-                                                                {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
-                                                            </div>
-                                                        </td>
-                                                        <td className=" " >
-
-                                                            <div className="dropdown dropstart ">
-                                                                <span className="d-inline-flex align-items-center " role="button"
-                                                                    data-bs-toggle="dropdown">
-                                                                    <div className="d-flex align-items-center ">
-                                                                        <span className="material-icons fs-18-unity">more_vert</span>
-                                                                    </div>
-                                                                </span>
-
-                                                                <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
-                                                                    style={{ borderRadius: "8px" }} >
-                                                                    <ul className="list-unstyled p-2 mb-0">
-                                                                        <li >
-                                                                            <button
-                                                                                className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                type="button"
-                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span
-                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
-                                                                                <span>{sl.l_view_detail}</span>
-                                                                            </button>
-                                                                        </li>
-                                                                        {
-                                                                            check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li>
-                                                                                    <button
-                                                                                        className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                        type="button"
-                                                                                        onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        <span
-                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
-                                                                                        <span>{sl.l_delete}</span>
-                                                                                    </button>
-                                                                                </li>
-                                                                            ) : null
-                                                                        }
-
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-
-                                                        </td>
+                                                        {
+                                                            fieldList.map((fieldRecord, fieldIndex) => {
+                                                                return (
+                                                                    <td key={fieldIndex} className=""
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        {record?.recordData?.[fieldRecord.name] || "-"}
+                                                                    </td>
+                                                                )
+                                                            })
+                                                        }
 
                                                     </tr>
+
 
                                                 );
                                             })
