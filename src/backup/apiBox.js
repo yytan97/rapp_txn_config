@@ -539,6 +539,883 @@ export async function deleteRecordWithId(token, databaseName = "kdb", tableName,
     return result;
 };
 
+// user module related API
+
+export async function createUserGroupCursor(token, searchText) {
+    if (debugMode) console.log("Create user group cursor");
+
+    let url = serviceURLBase2 + "/command/team.query";
+    let data = {
+        "filters": {
+            "team": {
+                "name": "all"
+            },
+        },
+        "cursor": {
+            "creation": "always"
+        }
+    };
+
+    if (searchText) data.filters.team.name = "%" + searchText + "%";
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function rewindNFetch4UserGroup(token, cursorID, page, pageSize) {
+    if (debugMode) console.log("Rewind and fetch cursor for user group", cursorID, page, pageSize);
+
+    let url = serviceURLBase2 + "/command/team.fetch";
+    let offset = 0;
+    if (page > 1) offset = (page - 1) * pageSize;
+
+    let data = {
+        "cursor": {
+            "identifier": cursorID,
+            "recordOffset": offset,
+            "recordCount": pageSize,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+// get user group record or list, if name is 'all' than list
+export async function getUserGroupRecord(token, name) {
+    if (debugMode) console.log("get user group with name", name);
+
+    let url = serviceURLBase2 + "/command/team.query";
+    let data = {
+        "filters": {
+            "team": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addRecord4UserGroup(token, name) {
+    if (debugMode) console.log("Add new record for user group", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/team.new";
+    let data = {
+        "team": {
+            "name": name,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteRecord4UserGroup(token, name) {
+    if (debugMode) console.log("Delete record for user group", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/team.delete";
+    let data = {
+        "filters": {
+            "team": {
+                "name": name,
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserList4UserGroup(token, groupName) {
+    if (debugMode) console.log("get user list for user group with name", groupName);
+
+    let url = serviceURLBase2 + "/command/team.user.query";
+    let data = {
+        "filters": {
+            "team": {
+                "name": groupName
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addUser4Group(token, username, groupName) {
+    if (debugMode) console.log("Add user for group", username, groupName);
+
+    let url = serviceURLBase2 + "/command/team.user.new";
+    let data = {
+        "team": {
+            "name": groupName,
+        },
+        "user": {
+            "name": username,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function removeUser4Group(token, username, groupName) {
+    if (debugMode) console.log("Remove user for group", username, groupName);
+
+    let url = serviceURLBase2 + "/command/team.user.delete";
+    let data = {
+        "filters": {
+            "team": {
+                "name": groupName,
+
+            },
+            "user": {
+                "name": username,
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getAccessRightList4UserGroup(token, groupName) {
+    if (debugMode) console.log("Get access right list for user group with name", groupName);
+
+    let url = serviceURLBase2 + "/command/accessRights.query";
+    let data = {
+        "filters": {
+            "name": "all",
+            "team": {
+                "name": groupName
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getAccessRightObjectList(token) {
+    if (debugMode) console.log("Get access right object list");
+
+    let url = serviceURLBase2 + "/command/accessRights.object.query";
+    let data = {
+        "filters": {
+            "accessRightsObject": { "name": "all" },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getAccessRightAction4Object(token, objectName) {
+    if (debugMode) console.log("Get access right action for object", objectName);
+
+    let url = serviceURLBase2 + "/command/accessRights.action.query";
+    let data = {
+        "filters": {
+            "accessRightsObject": { "name": objectName },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function updateAccessRightObject4Group(token, record, name) {
+    if (debugMode) console.log("Revoke or grant group access right action for object", record, name);
+
+    let url = serviceURLBase2 + "/command/RevokeAndGrantAccessRights";
+    let data = {
+        "team": {
+            "name": name,
+        },
+        "accessRightsObject": record,
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function updateAccessRightObject4User(token, record, name) {
+    if (debugMode) console.log("Revoke or grant user access right action for object", record, name);
+
+    let url = serviceURLBase2 + "/command/RevokeAndGrantAccessRights";
+    let data = {
+        "user": {
+            "name": name,
+        },
+        "accessRightsObject": record,
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function createUserCursor(token, searchText) {
+    if (debugMode) console.log("Create user cursor");
+
+    let url = serviceURLBase2 + "/command/user.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": "all"
+            },
+        },
+        "cursor": {
+            "creation": "always"
+        }
+    };
+
+    if (searchText) data.filters.user.name = "%" + searchText + "%";
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function rewindNFetch4User(token, cursorID, page, pageSize) {
+    if (debugMode) console.log("Rewind and fetch cursor for user group", cursorID, page, pageSize);
+
+    let url = serviceURLBase2 + "/command/user.fetch";
+    let offset = 0;
+    if (page > 1) offset = (page - 1) * pageSize;
+
+    let data = {
+        "cursor": {
+            "identifier": cursorID,
+            "recordOffset": offset,
+            "recordCount": pageSize,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserRecord(token, name) {
+    if (debugMode) console.log("Get user record", name);
+
+    let url = serviceURLBase2 + "/command/user.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addRecord4User(token, record) {
+    if (debugMode) console.log("Add new record for user", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/user.new";
+    let data = {
+        "user": {
+            "name": record?.username,
+            "preferName": record?.preferName,
+        },
+        "organization": {
+            "name": record?.organizationName,
+        },
+        "team": {
+            "name": record?.groupName,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function updateRecord4User(token, record) {
+    if (debugMode) console.log("Update record for user", record.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/user.update";
+    let data = {
+        "filters": {
+            "user": {
+                "name": record?.username,
+            },
+        },
+        "user": {
+            "preferName": record?.preferName,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteRecord4User(token, name) {
+    if (debugMode) console.log("Delete record for user", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/user.delete";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name,
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserGroupList4User(token, name) {
+    if (debugMode) console.log("get user group list for user with name", name);
+
+    let url = serviceURLBase2 + "/command/user.team.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getAccessRightList4User(token, name) {
+    if (debugMode) console.log("Get access right list for user with name", name);
+
+    let url = serviceURLBase2 + "/command/accessRights.query";
+    let data = {
+        "filters": {
+            "name": "all",
+            "user": {
+                "name": name
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserProfileRecord(token, name) {
+    if (debugMode) console.log("Get user profile record with name", name);
+
+    let url = serviceURLBase2 + "/command/GetUserProfile";
+    let data = {
+        "user": {
+            "name": name
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addUserProfile(token, username, record) {
+    if (debugMode) console.log("Add user profile", username);
+
+    if (!username) {
+        console.warn("Name not provide", username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/NewUserProfile";
+    let data = {
+        "user": {
+            "name": username,
+        },
+        "userProfile": record
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function updateUserProfile(token, username, record) {
+    if (debugMode) console.log("Update user profile", username);
+
+    if (!username) {
+        console.warn("Name not provide", username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/UpdateUserProfile";
+    let data = {
+        "user": {
+            "name": username,
+        },
+        "userProfile": record
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserContactList(token, name) {
+    if (debugMode) console.log("Get user contact list", name);
+
+    /*
+    let url = serviceURLBase2 + "/command/GetUserContactOfAnUser";
+    let data = {
+        "user": {
+            "name": name
+        },
+    };
+    */
+
+    let url = serviceURLBase2 + "/command/user.contact.query.for.an.user";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            }
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addUserContact(token, record) {
+    if (debugMode) console.log("Add new record for user contact", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/user.contact.new";
+    let data = {
+        "user": {
+            "name": record?.username,
+        },
+        "contact": {
+            "type": record?.type,
+            "address": record?.address
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+
+export async function deleteUserContact(token, record) {
+    if (debugMode) console.log("Delete record for user contact", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/DeleteUserContact";
+    let data = {
+        "user": {
+            "name": record?.username
+        },
+        "contact": {
+            "identifier": record?.identifier
+        }
+    };
+
+    /*
+    let url = serviceURLBase2 + "/command/user.contact.delete";
+    let data = {
+        "user": {
+            "name": record?.username,
+        },
+        "contact": {
+            "type": record?.type,
+            "identifier": record?.identifier
+        }
+    };
+    */
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserAddressList(token, name, type) {
+    if (debugMode) console.log("Get user address list", name);
+
+
+    let url = serviceURLBase2 + "/command/GetUserMailingAddress";
+    let data = {
+        "user": {
+            "name": name
+        },
+        "mailingAddress": {
+            "type": type,
+        },
+    };
+
+    /*
+    let url = serviceURLBase2 + "/command/user.maillingAddress.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            },
+            "mailingAddress": {
+                "type": "all"
+            }
+        }
+    };
+    */
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addUserAddress(token, record) {
+    if (debugMode) console.log("Add new record for user address", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/NewUserMailingAddress";
+    let data = {
+        "user": {
+            "name": record.username,
+        },
+        "mailingAddress": record.mailingAddress,
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function updateUserAddress(token, record) {
+    if (debugMode) console.log("Update record for user address", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/UpdateUserMailingAddress";
+    let data = {
+        "user": {
+            "name": record.username,
+        },
+        "mailingAddress": record.mailingAddress,
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteUserAddress(token, record) {
+    if (debugMode) console.log("Delete record for user address", record?.username);
+
+    if (!record?.username) {
+        console.warn("Name not provide", record?.username);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/DeleteUserMailingAddress";
+
+    let data = {
+        "user": {
+            "name": record?.username,
+        },
+        "mailingAddress": {
+            "type": record?.type,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+
+export async function createObjectCursor(token, searchText) {
+    if (debugMode) console.log("Create object cursor");
+
+    let url = serviceURLBase2 + "/command/accessRights.object.query";
+    let data = {
+        "filters": {
+            "accessRightsObject": {
+                "name": "all"
+            },
+        },
+        "cursor": {
+            "creation": "always"
+        }
+    };
+
+    if (searchText) data.filters.accessRightsObject.name = "%" + searchText + "%";
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function rewindNFetch4Object(token, cursorID, page, pageSize) {
+    if (debugMode) console.log("Rewind and fetch cursor for user group", cursorID, page, pageSize);
+
+    let url = serviceURLBase2 + "/command/accessRights.object.fetch";
+    let offset = 0;
+    if (page > 1) offset = (page - 1) * pageSize;
+
+    let data = {
+        "cursor": {
+            "identifier": cursorID,
+            "recordOffset": offset,
+            "recordCount": pageSize,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getObjectRecord(token, name) {
+    if (debugMode) console.log("Get object with name", name);
+
+    let url = serviceURLBase2 + "/command/accessRights.object.query";
+    let data = {
+        "filters": {
+            "accessRightsObject": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addRecord4Object(token, name) {
+    if (debugMode) console.log("Add new record for object", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/accessRights.object.new";
+    let data = {
+        "accessRightsObject": {
+            "name": name,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteRecord4Object(token, name) {
+    if (debugMode) console.log("Delete record for object", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/accessRights.object.delete";
+    let data = {
+        "filters": {
+            "accessRightsObject": {
+                "name": name,
+            },
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getObjectActionList(token, name) {
+    if (debugMode) console.log("Get object action list with name", name);
+
+    let url = serviceURLBase2 + "/command/accessRights.action.query";
+    let data = {
+        "filters": {
+            "accessRightsObject": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function addObjectAction(token, objectName, actionName) {
+    if (debugMode) console.log("Add action for object", objectName);
+
+    let url = serviceURLBase2 + "/command/accessRights.action.new";
+    let data = {
+
+        "accessRightsObject": {
+            "name": objectName
+        },
+        "accessRightsAction": {
+            "name": actionName
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteObjectAction(token, objectName, actionName) {
+    if (debugMode) console.log("Delete action for object", objectName);
+
+    let url = serviceURLBase2 + "/command/accessRights.action.delete";
+    let data = {
+        "filters": {
+            "accessRightsObject": {
+                "name": objectName
+            },
+            "accessRightsAction": {
+                "name": actionName
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function createSessionCursor(token, searchText) {
+    if (debugMode) console.log("Create session cursor");
+
+    let url = serviceURLBase2 + "/command/session.user.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": undefined,
+            },
+        },
+        "cursor": {
+            "creation": "always"
+        }
+    };
+
+    if (searchText) data.filters.user.name = searchText;
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function rewindNFetch4Session(token, cursorID, page, pageSize) {
+    if (debugMode) console.log("Rewind and fetch cursor for session", cursorID, page, pageSize);
+
+    let url = serviceURLBase2 + "/command/session.user.fetch";
+    let offset = 0;
+    if (page > 1) offset = (page - 1) * pageSize;
+
+    let data = {
+        "cursor": {
+            "identifier": cursorID,
+            "recordOffset": offset,
+            "recordCount": pageSize,
+        },
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getSessionRecord(token, name) {
+    if (debugMode) console.log("Get session with username", name);
+
+    let url = serviceURLBase2 + "/command/session.user.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function getUserSessionList(token, name) {
+    if (debugMode) console.log("Get session list with username", name);
+
+    let url = serviceURLBase2 + "/command/session.query";
+    let data = {
+        "filters": {
+            "user": {
+                "name": name
+            },
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function deleteRecord4Session(token, name) {
+    if (debugMode) console.log("Delete session for user", name);
+
+    if (!name) {
+        console.warn("Name not provide", name);
+        return { flag: false, errorMessage: 'Name not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/DeleteSession";
+    let data = {
+        "user": {
+            "name": name,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
+export async function removeSessionWithID(token, id) {
+    if (debugMode) console.log("Delete session with id", id);
+
+    if (!id) {
+        console.warn("ID not provide", id);
+        return { flag: false, errorMessage: 'ID not provided' };
+    }
+
+    let url = serviceURLBase2 + "/command/DeleteSession";
+
+    let data = {
+        "session": {
+            "identifier": id,
+        }
+    };
+
+    let result = await command2Host(url, data, token, "POST");
+    return result;
+};
+
 // Avatar 
 export async function getUserAvatar(username, token) {
     // current no need token

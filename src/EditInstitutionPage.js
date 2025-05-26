@@ -111,7 +111,7 @@ export function EditInstitutionPage({ debugMode = true }) {
 
         const sp = new URLSearchParams(location.search);
         institutionId = sp.get('id');
-        editMode = parseInt(sp.get('editMode'));
+        editMode = parseInt(sp.get('editMode')) || 0;
 
         console.log("Institution ID", institutionId);
         console.log("Edit mode", editMode);

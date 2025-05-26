@@ -40,7 +40,7 @@ export function Layout({ debugMode = true }) {
     // let fetchers = reactRouter.useFetchers();
     // let fetcherInProgress = fetchers.some((f) => ["loading", "submitting"].includes(f.state));
 
-    const { config, localData, gsl, isLogin } = react.useContext(globalContext);
+    const { config, localData, gsl, isLogin, appRedraw } = react.useContext(globalContext);
 
     const navigate = reactRouter.useNavigate();
 
@@ -61,7 +61,6 @@ export function Layout({ debugMode = true }) {
 
     react.useEffect(() => {
         console.log("Location change", location.pathname, window.history.state?.idx);
-        // if (!isLogin && location.pathname != "/login") navigate("/login");
 
         if (!isLogin) {
             if (location.pathname === "/login" ||
@@ -74,7 +73,6 @@ export function Layout({ debugMode = true }) {
                 navigate("/login");
             }
         }
-
 
         window.scrollTo(0, 0);
     }, [location, isLogin]);
@@ -92,6 +90,7 @@ let localData = undefined;
 let config = undefined;
 let gsl = undefined;
 
+let isLogin = false;
 let user = undefined;
 let dataset = {};
 let debugMode = true;
@@ -105,7 +104,7 @@ export default function App() {
     const [appRedraw, setAppRedraw] = react.useState(0);
     const [mode, setMode] = react.useState("load");
 
-    const [isLogin, setIsLogin] = react.useState(false);
+    // const [isLogin, setIsLogin] = react.useState(false);
     const [menuMode, setMenuMode] = react.useState(1);
     const [applicationLanguage, setApplicationLanguage] = react.useState("English");
 
@@ -114,7 +113,19 @@ export default function App() {
         if (debugMode) console.log("Run on effect", mode);
         let timer = setTimeout(setup, 100);
 
-        return () => clearTimeout(timer)
+        console.log("Window add listener");
+        window.addEventListener("click", click4Window);
+
+        let interval = setup4CheckTimeoutInterval();
+
+        return () => {
+            clearTimeout(timer);
+
+            console.log("Window remove listener");
+            window.removeEventListener("click", click4Window);
+
+            clearInterval(interval);
+        };
     }, []);
 
     // function
@@ -150,6 +161,8 @@ export default function App() {
             skipCheck4Right = config.skipCheck4Right;
         }
 
+        await check4Timeout();
+
         // postLogin here, here don't show or popup any message
         user = localData?.user;
         if (user !== undefined) {
@@ -157,11 +170,73 @@ export default function App() {
         }
 
         // menu mode 1 for long and 0 for short 
-        updateSideBar(menuMode);
+        // updateSideBar(menuMode);
+
+        let m = getAppMenuMode();
+        updateSideBar(m);
+        setMenuMode(m);
+
+        // mark the last access date
+        updateLastAccessDate();
 
         setMode("list");
         if (debugMode) console.log("Mode", mode);
+
     };
+
+    function click4Window(e) {
+        if (debugMode) console.debug("Click for window", e);
+        updateLastAccessDate();
+        return;
+    };
+
+    function setup4CheckTimeoutInterval() {
+        if (debugMode) console.log("Setup for check timeout interval");
+        let t1 = setInterval(check4Timeout, 1000 * 30);
+        return t1;
+    }
+
+    async function check4Timeout() {
+        let data = tBox.getAppLocalData();
+
+        if (config.timeout4Session != undefined && config.timeout4Session <= 0) {
+            if (debugMode) console.log("Skip last access data check for turn off", config);
+            return;
+        }
+
+        if (data.user == undefined || data.lastAccessDate == "") {
+
+            if (isLogin && data.user == undefined && data.lastAccessDate == "") {
+                if (debugMode) console.log("Other tab already timeout, timeout for current tab", data, isLogin);
+                updateLastAccessDate("");
+                return;
+            }
+
+            if (debugMode) console.log("Skip last access date check for no user or access date", data, isLogin);
+            return;
+        }
+
+        let dt1 = new Date(data.lastAccessDate || "");
+        let dt2 = new Date();
+
+        let a = moment(dt1);
+        let b = moment(dt2);
+
+        let c = b.diff(a, 'minutes');           // diffrence 
+        let d = config.timeout4Session || 10;   // max min allow for session
+
+        if (debugMode) console.log("Last access date", a, b, c, d, isLogin);
+
+        if (c > d) {
+            console.log("Hit unaccess timeout", a, b, c, d);
+            let result = await apiBox.logout(data.user?.sessionToken);
+            if (result) {
+                updateUser(undefined);
+                updateLastAccessDate("");
+            }
+        }
+        return;
+    }
 
     async function updateApplicationLanguage(lang) {
         if (debugMode) console.log("Update application language");
@@ -177,6 +252,12 @@ export default function App() {
         return;
     };
 
+    function setIsLogin(flag) {
+        isLogin = flag;
+        setAppRedraw((v) => v + 1);
+        return;
+    };
+
     function updateUser(userRecord) {
         // update isLogin, user and reload localData
 
@@ -185,7 +266,7 @@ export default function App() {
         if (debugMode) console.log("Reload local data", localData);
 
         let login = false;
-        if (userRecord !== undefined && userRecord.sessionToken !== undefined) login = true;
+        if (userRecord !== undefined && userRecord?.sessionToken !== undefined) login = true;
 
         user = userRecord;
 
@@ -195,8 +276,20 @@ export default function App() {
         return;
     };
 
+    function updateLastAccessDate(s) {
+        let dt = new Date();
+        if (s == undefined) s = dt.toISOString();
+        tBox.updateAppLocalData("lastAccessDate", s);
+
+        // localData = tBox.getAppLocalData();
+        // if (debugMode) console.log("Reload local data", localData);
+
+        if (debugMode) console.debug("Updated last access date", s);
+        return;
+    };
+
     function getSessionToken() {
-        let token = user.sessionToken;
+        let token = user?.sessionToken;
         if (debugMode) console.log("Get session token", token);
         return token;
     };
@@ -302,12 +395,34 @@ export default function App() {
 
         updateSideBar(mode);
         setMenuMode(mode);
+
+        // save to local storage
+        setAppMenuMode(mode);
         return;
     };
 
+    function getAppMenuMode() {
+        let key = componentName + ".sideBar";
+        let record = tBox.getLocalData4AppComponentSetting();
+        let v = record?.[key]?.menuMode;
+
+        if (v == undefined) v = 1;
+        return v;
+    }
+
+    function setAppMenuMode(mode) {
+        let key = componentName + ".sideBar";
+        let record = tBox.getLocalData4AppComponentSetting();
+        let obj = {
+            menuMode: mode
+        }
+        record[key] = obj;
+        tBox.putLocalData4AppComponentSetting(record);
+    }
+
     function check4Right(objectName, actionName) {
         if (skipCheck4Right) {
-            if (debugMode) console.log("Skip check for right", objectName, actionName);
+            if (debugMode) console.debug("Skip check for right", objectName, actionName);
             return true;
         }
 
@@ -354,6 +469,62 @@ export default function App() {
         return list;
     };
 
+    async function getCountryList() {
+        if (debugMode) console.log("Get country list");
+
+        let list = [];
+        try {
+            if (dataset.countryList === undefined) {
+                if (debugMode) console.log("From host database");
+
+                list = await apiBox.getCountryList();
+                if (list) {
+                    dataset.countryList = list;
+                }
+            }
+            else {
+                if (debugMode) console.log("From memory");
+                list = dataset.countryList;
+            }
+        }
+        catch (e) {
+            console.warn("Error", e);
+        }
+        return list;
+    };
+
+    async function getMobileCountryCodeList() {
+        if (debugMode) console.log("Get mobile country code list");
+
+        let list = [];
+        try {
+            if (dataset.mobileCountryCodeList === undefined) {
+                if (debugMode) console.log("From host database");
+
+                let url = "./conf/mobileCodeList.json";
+                list = await tBox.getJSONHostFile(url);
+
+                list.sort((a, b) => {
+                    if (a.code < b.code) return -1;
+                    if (a.code > b.code) return 1;
+                    return 0;
+                });
+
+                if (list) {
+                    dataset.mobileCountryCodeList = list;
+                }
+            }
+            else {
+                if (debugMode) console.log("From memory");
+                list = dataset.mobileCountryCodeList;
+            }
+        }
+        catch (e) {
+            console.warn("Error", e);
+        }
+        return list;
+    };
+
     return (
         <globalContext.Provider value={{
             config,
@@ -372,7 +543,9 @@ export default function App() {
             postLogin,
             toggleMenuMode,
             check4Right,
-            getCurrencyList
+            getCurrencyList,
+            getCountryList,
+            getMobileCountryCodeList
         }}>
 
             {

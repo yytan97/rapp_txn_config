@@ -1,7 +1,9 @@
 
 let debugMode = false;
 
-const key4AppLocalData = "UnityTestVersion1";
+export const key4AppLocalData = "UnityTestVersion1";
+export const name4AppComponentSetting = key4AppLocalData + ".appComponentSettingVersion22";
+
 const url4DefaultParameter = "./conf/default.conf";
 const url4AppParameter = "./conf/app.conf";
 
@@ -393,7 +395,7 @@ export function getErrorMessage(e, sl) {
 
         // error from host
         let code = e.data.result.code;
-        let reason = e.data.result.reason;
+        let reason = code ? `${e.data.result.reason} (${e.data.result.code})` : `${e.data.result.reason}`;
 
         // sample code e_code_9006, e_code_6010
         let key = `e_code_${code}`;
@@ -580,4 +582,32 @@ export function buildSearchString(fieldList, v, dbType) {
     }
     if (debugMode) console.log("Search string", s);
     return s;
+};
+
+
+export function getLocalData4AppComponentSetting(defaultData = {}) {
+    console.log("Get local storage for app component setting");
+
+    let name = name4AppComponentSetting;
+    let list = getLocalData(name, defaultData);
+
+    return list;
+};
+
+export function putLocalData4AppComponentSetting(data) {
+    console.log("Put local storage for app component setting");
+
+    let name = name4AppComponentSetting;
+    putLocalData(name, data);
+
+    return;
+};
+
+export function removeLocalData4AppComponentSetting() {
+    console.log("Remove local storage for app component setting");
+
+    let name = name4AppComponentSetting;
+    removeLocalData(name);
+
+    return;
 };
