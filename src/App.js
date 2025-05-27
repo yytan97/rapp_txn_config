@@ -96,6 +96,8 @@ let dataset = {};
 let debugMode = true;
 let skipCheck4Right = true;
 
+let interval4CheckLastAccess = undefined;
+
 // App
 export default function App() {
     const componentName = "App";
@@ -116,15 +118,14 @@ export default function App() {
         console.log("Window add listener");
         window.addEventListener("click", click4Window);
 
-        let interval = setup4CheckTimeoutInterval();
-
         return () => {
             clearTimeout(timer);
 
             console.log("Window remove listener");
             window.removeEventListener("click", click4Window);
 
-            clearInterval(interval);
+            if (interval4CheckLastAccess)
+                clearInterval(interval4CheckLastAccess);
         };
     }, []);
 
@@ -178,9 +179,12 @@ export default function App() {
 
         // mark the last access date
         updateLastAccessDate();
+        interval4CheckLastAccess = setup4CheckTimeoutInterval();
 
         setMode("list");
         if (debugMode) console.log("Mode", mode);
+
+
 
     };
 
@@ -200,7 +204,7 @@ export default function App() {
         let data = tBox.getAppLocalData();
 
         if (config.timeout4Session != undefined && config.timeout4Session <= 0) {
-            if (debugMode) console.log("Skip last access data check for turn off", config);
+            console.warn("Skip last access data check for turn off", config.timeout4Session);
             return;
         }
 
@@ -225,7 +229,7 @@ export default function App() {
         let c = b.diff(a, 'minutes');           // diffrence 
         let d = config.timeout4Session || 10;   // max min allow for session
 
-        if (debugMode) console.log("Last access date", a, b, c, d, isLogin);
+        console.debug("Last access date", a, b, c, d, isLogin);
 
         if (c > d) {
             console.log("Hit unaccess timeout", a, b, c, d);
