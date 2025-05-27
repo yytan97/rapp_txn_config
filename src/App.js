@@ -212,6 +212,7 @@ export default function App() {
 
             if (isLogin && data.user == undefined && data.lastAccessDate == "") {
                 if (debugMode) console.log("Other tab already timeout, timeout for current tab", data, isLogin);
+                updateUser(undefined);
                 updateLastAccessDate("");
                 return;
             }
