@@ -110,6 +110,8 @@ export default function App() {
     const [menuMode, setMenuMode] = react.useState(1);
     const [applicationLanguage, setApplicationLanguage] = react.useState("English");
 
+    const [isPinned, setIsPinned] = react.useState(getSidebarPin());
+
     // init function
     react.useEffect(() => {
         if (debugMode) console.log("Run on effect", mode);
@@ -183,8 +185,6 @@ export default function App() {
 
         setMode("list");
         if (debugMode) console.log("Mode", mode);
-
-
 
     };
 
@@ -367,6 +367,35 @@ export default function App() {
         }
     };
 
+    // sidebar pin navigation function 
+
+    function getSidebarPin() {
+        const key = componentName + ".sideBar";
+        const record = tBox.getLocalData4AppComponentSetting();
+        return record?.[key]?.isPinned === 1;
+    }
+
+    function setSidebarPin(pinned) {
+        const key = componentName + ".sideBar";
+        const record = tBox.getLocalData4AppComponentSetting();
+        const obj = {
+            menuMode,
+            isPinned: pinned ? 1 : 0
+        };
+        record[key] = obj;
+        tBox.putLocalData4AppComponentSetting();
+    }
+
+    function togglePinNavigation() {
+        console.log("Pin clicked");
+        const newPinned = !isPinned;
+        setIsPinned(newPinned);
+        setSidebarPin(newPinned);
+
+        // Fix the current menu mode width
+        updateSideBar(menuMode);
+    }
+
     function updateSideBar(mode) {
         if (mode == 1) {
             dataset.sideBarWidth = {
@@ -393,14 +422,11 @@ export default function App() {
     };
 
     function toggleMenuMode() {
-        let mode = menuMode;
-
-        if (mode == 0) mode = 1;
-        else mode = 0;
+        if (isPinned) return;
+        const mode = menuMode === 1 ? 0 : 1;
 
         updateSideBar(mode);
         setMenuMode(mode);
-
         // save to local storage
         setAppMenuMode(mode);
         return;
@@ -540,6 +566,8 @@ export default function App() {
             applicationLanguage,
             isLogin,
             menuMode,
+            isPinned,
+            togglePinNavigation,
             dataset,
             appRedraw, setAppRedraw,
             updateApplicationLanguage,

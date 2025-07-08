@@ -106,19 +106,22 @@ export function putLocalData(key, obj) {
 };
 
 export function getLocalData(key, defaultObject = {}) {
-    let v = undefined;
-    let obj = {};
-    v = localStorage.getItem(key);
+    let v = localStorage.getItem(key);
 
-    if (v == undefined) {
-        obj = defaultObject;
+    if (!v || v === "undefined") {
+        const obj = defaultObject;
         putLocalData(key, obj);
-    }
-    else {
-        obj = JSON.parse(v);
+        return obj;
     }
 
-    return obj;
+    try {
+        return JSON.parse(v);
+    } catch (e) {
+        console.warn(`Invalid JSON in localStorage for key "${key}":`, v);
+        const obj = defaultObject;
+        putLocalData(key, obj); // overwrite with safe default
+        return obj;
+    }
 };
 
 export function getAppLocalData() {

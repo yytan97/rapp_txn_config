@@ -20,7 +20,7 @@ export function SideBar({ debugMode = false }) {
     const componentName = "SideBar";
     if (debugMode) console.log(`${componentName} component start ...`);
 
-    const { gsl, menuMode, toggleMenuMode, check4Right, setAppRedraw } = react.useContext(globalContext);
+    const { gsl, menuMode, toggleMenuMode, isPinned, togglePinNavigation, check4Right, setAppRedraw } = react.useContext(globalContext);
 
     // check from context
     let sl = tBox.getStringLabel(gsl, componentName);
@@ -207,19 +207,21 @@ export function SideBar({ debugMode = false }) {
 
     // Figma UI 
     return (
-        <div className={`my-sidebar ${class4MenuMode()}`}>
+        <div className={`my-sidebar ${class4MenuMode()} ${isPinned ? 'pinned' : ''}`}>
             <div className="my-primary-section">
 
                 <div className="my-title" role="button" onClick={toggle4MenuMode}>
                     <span className="long-mode-label ps-3">
                         <img src="images/Synap_logo.svg" style={{ width: "76px", height: "33px" }} />
                     </span>
-                    <a className="my-toggle" >
-                        {
-                            (menuMode === 0) ? <span className="material-icons-outlined fs-24-unity">keyboard_double_arrow_right</span>
-                                : <span className="material-icons-outlined fs-24-unity">keyboard_double_arrow_left</span>
-                        }
-                    </a>
+                    {!isPinned && (
+                        <a className="my-toggle" >
+                            {
+                                (menuMode === 0) ? <span className="material-icons-outlined fs-24-unity">keyboard_double_arrow_right</span>
+                                    : <span className="material-icons-outlined fs-24-unity">keyboard_double_arrow_left</span>
+                            }
+                        </a>
+                    )}
                 </div>
 
                 <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Home}>
@@ -387,9 +389,11 @@ export function SideBar({ debugMode = false }) {
 
             <div className="pt-8 pb-8 my-secondary-section ">
                 <div className="my-2 my-divider"></div>
-                <div className={`my-link1 ${class4Active('/setting')}`} role="button" onClick={click4Setting}>
+                <div className="my-link1" role="button" onClick={togglePinNavigation}>
                     <span className="ms-3 long-mode-label">{sl.l_pin_navigation}</span>
-                    <span className="material-icons-outlined fs-16-unity">push_pin</span>
+                    <span className="material-icons-outlined fs-16-unity">
+                        {isPinned ? 'push_pin_off' : 'push_pin'}
+                    </span>
                 </div>
             </div>
 
