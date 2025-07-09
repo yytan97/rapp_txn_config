@@ -391,8 +391,8 @@ export function SideBar({ debugMode = false }) {
                 <div className="my-2 my-divider"></div>
                 <div className="my-link1" role="button" onClick={togglePinNavigation}>
                     <span className="ms-3 long-mode-label">{sl.l_pin_navigation}</span>
-                    <span className="material-icons-outlined fs-16-unity">
-                        {isPinned ? 'push_pin_off' : 'push_pin'}
+                    <span className="material-symbols-outlined fs-16-unity">
+                        {isPinned ? 'keep_off' : 'keep'}
                     </span>
                 </div>
             </div>
