@@ -27,7 +27,6 @@ body {
 	line-height: 150%;
 }
 
-
 .form-label-unity-v2 {
         font-size: 11px;
         margin-top: 0px;
@@ -94,7 +93,6 @@ body {
 	height: 32px;
 }
 
-
 .fs-8-unity {
 	font-size: 8px;
 }
@@ -157,9 +155,71 @@ body {
 	animation-play-state: paused; 
 }
 
-
 .popover {
 	--bs-popover-max-width: 400px;
 }
 
+.grey-font {
+	color: #6D7172;
+}
 
+/* padding-top */
+.pt-8 {
+	padding-top: 8px;
+}
+
+.pt-16 {
+	padding-top: 16px;
+}
+
+/* padding-bottom */
+.pb-16 {
+	padding-bottom: 16px;
+}
+
+.pt-12 {
+	padding-top: 12px;
+}
+
+/* padding-left */
+.pl-24 {
+	padding-left: 24px;
+}
+
+/* padding-right */
+.pr-24 {
+	padding-right: 24px;
+}
+
+/* margin-top */
+.mt-16 {
+	margin-top: 16px;
+}
+
+
+.title-font {
+	font-size: 24px;
+	color: #1D1F20;
+}
+
+.dashboard-card {
+	border-radius: 16px;
+	box-shadow: 0px 2px 4px 0px rgba(36, 38, 39, 0.16);
+	padding: 24px;
+}
+
+.menu-img-icon {
+	width: auto;
+	height: auto;
+	object-fit: contain;
+	margin-right: 8px;
+	vertical-align: middle;
+}
+
+.manage-btn {
+	width: 124px;
+}
+
+.cursor {
+	cursor: pointer;
+}

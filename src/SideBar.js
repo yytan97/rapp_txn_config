@@ -128,6 +128,17 @@ export function SideBar({ debugMode = false }) {
         return;
     };
 
+    function click4SystemConfigurationDashboard(e) {
+        let target = "/systemConfigurationDashboard";
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
     // return (
     //     <div className={`my-sidebar ${class4MenuMode()}`}>
     //         <div className="my-primary-section">
@@ -289,9 +300,9 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}> 
-                                <div className={`my-link ${class4Active('/configurationFileManagement')} ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
+                                <div className={`my-link ${class4Active('/systemConfigurationDashboard')} ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
                                     toggleSubmenu();
-                                    click4Configuration(e); 
+                                    click4SystemConfigurationDashboard(e); 
                                 }}>
                                     <span className="material-icons-outlined fs-24-unity">build</span>
                                     {menuMode === 1 && (

@@ -55,6 +55,8 @@ import { ProcessControlPage } from "./ProcessControlPage.js";
 import { TransactionHistoryOverviewPage } from "./TransactionHistoryOverviewPage.js";
 import { TransactionHistoryDetailPage } from "./TransactionHistoryDetailPage.js";
 
+import { SystemConfigurationDashboard } from "./SystemConfigurationDashboard.js";
+
 export let appRouterDefination = [
     {
         path: "/",
@@ -186,6 +188,10 @@ export let appRouterDefination = [
             {
                 path: "processControl",
                 Component: ProcessControlPage,
+            },
+            {
+                path: "systemConfigurationDashboard",
+                Component: SystemConfigurationDashboard,
             },
             {
                 path: "testDashboard",
