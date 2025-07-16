@@ -56,6 +56,7 @@ import { TransactionHistoryOverviewPage } from "./TransactionHistoryOverviewPage
 import { TransactionHistoryDetailPage } from "./TransactionHistoryDetailPage.js";
 
 import { SystemConfigurationDashboard } from "./SystemConfigurationDashboard.js";
+import { InstitutionSettingsDashboard } from "./InstitutionSettingsDashboard.js";
 
 export let appRouterDefination = [
     {
@@ -192,6 +193,10 @@ export let appRouterDefination = [
             {
                 path: "systemConfigurationDashboard",
                 Component: SystemConfigurationDashboard,
+            },
+            {
+                path: "institutionSettingsDashboard",
+                Component: InstitutionSettingsDashboard,
             },
             {
                 path: "testDashboard",

@@ -196,6 +196,11 @@ body {
 	margin-top: 16px;
 }
 
+/* margin-bottom */
+.mb-24 {
+	margin-bottom: 24px;
+}
+
 
 .title-font {
 	font-size: 24px;

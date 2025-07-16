@@ -29,15 +29,16 @@ export async function dashboardLoader() {
     };
 };
 
-export function SystemConfigurationDashboard({ debugMode = false }) {
-    const componentName = "SystemConfigurationDashboard";
+export function InstitutionSettingsDashboard({ debugMode = false }) {
+    const componentName = "InstitutionSettingsDashboard";
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "institution_settings", callback: callback4InstitutionSettings, icon: "/images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "table_management", callback: callback4CryptogramManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
-        { name: "configuration_file", callback: callback4TimerManagement, icon: "/images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "hot_card", callback: callback4BINPrefixManagement, icon: "/images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "institution_management", callback: callback4CreateNewInstitution, icon: "/images/institution_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "/images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "timer_management", callback: callback4TimerManagement, icon: "/images/timer_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
+        { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "/images/bin_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "route_management", callback: callback4BINPrefixManagement, icon: "/images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -84,14 +85,14 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4InstitutionSettings(e) {
+    function callback4CreateNewInstitution(e) {
         if (debugMode) console.log("Callback for create new institution", e);
 
         let sp = new URLSearchParams({
             editMode: 0
         });
 
-        navigate("/institutionSettingsDashboard");
+        navigate("/editInstitution");
         return;
     };
 
@@ -141,7 +142,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
                         <div className="row">
                             <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                                 <i className="fas fa-chevron-left fa-fw"></i>
-                                {sl.l_home}
+                                {sl.l_system_config}
                             </div>
                             
                             <div className="col-12 pt-12 pb-16">
@@ -157,7 +158,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
                                 menuList.map((record, index) => {
                                     if (check4Right(record.accessObject, record.accessAction))
                                         return (
-                                            <div key={index} className="col-3 equal-height-col">
+                                            <div key={index} className="col-3 equal-height-col mb-24">
                                                 <div className="border synap-btn-option dashboard-card">
                                                     <img src={record.icon} alt={record.name} className="menu-img-icon" />
                                                     <div className="d-flex flex-column justify-content-center">
