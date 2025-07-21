@@ -34,11 +34,11 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "institution_management", callback: callback4CreateNewInstitution, icon: "/images/institution_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "/images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "institution_management", callback: callback4InstitutionManagement, icon: "/images/institution_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.access" },
+        { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "/images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
         { name: "timer_management", callback: callback4TimerManagement, icon: "/images/timer_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
         { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "/images/bin_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
-        { name: "route_management", callback: callback4BINPrefixManagement, icon: "/images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "route_management", callback: callback4RouteManagement, icon: "/images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "route_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -85,14 +85,14 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4CreateNewInstitution(e) {
-        if (debugMode) console.log("Callback for create new institution", e);
+    function callback4InstitutionManagement(e) {
+        if (debugMode) console.log("Callback for institution management", e);
 
         let sp = new URLSearchParams({
             editMode: 0
         });
 
-        navigate("/editInstitution");
+        navigate("/institutionManagement");
         return;
     };
 
@@ -119,6 +119,14 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         navigate("/binPrefixManagement");
         return;
     };
+
+    function callback4RouteManagement(e) {
+        if (debugMode) console.log("Callback for route management", e);
+
+        // cleanUp4RouteManagement();
+        // navigate("/binPrefixManagement");
+        return;
+    }
 
     return (
         <div className="container-fluid px-0">

@@ -12,7 +12,7 @@ import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
 import { FooterPanel } from "./FooterPanel.js";
 
-import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
+import { cleanUp as cleanUp4TableManagement } from "./TableManagementPage.js";
 import { cleanUp as cleanUp4TimerManagement } from "./TimerManagementPage.js";
 import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
 
@@ -35,7 +35,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
 
     const menuList = [
         { name: "institution_settings", callback: callback4InstitutionSettings, icon: "/images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "table_management", callback: callback4CryptogramManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "table_management", callback: callback4TableManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
         { name: "configuration_file", callback: callback4TimerManagement, icon: "/images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
         { name: "hot_card", callback: callback4BINPrefixManagement, icon: "/images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
@@ -95,11 +95,11 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4CryptogramManagement(e) {
-        if (debugMode) console.log("Callback for cryptogram management", e);
+    function callback4TableManagement(e) {
+        if (debugMode) console.log("Callback for table management", e);
 
-        cleanUp4CryptogramManagement();
-        navigate("/cryptogramManagement");
+        cleanUp4TableManagement();
+        navigate("/tableManagement");
         return;
     };
 
