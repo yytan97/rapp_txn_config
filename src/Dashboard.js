@@ -34,10 +34,12 @@ export function Dashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "create_new_institution", callback: callback4CreateNewInstitution, icon: "domain", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "cryptogram_management", callback: callback4CryptogramManagement, icon: "key", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
-        { name: "timer_management", callback: callback4TimerManagement, icon: "timer", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
-        { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "feed", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "merchant", content: "merchant_content", callback: callback4CreateNewInstitution, icon: "/images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "authenticate", content: "auth_content", callback: callback4CryptogramManagement, icon: "/images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
+        { name: "trans_history", content: "trans_content", callback: callback4TimerManagement, icon: "/images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
+        { name: "sys_config", content: "config_content", callback: callback4BINPrefixManagement, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "sys_monitoring", content: "monitoring_content", callback: callback4BINPrefixManagement, icon: "/images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "ui_workspace", content: "ui_content", callback: callback4BINPrefixManagement, icon: "/images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -137,30 +139,55 @@ export function Dashboard({ debugMode = false }) {
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
 
-                    <div className="container-fluid" style={{ minHeight: "100vh", }}>
-                        <div className="row g-3" >
+                    <div className="container-fluid pl-24 pr-24 pt-52" style={{ minHeight: "100vh", }}>
+                        <div className="row">
 
-                            <div className="col-12">
-                                <h4 className="mt-3 fw-bold">{sl.l_title}</h4>
+                            <div className="position-relative">
+                                <div className="welcome-container-box">
+                                    <div className="title">
+                                        {sl.l_main_dashboard}
+                                    </div>
+                                    <div className="content">
+                                        {sl.l_main_dashboard}
+                                    </div>
+                                </div>
+                                <div className="image-pos">
+                                    <img src="images/boy.svg" style={{width: "297px", height: "164px"}}/>
+                                </div>
+                            </div>
+                            <div className="col-12 pt-12 pb-16">
+                                <div className="title-font fw-bold">
+                                    {sl.l_title}
+                                </div>
+                                <div className="fs-14-unity grey-font">
+                                    {sl.l_all_tools}
+                                </div>
                             </div>
 
                             {
                                 menuList.map((record, index) => {
                                     if (check4Right(record.accessObject, record.accessAction))
                                         return (
-                                            <div key={index} className="col-3">
-                                                <div className="d-flex flex-column justify-content-center align-items-center border rounded p-3 synap-btn-option"
+                                            <div key={index} className="col-3 d-flex mb-24">
+                                                <div className="w-100 h-100 d-flex flex-column border synap-btn-option dashboard-card"
                                                     role="button" onClick={(e) => click4MenuOption(e, record)}>
-                                                    <span className="material-icons-outlined text-primary"
-                                                        style={{ fontSize: "64px" }}>{record.icon}</span>
-                                                    <div className="d-flex flex-column justify-content-center align-items-center "
-                                                        style={{ height: "64px" }}>
-                                                        <div className="fs-14-unity text-center"
+                                                    <img src={record.icon} alt={record.name} className="menu-img-icon" />
+                                                    <div className="d-flex flex-column justify-content-center">
+                                                        <div className="fs-16-unity fw-bold pt-24"
                                                             dangerouslySetInnerHTML={{
                                                                 __html: tBox.getLabel(sl, record.name, "l_")
                                                             }} >
                                                         </div>
+                                                        <div className="pt-4px pb-32 fs-14-unity dark-grey-font"
+                                                            dangerouslySetInnerHTML={{
+                                                                __html: tBox.getLabel(sl, record.content, "l_")
+                                                            }} >
+                                                        </div>
                                                     </div>
+                                                    <button className="btn btn-outline-dark mt-32 manage-btn" type="button" onClick={(e) => click4MenuOption(e, record)}>
+                                                        {sl.b_manage}
+                                                        <i class="fa-sharp fa-solid fa-arrow-right" style={{paddingLeft: "8px"}}></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         );
