@@ -169,8 +169,11 @@ export function Dashboard({ debugMode = false }) {
                                     if (check4Right(record.accessObject, record.accessAction))
                                         return (
                                             <div key={index} className="col-3 d-flex mb-24">
-                                                <div className="w-100 h-100 d-flex flex-column border synap-btn-option dashboard-card"
+                                                <div className="w-100 h-100 d-flex flex-column border synap-btn-option dashboard-card position-relative"
                                                     role="button" onClick={(e) => click4MenuOption(e, record)}>
+                                                    <span className="fs-12-unity dashboard-label badge bg-success position-absolute top-0 end-0">
+                                                        Connecting
+                                                    </span>
                                                     <img src={record.icon} alt={record.name} className="menu-img-icon" />
                                                     <div className="d-flex flex-column justify-content-center">
                                                         <div className="fs-16-unity fw-bold pt-24"
