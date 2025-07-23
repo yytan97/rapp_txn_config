@@ -37,7 +37,7 @@ export function Dashboard({ debugMode = false }) {
         { name: "merchant", content: "merchant_content", callback: callback4CreateNewInstitution, icon: "/images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
         { name: "authenticate", content: "auth_content", callback: callback4CryptogramManagement, icon: "/images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
         { name: "trans_history", content: "trans_content", callback: callback4TimerManagement, icon: "/images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
-        { name: "sys_config", content: "config_content", callback: callback4BINPrefixManagement, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "sys_config", content: "config_content", callback: callback4SystemComfigurationDashboard, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
         { name: "sys_monitoring", content: "monitoring_content", callback: callback4BINPrefixManagement, icon: "/images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
         { name: "ui_workspace", content: "ui_content", callback: callback4BINPrefixManagement, icon: "/images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
     ];
@@ -118,6 +118,13 @@ export function Dashboard({ debugMode = false }) {
 
         cleanUp4BINPrefixManagement();
         navigate("/binPrefixManagement");
+        return;
+    };
+
+    function callback4SystemComfigurationDashboard(e) {
+        if (debugMode) console.log("Callback for System Configuration Dashboard", e);
+
+        navigate("/systemConfigurationDashboard");
         return;
     };
 

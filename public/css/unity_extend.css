@@ -4,7 +4,7 @@ body {
 
 .bg-unity-1 {
 	min-height: 100vh; 
-	background: linear-gradient( to bottom, #eaecf0 0px, #eaecf0 300px, #fff 301px);
+	/* background: linear-gradient( to bottom, #eaecf0 0px, #eaecf0 300px, #fff 301px); */
 }
 
 .bg-unity-3 {
@@ -176,16 +176,16 @@ body {
 	padding-top: 8px;
 }
 
+.pt-12 {
+	padding-top: 12px;
+}
+
 .pt-16 {
 	padding-top: 16px;
 }
 
 .pt-24 {
 	padding-top: 24px;
-}
-
-.pt-12 {
-	padding-top: 12px;
 }
 
 .pt-52 {
@@ -294,4 +294,29 @@ body {
     position: absolute;
     top: -40%;
     right: 0%;
+}
+
+.sm-card {
+	border-radius: 16px;
+	box-shadow: 0px 2px 4px 0px rgba(36, 38, 39, 0.16);
+	padding: 24px;
+	height: auto;
+	width: calc(100%/3);
+	margin-right: 24px;
+}
+
+.sm-card:last-child {
+	margin-right: 0px;
+}
+
+.sm-card .label {
+	color: #619FCB;
+	font-weight: 600;
+	font-size: 12px;
+}
+
+.sm-card .num-count {
+	font-size: 32px;
+	font-weight: 700;
+	color: #1D1F20;
 }

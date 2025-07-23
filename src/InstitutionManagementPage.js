@@ -8,6 +8,7 @@ import { globalContext } from "./globalContext.js";
 
 // import { ErrorLine } from "./ErrorLine.js";
 import { DumpPanel } from "./DumpPanel.js";
+import { Card } from "./Card.js";
 
 import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
@@ -351,14 +352,25 @@ export function InstitutionManagementPage({ debugMode = true }) {
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
 
-                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
-                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
-                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
+                    <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
+                        <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
+                            <i className="fas fa-chevron-left fa-fw"></i>
+                            {sl.l_institution_settings}
                         </div>
 
-                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_title} </div>
+                        <div className="col-12 pt-12 pb-16">
+                            <div className="title-font fw-bold">
+                                {sl.l_title}
+                            </div>
+                        </div>
 
-                        <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                        <div className="col-12 d-flex">
+                            <Card label={sl.l_institution_last_updated} tip={sl.t_insti_last} numCount="150"/>
+                            <Card label={sl.l_active_institution} tip={sl.t_insti_last} numCount="15"/>
+                            <Card label={sl.l_total_institution} tip={sl.t_insti_last} numCount="10"/>
+                        </div>
+
+                        <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="col-7 pe-3">
                                     <div className="input-group">
