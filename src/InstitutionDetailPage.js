@@ -507,7 +507,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
 
 
     return (
-        <div className="container-fluid px-0 bg-unity-3">
+        <div className="container-fluid px-0 bg-synap-3">
             <TitlePanel />
             <div className="d-flex ">
                 <div style={{ ...(dataset?.sideBarWidth) }}>
@@ -515,47 +515,114 @@ export function InstitutionDetailPage({ debugMode = true }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-
-                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
-
+                    <div className="mt-2 mb-4 pl-24 pr-24" style={{ minHeight: "100vh", }}>
                         <div className=" d-flex justify-content-between">
-                            <div className="col-12 col-md-6 text-white"
-                                style={{ fontSize: "12px", color: "#76797B", cursor: "pointer" }}
+                            <div className="col-12 col-md-6 previous-font"
                                 onClick={() => navigate(-1)} >
-                                <i className="fas fa-chevron-left fa-fw"></i>{sl.l_previous_page}
-                            </div>
-                            <div className="text-end text-white" style={{ fontSize: "12px", color: "#76797B" }}>
-                                {sl.l_last_updated} {tBox.getLastUpdatedDate()}
+                                <i className="fas fa-chevron-left fa-fw"></i>
+                                {sl.l_previous_page}
                             </div>
                         </div>
 
                         <div className="d-flex justify-content-center">
-
-                            <div className="col-3">
-
-                                <div className="px-4" style={{ marginTop: "200px", fontSize: "12px" }}>
-                                    <div className="my-4"
-                                        onClick={() => click4Tab(1)}
-                                        style={tabIndex === 1 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
-                                        {sl.l_institution_information}
+                            <div className="col-11 col-xl-12">
+                                <div>
+                                    <div className="d-flex align-items-center pt-16">
+                                        <div className="fs-14-unity pr-8">
+                                            {sl.l_institution}
+                                        </div>
+                                        <div className={`${getStatusLabelClass(institutionRecord?.institutionStatus)}`}
+                                            style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
+                                            <span >
+                                            {getLabel(sl, institutionRecord?.institutionStatus, "o_status_")}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="my-4"
-                                        onClick={() => click4Tab(2)}
-                                        style={tabIndex === 2 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
-                                        {sl.l_transaction_type}
+                                    <div className="detail-title">
+                                        {institutionRecord?.institutionId}
                                     </div>
-                                    <div className="my-4"
-                                        onClick={() => click4Tab(3)}
-                                        style={tabIndex === 3 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
-                                        {sl.l_routing_information}
+                                    <div className="d-flex justify-content-center align-items-center bg-white upper-card-box mb-24">
+                                        <div style={{ width: "100%" }}>
+                                            <div className="d-flex justify-content-between">
+                                                <div className="fs-14-unity info-synap">
+                                                    <div className="fw-normal pb-4px">
+                                                        {sl.l_last_updated}
+                                                    </div>
+                                                    <div className="fw-semibold">
+                                                        {tBox.getLastUpdatedDate()}
+                                                    </div>
+                                                </div>
+                                                <div className="fs-14-unity info-synap">
+                                                    <div className="fw-normal pb-4px">
+                                                        {sl.l_timer_id}
+                                                    </div>
+                                                    <div className="fw-semibold">
+                                                        {tBox.getLastUpdatedDate()}
+                                                    </div>
+                                                </div>
+                                                <div className="fs-14-unity info-synap">
+                                                    <div className="fw-normal pb-4px">
+                                                        {sl.l_cryptogram_id}
+                                                    </div>
+                                                    <div className="fw-semibold">
+                                                        {tBox.getLastUpdatedDate()}
+                                                    </div>
+                                                </div>
+                                                <div className="fs-14-unity info-synap">
+                                                    <div className="fw-normal pb-4px">
+                                                        {sl.l_routing_id}
+                                                    </div>
+                                                    <div className="fw-semibold">
+                                                        {tBox.getLastUpdatedDate()}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-
                                 </div>
                             </div>
+                        </div>
 
-                            <div className="col-9 ">
+                        {/* <div className="">
+                            <div className="px-4" style={{ fontSize: "12px" }}>
+                                <div className="my-4"
+                                    onClick={() => click4Tab(1)}
+                                    style={tabIndex === 1 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
+                                    {sl.l_institution_information}
+                                </div>
+                                <div className="my-4"
+                                    onClick={() => click4Tab(2)}
+                                    style={tabIndex === 2 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
+                                    {sl.l_transaction_type}
+                                </div>
+                                <div className="my-4"
+                                    onClick={() => click4Tab(3)}
+                                    style={tabIndex === 3 ? { color: '#487798', cursor: "pointer" } : { color: '#76797B', cursor: "pointer" }}>
+                                    {sl.l_routing_information}
+                                </div>
+                            </div>
+                        </div> */}
 
-                                <div className="" style={{ marginTop: "64px" }}>
+                        <div className="tab-wrapper">
+                            <div className="tab-bar">
+                                <div className="col-12 d-flex">
+                                    <div className={`tab-item ${tabIndex === 1 ? 'active' : ''}`} onClick={() => click4Tab(1)}>
+                                        {sl.l_institution_information}
+                                    </div>
+                                    <div className={`tab-item ${tabIndex === 2 ? 'active' : ''}`} onClick={() => click4Tab(2)}>
+                                        {sl.l_transaction_type}
+                                    </div>
+                                    <div className={`tab-item ${tabIndex === 3 ? 'active' : ''}`} onClick={() => click4Tab(3)}>
+                                        {sl.l_routing_information}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="d-flex justify-content-center">
+                            <div className="col-12">
+
+                                {/* <div className="" style={{ marginTop: "64px" }}>
                                     <div className="d-flex align-items-center justify-content-center bg-white px-5"
                                         style={{ borderRadius: "16px 16px 16px 16px", border: "1px solid #ebebeb", minHeight: "154px" }}>
                                         <div style={{ width: "100%" }} >
@@ -575,7 +642,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 {
                                     tabIndex === 1 ? (

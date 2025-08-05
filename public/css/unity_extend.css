@@ -193,6 +193,10 @@ body {
 }
 
 /* padding-bottom */
+.pb-4px {
+	padding-bottom: 4px;
+}
+
 .pb-16 {
 	padding-bottom: 16px;
 }
@@ -207,6 +211,10 @@ body {
 }
 
 /* padding-right */
+.pr-8 {
+	padding-right: 8px;
+}
+
 .pr-24 {
 	padding-right: 24px;
 }
@@ -319,4 +327,79 @@ body {
 	font-size: 32px;
 	font-weight: 700;
 	color: #1D1F20;
+}
+
+.tableRow-title {
+	font-size: 12px;
+	color: #6D7172;
+	font-weight: 400!important;
+}
+
+.bg-synap-3 {
+	min-height: 100vh;
+	background: linear-gradient(to bottom, #DFECF5 0px, #DFECF5 205px, #fff 206px);
+}
+
+.previous-font {
+	font-size: 12px;
+	color: #76797B;
+	cursor: pointer;
+}
+
+.detail-title {
+	font-size: 32px;
+	font-weight: 700;
+}
+
+.upper-card-box {
+	border-radius: 16px;
+	border: 1px solid #ebebeb;
+	padding: 8px;
+	box-shadow: 0px 2px 4px 0px rgba(36, 38, 39, 0.16);
+}
+
+.info-synap {
+    flex: 1;
+    padding: 8px 16px;
+}
+
+.info-synap:not(:last-child) {
+    border-right: 1px solid #d3d3d3; /* Light gray vertical divider */
+}
+
+.tab-wrapper {
+	width: 100%;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-bar {
+	display: flex;
+    gap: 24px;
+	color: #4E7FA2;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.tab-item {
+    font-size: 12px;
+    font-weight: 600;
+    color: #76797B;
+    padding: 8px 18.5px;
+    cursor: pointer;
+    position: relative;
+}
+
+.tab-item.active {
+    color: #487798;
+}
+
+.tab-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #487798;
+    border-radius: 1px;
 }

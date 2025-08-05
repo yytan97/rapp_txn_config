@@ -371,30 +371,31 @@ export function InstitutionManagementPage({ debugMode = true }) {
                         </div>
 
                         <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div className="col-7 pe-3">
+                            <div className="d-flex justify-content-end align-items-center">
+                                <div className="col-4 pe-3">
                                     <div className="input-group">
-                                        <input type="text" className="form-control border-0"
-                                            placeholder={sl.p_search}
-                                            value={searchObject.searchText || ""}
-                                            onChange={change4SearchText}
-                                            onKeyDown={keyPress4SearchText}
-                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                         <button className="btn border-0"
                                             style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
                                             type="button"
                                             onClick={click4Search}>
-                                            <span className="material-icons " style={{ color: "#A4A6A7" }} >search</span>
+                                            <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
                                         </button>
+                                        <input type="text" className="form-control border-0"
+                                            placeholder={sl.p_search_query}
+                                            value={searchObject.searchText || ""}
+                                            onChange={change4SearchText}
+                                            onKeyDown={keyPress4SearchText}
+                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                     </div>
                                 </div>
 
                                 <div>
                                     {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                            <button className="btn btn-ghost-unity " role="button" title={sl.t_add_record}
+                                            <button className="btn btn-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                <span className="material-icons-outlined">add</span>
+                                                {/* <span className="material-icons-outlined">add</span> */}
+                                                {sl.b_add_institution}
                                             </button>
                                         ) : null
                                     }
@@ -406,11 +407,10 @@ export function InstitutionManagementPage({ debugMode = true }) {
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
                                 <table className="table table-hover mb-0">
                                     <thead>
-                                        <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
+                                        <tr className="text-nowrap tableRow-title">
                                             <th className="">
                                                 {sl.h_institution_id}
                                             </th>
-
                                             <th className="">
                                                 {sl.h_institution_timer_id}
                                             </th>
