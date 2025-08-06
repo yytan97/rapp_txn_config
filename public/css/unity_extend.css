@@ -403,3 +403,19 @@ body {
     background-color: #487798;
     border-radius: 1px;
 }
+
+.table-key {
+	font-size: 14px;
+	color: #6D7172;
+	font-weight: 400;
+}
+
+.table-value {
+	font-size: 14px;
+	color: #494D4F;
+	font-weight: 600;
+}
+
+.table-content-padding {
+	padding: 8px 0px;
+}

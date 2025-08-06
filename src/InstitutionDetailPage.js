@@ -557,7 +557,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         {sl.l_timer_id}
                                                     </div>
                                                     <div className="fw-semibold">
-                                                        {tBox.getLastUpdatedDate()}
+                                                        {institutionRecord?.institutionTimerId || "-"}
                                                     </div>
                                                 </div>
                                                 <div className="fs-14-unity info-synap">
@@ -565,7 +565,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         {sl.l_cryptogram_id}
                                                     </div>
                                                     <div className="fw-semibold">
-                                                        {tBox.getLastUpdatedDate()}
+                                                        {institutionRecord?.institutionCryptoId || "-"}
                                                     </div>
                                                 </div>
                                                 <div className="fs-14-unity info-synap">
@@ -573,7 +573,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         {sl.l_routing_id}
                                                     </div>
                                                     <div className="fw-semibold">
-                                                        {tBox.getLastUpdatedDate()}
+                                                        {institutionRecord?.institutionRoutingId || "-"}
                                                     </div>
                                                 </div>
                                             </div>
@@ -652,7 +652,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                             callback4Toggle={callback4TogglePanel}>
                                             <div className="d-flex flex-column align-items-center justify-content-center border-top"
                                                 style={{ minHeight: "168px" }} >
-                                                <div className="px-5 py-1 w-100">
+                                                <div className="pl-24 pr-24 py-1 w-100">
 
                                                     <DisplayLine label={sl.l_institution_record_type} value={institutionRecord?.institutionRecordType} />
                                                     <DisplayLine label={sl.l_institution_owner} value={institutionRecord?.institutionOwner} />
@@ -703,7 +703,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                             callback4Toggle={callback4TogglePanel}>
                                             <div className="d-flex flex-column align-items-center justify-content-center border-top"
                                                 style={{ minHeight: "168px" }} >
-                                                <div className="px-5 py-1 w-100">
+                                                <div className="pl-24 pr-24 py-1 w-100">
 
                                                     <div className="row flex-fill">
                                                         {
@@ -730,8 +730,6 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                 </div>
 
                                             </div>
-
-
 
                                             {
                                                 check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
@@ -807,7 +805,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                             callback4Toggle={callback4TogglePanel}>
                                                             <div className="d-flex flex-column align-items-center justify-content-center border-top"
                                                                 style={{ minHeight: "168px" }} >
-                                                                <div className="px-5 py-1 w-100">
+                                                                <div className="pl-24 pr-24 py-1 w-100">
 
                                                                     <DisplayLine label={sl.l_routing_order} value={record?.routingOrder} />
                                                                     <DisplayLine label={sl.l_link_type} value={record?.linkType} />
@@ -896,11 +894,11 @@ export function InstitutionDetailPage({ debugMode = true }) {
 export function DisplayLine({ label, value, debugMode = false }) {
 
     return (
-        <div className="d-flex justify-content-between align-items-center my-3">
-            <div style={{ color: "#76797B", fontSize: "14px" }}>
+        <div className="d-flex table-content-padding">
+            <div className="col-4 table-key">
                 {label}
             </div>
-            <div style={{ color: "#494D4F", fontSize: "16px" }}>
+            <div className="lol-8 table-value">
                 {value || "-"}
             </div>
         </div>
