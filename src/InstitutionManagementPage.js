@@ -394,14 +394,11 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
                                             <button className="btn btn-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                {/* <span className="material-icons-outlined">add</span> */}
                                                 {sl.b_add_institution}
                                             </button>
                                         ) : null
                                     }
-
                                 </div>
-
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>

@@ -8,6 +8,7 @@ import { globalContext } from "./globalContext.js";
 
 // import { ErrorLine } from "./ErrorLine.js";
 import { DumpPanel } from "./DumpPanel.js";
+import { Card } from "./Card.js";
 
 import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
@@ -343,51 +344,60 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-
-                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
-                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
-                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
+                    <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
+                        <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
+                            <i className="fas fa-chevron-left fa-fw"></i>
+                            {sl.l_institution_settings}
                         </div>
 
-                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_title} </div>
+                        <div className="col-12 pt-12 pb-16">
+                            <div className="title-font fw-bold">
+                                {sl.l_title}
+                            </div>
+                        </div>
+
+                        <div className="col-12 d-flex">
+                            <Card label={sl.l_crypto_created} tip={sl.t_insti_last} numCount="150"/>
+                            <Card label={sl.l_active_cryto} tip={sl.t_insti_last} numCount="15"/>
+                            <Card label={sl.l_total_crypto} tip={sl.t_insti_last} numCount="10"/>
+                        </div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <div className="col-7 pe-3">
+                            <div className="d-flex justify-content-end align-items-center">
+                                <div className="col-4 pe-3">
                                     <div className="input-group">
+                                        <button className="btn border-0"
+                                            style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                            type="button"
+                                            onClick={click4Search}>
+                                            <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
+                                        </button>
                                         <input type="text" className="form-control border-0"
                                             placeholder={sl.p_search}
                                             value={searchObject.searchText || ""}
                                             onChange={change4SearchText}
                                             onKeyDown={keyPress4SearchText}
-                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
-                                        <button className="btn border-0"
-                                            style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
-                                            type="button"
-                                            onClick={click4Search}>
-                                            <span className="material-icons " style={{ color: "#A4A6A7" }} >search</span>
-                                        </button>
+                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} 
+                                            />                                       
                                     </div>
                                 </div>
 
                                 <div>
                                     {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                            <button className="btn btn-ghost-unity " role="button" title={sl.t_add_record}
+                                            <button className="btn btn-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                <span className="material-icons-outlined">add</span>
+                                                {sl.b_add_crypto}
                                             </button>
                                         ) : null
                                     }
-
                                 </div>
-
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
                                 <table className="table table-hover mb-0">
                                     <thead>
-                                        <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
+                                        <tr className="text-nowrap tableRow-title">
                                             <th className="">
                                                 {sl.h_row_id}
                                             </th>
@@ -444,8 +454,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                                 {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
                                                             </div>
                                                         </td>
-                                                        <td className=" " >
-
+                                                        <td className=" ">
                                                             <div className="dropdown dropstart ">
                                                                 <span className="d-inline-flex align-items-center " role="button"
                                                                     data-bs-toggle="dropdown">
