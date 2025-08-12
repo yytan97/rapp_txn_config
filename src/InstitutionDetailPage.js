@@ -29,7 +29,7 @@ let databaseName = "kdb";
 const accessObjectName = "webapp_configuration_access";
 const accessActionPrefix = "institution_management";
 
-let institutionRecord = undefined;
+export let institutionRecord = undefined;
 let rowId = undefined;
 let closePanel = {};
 let tabIndex = 1;
@@ -892,7 +892,6 @@ export function InstitutionDetailPage({ debugMode = true }) {
 };
 
 export function DisplayLine({ label, value, debugMode = false }) {
-
     return (
         <div className="d-flex table-content-padding">
             <div className="col-4 table-key">
