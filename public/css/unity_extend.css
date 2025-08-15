@@ -419,3 +419,9 @@ body {
 .table-content-padding {
 	padding: 8px 0px;
 }
+
+li {
+	list-style-type: none;
+	border-left: none!important;
+	margin-left: 1em;
+}
