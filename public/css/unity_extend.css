@@ -423,5 +423,14 @@ body {
 li {
 	list-style-type: none;
 	border-left: none!important;
-	margin-left: 1em;
+	margin-left: 0em!important;
+}
+
+.btn-more {
+	border: 1px solid #494D4F;
+	border-radius: 8px;
+	background-color: #DFECF5;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }

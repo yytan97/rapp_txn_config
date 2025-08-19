@@ -520,7 +520,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                             <div className="col-12 col-md-6 previous-font"
                                 onClick={() => navigate(-1)} >
                                 <i className="fas fa-chevron-left fa-fw"></i>
-                                {sl.l_previous_page}
+                                {sl.l_institution_management}
                             </div>
                         </div>
 
@@ -897,7 +897,7 @@ export function DisplayLine({ label, value, debugMode = false }) {
             <div className="col-4 table-key">
                 {label}
             </div>
-            <div className="lol-8 table-value">
+            <div className="col-8 table-value">
                 {value || "-"}
             </div>
         </div>

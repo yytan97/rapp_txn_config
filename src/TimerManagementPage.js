@@ -462,7 +462,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                                                 <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                     style={{ borderRadius: "8px" }} >
                                                                     <ul className="list-unstyled p-2 mb-0">
-                                                                        <li style={{boarderLeft: "none"}}>
+                                                                        <li>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"

@@ -219,15 +219,46 @@ export function TimerDetailPage({ debugMode = true }) {
                         <div className="d-flex justify-content-center">
                             <div className="col-11 col-xl-12">
                                 <div>
-                                    <div className="d-flex align-items-center pt-16">
-                                        <div className="fs-14-unity pr-8">
-                                            {sl.l_timer}
+                                    <div className="d-flex justify-content-between align-items-center">
+                                        <div className="d-flex align-items-center pt-16">
+                                            <div className="fs-14-unity pr-8">
+                                                {sl.l_timer}
+                                            </div>
+                                            <div className={`${getStatusLabelClass(dataRecord?.recordStatus)}`}
+                                                style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
+                                                <span >
+                                                {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className={`${getStatusLabelClass(dataRecord?.recordStatus)}`}
-                                            style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
-                                            <span >
-                                            {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
+                                        <div className="dropdown dropstart">
+                                            {/* <button className="btn-more p-2">
+                                                <span class="material-symbols-outlined">more_vert</span>
+                                            </button> */}
+                                            <span className="d-inline-flex align-items-center " role="button" data-bs-toggle="dropdown">
+                                                <div className="btn-more p-2">
+                                                    <span className="material-icons fs-18-unity">more_vert</span>
+                                                </div>
                                             </span>
+                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0" style={{ borderRadius: "8px" }}>
+                                                <ul className="list-unstyled p-2 mb-0">
+                                                    <li>
+                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
+                                                            <span>{sl.b_change_status}</span>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
+                                                            <span>{sl.b_delete_timer}</span>
+                                                        </button>
+                                                    </li>
+                                                    <li>
+                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
+                                                            <span>{sl.b_copy_id}</span>
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="detail-title">
@@ -391,7 +422,7 @@ export function DisplayLine({ label, value, debugMode = false }) {
             <div className="col-4 table-key">
                 {label}
             </div>
-            <div className="lol-8 table-value">
+            <div className="col-8 table-value">
                 {value || "-"}
             </div>
         </div>
