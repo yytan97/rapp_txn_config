@@ -197,6 +197,10 @@ body {
 	padding-bottom: 4px;
 }
 
+.pb-12 {
+	padding-bottom: 12px;
+}
+
 .pb-16 {
 	padding-bottom: 16px;
 }
@@ -433,4 +437,27 @@ li {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+}
+
+.close-btn {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding-right: 24px;
+	color: #494D4F;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.file-font {
+	font-weight: 700;
+	font-size: 18px;
+	color: #1D1F20;
+}
+
+.filename-font {
+	font-weight: 400px;
+	font-size: 14px;
+	color: #6D7172;
+
 }

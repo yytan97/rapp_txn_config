@@ -37,6 +37,10 @@ let dataContent = undefined;
 let editMode = 0;
 let filename = undefined;
 
+let parts = undefined;
+let pathname = undefined;
+let file = undefined;
+
 export function cleanUp() {
     filename = undefined;
 
@@ -78,6 +82,13 @@ export function EditConfigurationPage({ debugMode = true }) {
 
         console.log("Edit mode", editMode);
         console.log("Filename", filename);
+
+        const parts = filename.split("/");
+        file = parts.pop();
+        pathname = parts.join("/");
+       
+        console.log("pathname", pathname);
+        console.log("file", file);
 
         let timer = setTimeout(async () => {
 
@@ -285,62 +296,69 @@ export function EditConfigurationPage({ debugMode = true }) {
     };
 
     return (
-        <div className="container " >
+        <div className="container-fluid px-0">
 
-            <div className="border-bottom d-flex align-items-center justify-content-between sticky-top bg-white"
-                style={{ minHeight: "60px" }}>
-
-                <div style={{ color: "#494D4F", fontSize: "16px", cursor: "pointer" }}
-                    onClick={() => navigate(-1)}>
-                    <i className="fas fa-arrow-left fa-fw me-2 ms-1"></i> {sl.l_previous_page}
+            <div className="border-bottom d-flex align-items-center justify-content-end sticky-top bg-white" style={{ minHeight: "50px" }}>
+                <div className="close-btn" onClick={() => navigate(-1)}>
+                    <span class="material-symbols-outlined">close</span>
                 </div>
+            </div>
 
-                <div >
+            <div className="pl-24 pr-24 pt-24">
+                <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div className="d-flex">
+                            <span class="material-symbols-outlined">description</span>
+                            <div className="file-font">
+                                {file}
+                            </div>
+                        </div>
+                        <div className="filename-font">
+                            {filename}
+                        </div>
+                    </div>
+                    
+                    <div>
+                        {
+                                (editMode === 1 && check4Right(accessObjectName, `${accessActionPrefix}.edit`)) ? (
+                                    <button className="ms-1 btn btn-ghost-unity "
+                                        type="button"
+                                        onClick={click4UpdateFile}
+                                        title={sl.t_save}
+                                        disabled={!dirty} >
+                                        <span className="material-icons-outlined fs-24-unity">upload_file</span>
+                                    </button>
+                                ) : null
+                            }
 
-                    {
-                        (editMode === 1 && check4Right(accessObjectName, `${accessActionPrefix}.edit`)) ? (
-                            <button className="ms-1 btn btn-ghost-unity "
-                                type="button"
-                                onClick={click4UpdateFile}
-                                title={sl.t_save}
-                                disabled={!dirty} >
-                                <span className="material-icons-outlined fs-24-unity">upload_file</span>
+                            <button className="ms-1 btn btn-ghost-unity " type="button"
+                                onClick={click4EditorMenu}
+                                title="Editor shortcut menu">
+                                <span className="material-icons-outlined fs-24-unity">menu_open</span>
                             </button>
-                        ) : null
-                    }
-
-                    <button className="ms-1 btn btn-ghost-unity " type="button"
-                        onClick={click4EditorMenu}
-                        title="Editor shortcut menu">
-                        <span className="material-icons-outlined fs-24-unity">menu_open</span>
-                    </button>
-                    <button className="ms-1 btn btn-ghost-unity " type="button"
-                        onClick={click4FoldBlock}
-                        title="Fold block">
-                        <span className="material-icons-outlined fs-24-unity">unfold_less</span>
-                    </button>
-                    <button className="ms-1 btn btn-ghost-unity " type="button"
-                        onClick={click4UnfoldBlock}
-                        title="Unfold block">
-                        <span className="material-icons-outlined fs-24-unity">unfold_more</span>
-                    </button>
-
+                            <button className="ms-1 btn btn-ghost-unity " type="button"
+                                onClick={click4FoldBlock}
+                                title="Fold block">
+                                <span className="material-icons-outlined fs-24-unity">unfold_less</span>
+                            </button>
+                            <button className="ms-1 btn btn-ghost-unity " type="button"
+                                onClick={click4UnfoldBlock}
+                                title="Unfold block">
+                                <span className="material-icons-outlined fs-24-unity">unfold_more</span>
+                            </button>
+                    </div>
+                </div>
+                    <div className="mb-3 pt-24">
+                    <div id="monaco" className="" style={{ width: "100%", height: "calc(100vh - 100px)" }}></div>
                 </div>
 
+                <DumpPanel dataList={[
+                    { name: "sl", data: sl },
+                ]} debugMode={debugMode} />
             </div>
-
-            <div style={{ fontSize: "12px" }}>{filename}</div>
-            <div className="mb-3 ">
-                <div id="monaco" className="" style={{ width: "100%", height: "calc(100vh - 100px)" }}></div>
-            </div>
-
-            <DumpPanel dataList={[
-                { name: "sl", data: sl },
-            ]} debugMode={debugMode} />
         </div >
     );
 };
-
 
 let myLangDefine = {
     // Set defaultToken to invalid to see what you do not tokenize yet
