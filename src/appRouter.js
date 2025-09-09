@@ -180,7 +180,6 @@ export let appRouterDefination = [
             },
             {
                 path: "switchTransaction",
-                Component: SwitchTransactionControlPage,
             },
             {
                 path: "switchServer",

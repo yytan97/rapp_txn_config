@@ -35,9 +35,9 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
 
     const menuList = [
         { name: "institution_settings", callback: callback4InstitutionSettings, icon: "/images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "table_management", callback: callback4TableManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "table_management", callback: callback4TableListManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
         { name: "configuration_file", callback: callback4ConfigurationFileManagement, icon: "/images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "hot_card", callback: callback4BINPrefixManagement, icon: "/images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "hot_card", icon: "/images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -95,11 +95,11 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4TableManagement(e) {
+    function callback4TableListManagement(e) {
         if (debugMode) console.log("Callback for table management", e);
 
         cleanUp4TableManagement();
-        navigate("/tableManagement");
+        navigate("/tableListManagement");
         return;
     };
 
@@ -111,13 +111,13 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4BINPrefixManagement(e) {
-        if (debugMode) console.log("Callback for BIN prefix management", e);
+    // function callback4BINPrefixManagement(e) {
+    //     if (debugMode) console.log("Callback for BIN prefix management", e);
 
-        cleanUp4BINPrefixManagement();
-        navigate("/binPrefixManagement");
-        return;
-    };
+    //     cleanUp4BINPrefixManagement();
+    //     navigate("/binPrefixManagement");
+    //     return;
+    // };
 
     return (
         <div className="container-fluid px-0">

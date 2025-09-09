@@ -249,7 +249,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'institution_management.access') ?
                         (
                             <>
-                                <div className={`my-link ${class4Active('/institutionManagement')}`} role="button" onClick={click4InstitutionManagement}>
+                                <div className={`my-link ${class4Active('')}`} role="button">
                                     <span className="material-icons-outlined fs-24-unity">point_of_sale</span>
                                     {menuMode === 1 && (
                                         <span className="ms-2 long-mode-label">{sl.l_merchant}</span>
@@ -266,7 +266,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'crypto_management.access') ?
                         (
                             <>
-                                <div className={`my-link ${class4Active('/cryptogramManagement')}`} role="button" onClick={click4CryptogramManagement}>
+                                <div className={`my-link ${class4Active('')}`} role="button">
                                     <span className="material-icons-outlined fs-24-unity">manage_accounts</span>
                                     {menuMode === 1 && (
                                         <span className="ms-2 long-mode-label">{sl.l_authenticate}</span>
@@ -283,7 +283,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'table.access') ?
                         (
                             <>
-                                <div className={`my-link ${class4Active('/tableListManagement')}`} role="button" onClick={click4Table}>
+                                <div className={`my-link ${class4Active('')}`} role="button">
                                     <span className="material-icons-outlined fs-24-unity">request_quote</span>
                                     {menuMode === 1 && (
                                         <span className="ms-2 long-mode-label">{sl.l_transaction_history}</span>
@@ -300,7 +300,8 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}> 
-                                <div className={`my-link ${class4Active('/systemConfigurationDashboard')} ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
+                                <div className={`my-link ${(class4Active('/systemConfigurationDashboard') || class4Active('/institutionSettingsDashboard') || class4Active('/institutionManagement') || class4Active('/tableListManagement') || class4Active('/configurationFileManagement') || class4Active('/cryptogramManagement') || class4Active('/timerManagement') || class4Active('/binPrefixManagement')) ? 'active' : ''} 
+                                ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
                                     toggleSubmenu();
                                     click4SystemConfigurationDashboard(e); 
                                 }}>
@@ -354,7 +355,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <>
-                                <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Configuration}>
+                                <div className={`my-link ${class4Active('')}`} role="button">
                                     <span className="material-icons-outlined fs-24-unity">monitor_heart</span>
                                     {menuMode === 1 && (
                                         <span className="ms-2 long-mode-label">{sl.l_system_monitoring}</span>
@@ -371,7 +372,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <>
-                                <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Configuration}>
+                                <div className={`my-link ${class4Active('')}`} role="button">
                                     <span className="material-icons-outlined fs-24-unity">design_services</span>
                                     {menuMode === 1 && (
                                         <span className="ms-2 long-mode-label">{sl.l_ui_workspace}</span>

@@ -424,11 +424,11 @@ body {
 	padding: 8px 0px;
 }
 
-li {
+/* li {
 	list-style-type: none;
 	border-left: none!important;
 	margin-left: 0em!important;
-}
+} */
 
 .btn-more {
 	border: 1px solid #494D4F;

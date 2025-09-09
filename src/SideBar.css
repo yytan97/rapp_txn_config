@@ -290,10 +290,14 @@
   
   /* Submenu items container */
   .my-submenu-items {
-    padding-left: 8px;
+    margin-left: 8px;
     /* border-left: 1px solid #e0e0e0; */
     margin-top: 5px;
     display: none;
+  }
+
+  .my-submenu-items > div:last-child {
+    border-left: none!important;
   }
   
   .my-submenu-items.open {
@@ -369,7 +373,7 @@ ul {
     top: 0;
     left: -1px;
 
-    xxx-bottom: 50%;
+    /* xxx-bottom: 50%; */
     height: 1.3em;
 
     width: 0.95em;
@@ -382,7 +386,6 @@ ul {
   ul>li:last-child {
     border-left: 1px solid transparent;
   }
-
 
   summary {
     list-style: none;

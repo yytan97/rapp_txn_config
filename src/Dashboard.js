@@ -34,12 +34,12 @@ export function Dashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "merchant", content: "merchant_content", callback: callback4CreateNewInstitution, icon: "/images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "authenticate", content: "auth_content", callback: callback4CryptogramManagement, icon: "/images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
-        { name: "trans_history", content: "trans_content", callback: callback4TimerManagement, icon: "/images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
-        { name: "sys_config", content: "config_content", callback: callback4SystemComfigurationDashboard, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
-        { name: "sys_monitoring", content: "monitoring_content", callback: callback4BINPrefixManagement, icon: "/images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
-        { name: "ui_workspace", content: "ui_content", callback: callback4BINPrefixManagement, icon: "/images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "merchant", content: "merchant_content", icon: "/images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "authenticate", content: "auth_content", icon: "/images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
+        { name: "trans_history", content: "trans_content", icon: "/images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
+        { name: "sys_config", content: "config_content", callback: callback4SystemConfigurationDashboard, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "sys_monitoring", content: "monitoring_content", icon: "/images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "ui_workspace", content: "ui_content", icon: "/images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -86,42 +86,42 @@ export function Dashboard({ debugMode = false }) {
         return;
     };
 
-    function callback4CreateNewInstitution(e) {
-        if (debugMode) console.log("Callback for create new institution", e);
+    // function callback4CreateNewInstitution(e) {
+    //     if (debugMode) console.log("Callback for create new institution", e);
 
-        let sp = new URLSearchParams({
-            editMode: 0
-        });
+    //     let sp = new URLSearchParams({
+    //         editMode: 0
+    //     });
 
-        navigate("/editInstitution");
-        return;
-    };
+    //     navigate("/editInstitution");
+    //     return;
+    // };
 
-    function callback4CryptogramManagement(e) {
-        if (debugMode) console.log("Callback for cryptogram management", e);
+    // function callback4CryptogramManagement(e) {
+    //     if (debugMode) console.log("Callback for cryptogram management", e);
 
-        cleanUp4CryptogramManagement();
-        navigate("/cryptogramManagement");
-        return;
-    };
+    //     cleanUp4CryptogramManagement();
+    //     navigate("/cryptogramManagement");
+    //     return;
+    // };
 
-    function callback4TimerManagement(e) {
-        if (debugMode) console.log("Callback for timer management", e);
+    // function callback4TimerManagement(e) {
+    //     if (debugMode) console.log("Callback for timer management", e);
 
-        cleanUp4TimerManagement();
-        navigate("/timerManagement");
-        return;
-    };
+    //     cleanUp4TimerManagement();
+    //     navigate("/timerManagement");
+    //     return;
+    // };
 
-    function callback4BINPrefixManagement(e) {
-        if (debugMode) console.log("Callback for BIN prefix management", e);
+    // function callback4BINPrefixManagement(e) {
+    //     if (debugMode) console.log("Callback for BIN prefix management", e);
 
-        cleanUp4BINPrefixManagement();
-        navigate("/binPrefixManagement");
-        return;
-    };
+    //     cleanUp4BINPrefixManagement();
+    //     navigate("/binPrefixManagement");
+    //     return;
+    // };
 
-    function callback4SystemComfigurationDashboard(e) {
+    function callback4SystemConfigurationDashboard(e) {
         if (debugMode) console.log("Callback for System Configuration Dashboard", e);
 
         navigate("/systemConfigurationDashboard");

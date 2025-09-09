@@ -242,11 +242,6 @@ export function ConfigurationFileManagementPage({ debugMode = true }) {
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
                     <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
-                        {/* <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
-                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
-                        </div>
-
-                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_configuration_file}</div> */}
                         <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                             <i className="fas fa-chevron-left fa-fw"></i>
                             {sl.l_system_configuration}
@@ -265,7 +260,7 @@ export function ConfigurationFileManagementPage({ debugMode = true }) {
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="col-12">
                                     <div className="input-group">
-                                        <input type="text" className="form-control border-0" placeholder={sl.p_filter}
+                                        <input type="text" className="form-control border-0" placeholder={sl.p_search_query}
                                             value={filterText}
                                             onChange={change4FilterText}
                                             style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
@@ -276,7 +271,6 @@ export function ConfigurationFileManagementPage({ debugMode = true }) {
                                         </button>
                                     </div>
                                 </div>
-
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "50vh" }} >
@@ -335,10 +329,7 @@ export function ConfigurationFileManagementPage({ debugMode = true }) {
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
-
-
                     </div>
 
                     <DumpPanel dataList={[
