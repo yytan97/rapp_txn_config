@@ -34,7 +34,7 @@ const accessObjectName = "webapp_configuration_access";
 const accessActionPrefix = "cryptogram_management";
 
 let dataRecord = undefined;
-let fieldList = [];
+export let fieldList = [];
 
 // parameter
 let rowId = undefined;
@@ -443,6 +443,7 @@ export function EditTablePage({ debugMode = true }) {
         if (debugMode) console.log("Click for show schema ", e);
 
         showTableSchemaDialogBox(fieldList);
+        console.log("schema fieldlist:",fieldList)
         return;
     };
 
