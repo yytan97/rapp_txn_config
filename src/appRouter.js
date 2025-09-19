@@ -44,6 +44,7 @@ import { EditTimerPage } from "./EditTimerPage.js";
 import { BINPrefixManagementPage } from "./BINPrefixManagementPage.js";
 import { BINPrefixDetailPage } from "./BINPrefixDetailPage.js";
 import { EditBINPrefixPage } from "./EditBINPrefixPage.js";
+import { EditBINPrefixPageV2 } from "./EditBINPrefixPageV2.js";
 
 import { SwitchInstitutionControlPage } from "./SwitchInstitutionControlPage.js";
 import { SwitchLinkControlPage } from "./SwitchLinkControlPage.js";
@@ -161,6 +162,10 @@ export let appRouterDefination = [
             {
                 path: "editBINPrefix",
                 Component: EditBINPrefixPage,
+            },
+            {
+                path: "editBINPrefixV2",
+                Component: EditBINPrefixPageV2,
             },
             {
                 path: "transactionHistory",

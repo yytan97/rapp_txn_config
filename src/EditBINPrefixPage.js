@@ -385,7 +385,7 @@ export function EditBINPrefixPage({ debugMode = true }) {
 
                     <div className="pb-3 border-bottom">
                         <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
-                            {(editMode === 0) ? sl.l_add_cryptogram : sl.l_edit_cryptogram}
+                            {(editMode === 0) ? sl.l_add_timer : sl.l_edit_timer}
                         </div>
 
                         <div style={{ color: "#76797B", fontSize: "12px" }}>
