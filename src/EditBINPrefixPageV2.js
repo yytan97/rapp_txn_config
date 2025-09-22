@@ -133,8 +133,15 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
     // 👉 Navigation Handlers
     const goNext = () => {
+        formObject.valid = ref4Form.current.checkValidity();
+
         if (formObject.valid) {
             setStep(2);
+
+            setTimeout(() => {
+                formObject.valid = ref4Form.current.checkValidity();
+                setRedraw(v => v + 1); // trigger re-render for button state
+            }, 0);
         } else {
             alert("Please fill all required fields before proceeding.");
         }
