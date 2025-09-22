@@ -422,7 +422,8 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                 </div> */}
             </div>
 
-            <form ref={ref4Form} className="d-flex justify-content-left mt-4 mb-5 ml-24">
+            <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
+                ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
                 {renderStepper()}
                 <div className="col-7" style={{ minHeight: "80vh" }}>
                     {step === 1 && (
