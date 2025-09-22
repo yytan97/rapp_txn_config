@@ -484,39 +484,44 @@ body {
 	background-color: #F2F4F7;
 	padding: 80px 48px;
 	border-radius: 24px;
+	height: 100%;
 }
 
-/* Vertical Steps Style */
+.stepper-title {
+	font-weight: 700;
+	font-size: 14px;
+	color: #6D7172;
+}
+
 .steps-vertical {
 	max-width: 500px;
-	margin: 2rem auto;
 	padding: 0;
 }
 
 .step-vertical {
 	display: flex;
 	position: relative;
-	padding: 10px 0;
+	padding: 5px 0;
 }
 
 .step-vertical:not(:last-child)::after {
 	content: '';
 	position: absolute;
 	left: 7px;
-	top: 40px;
+	top: 18px;
 	bottom: 0;
-	width: 2px;
+	border-width: 1px;
 	height: 20px;
-	background: red;
-	border-style: dotted;
+	border-color: #619FCB;
+	border-style: dashed;
 }
 
 .step-vertical-icon {
 	width: 16px;
-	height: 18px;
+	height: 16px;
 	border-radius: 50%;
 	background: white;
-	border: 0.5px solid #dee2e6;
+	border: 0.3px solid #dee2e6;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -528,15 +533,27 @@ body {
 	flex-shrink: 0;
 }
 
-/* .step-vertical-content {
-	padding-top: 0.5rem;
-} */
+.step-vertical-icon .material-symbols-outlined.completed {
+	border-radius: 50%;
+	color: white;
+	background-color: #619FCB;
+}
+
+.step-vertical-content {
+	font-size: 12px;
+	color: #494D4F;
+	font-weight: 400;
+}
+
+.step-vertical.active .step-vertical-content {
+	font-weight: 600;
+} 
 
 .step-vertical.active .step-vertical-icon {
 	background: white;
 	border-color: #619FCB;
 	color: #619FCB;
-	box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2);
+	/* box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.2); */
 }
 
 .step-vertical.complete .step-vertical-icon {
@@ -544,5 +561,7 @@ body {
 	border-color: #619FCB;
 	color: #619FCB;
 }
+/* stepper */
+
 
 

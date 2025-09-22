@@ -349,21 +349,30 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
     const renderStepper = () => {
         if (editMode !== 0) return null; // hide in Edit mode
         return (
-            <div className="col-4 mr-24">
+            <div className="col-3 mr-24">
                 <div className="stepper-background">
-                    <div>Create BIN Prefix</div>
+                    <div className="stepper-title">
+                        {sl.l_create_bin_prefix}
+                    </div>
                     <div className="steps-vertical">
-                        <div className={`step-vertical ${step >= 1 ? "active" : ""} d-flex`}>
+                        <div className={`step-vertical ${step >= 1 ? "active" : ""} d-flex align-items-center`}>
                             <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined">adjust</span>
+                                <span className={`material-symbols-outlined ${step > 1 ? "completed" : "pending"}`} style={{
+                                    fontSize: "19px"}}>
+                                    {step > 1 ? "check_circle" : "adjust"}
+                                </span>
                             </div>
-                            <div className="step-vertical-content">Prefix Details</div>
+                            <div className="step-vertical-content" style={{fontWeight: step === 2 ? "400" : "600"}}>
+                                {sl.l_prefix_details}
+                            </div>
                         </div>
                         <div className={`step-vertical ${step === 2 ? "active" : ""} d-flex`}>
                             <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined">adjust</span>
+                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
                             </div>
-                            <div className="step-vertical-content">Assign Prefix</div>
+                            <div className="step-vertical-content">
+                                {sl.l_assign_prefix}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -408,34 +417,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
             <form ref={ref4Form} className="d-flex justify-content-left mt-4 mb-5 ml-24">
                 {renderStepper()}
-                {/* <div className="col-4 mr-24">
-                    <div className="stepper-background">
-                        <div>
-                            Create BIN Prefix
-                        </div>
-                        <div>
-                            <div class="steps-vertical">
-                                <div class="step-vertical complete d-flex">
-                                    <div class="step-vertical-icon">
-                                        <span class="material-symbols-outlined">adjust</span>
-                                    </div>
-                                    <div class="step-vertical-content">
-                                        <div>{sl.l_prefix_details}</div>
-                                    </div>
-                                </div>
-                                <div class="step-vertical active d-flex">
-                                    <div class="step-vertical-icon">
-                                        <span class="material-symbols-outlined">adjust</span>
-                                    </div>
-                                    <div class="step-vertical-content">
-                                        <div>{sl.l_assign_prefix}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
-                <div className="col-7" style={{ minHeight: "50vh" }}>
+                <div className="col-7" style={{ minHeight: "80vh" }}>
                     {step === 1 && (
                         <>
                             <div className="pb-3 border-bottom">
@@ -572,19 +554,19 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('priority', sl, formObject)} />
                                 </div>
-                                <div className="mt-4 d-flex justify-content-between">
-                                    <button type="button" className="btn btn-secondary" onClick={goBack}>
+                                <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "410px"}}>
+                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
                                         {sl.b_back}
                                     </button>
-                                    <button type="submit" className="btn btn-success">
+                                    <button className="btn btn-primary"
+                                    type="submit" 
+                                    disabled={!formObject?.valid || !formObject?.dirty}>
                                         {sl.b_save}
                                     </button>
                                 </div>
                             </div>
                         </>
                     )}
-                    
-                    
                 </div >
             </form >
 
