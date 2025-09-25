@@ -55,6 +55,7 @@ export function cleanUp() {
         valid: false,
         fieldState: {},
     };
+
     return;
 };
 
@@ -76,11 +77,26 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
     let [redraw, setRedraw] = react.useState(0);
     const [step, setStep] = react.useState(1);
+    const [showInstitutionDrawer, setShowInstitutionDrawer] = react.useState(false);
+    const [institutionList, setInstitutionList] = react.useState([]);
+    const [searchTerm, setSearchTerm] = react.useState("");
+    const [selectedInstitution, setSelectedInstitution] = react.useState("");
     const maxLength = 150;
     const ref4Form = react.useRef();
 
+    const filteredInstitutions = institutionList.filter(id =>
+        id.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    let [refresh, setRefresh] = react.useState(true);
+    let [reset, setReset] = react.useState(true);
+
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
+
+    const passedInstitutionList = location.state?.institutionList || [];
+    console.log("passedInstitutionList", passedInstitutionList);
+    
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -119,7 +135,41 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
     }, [redraw]);
 
     let blocker = reactRouter.useBlocker(shouldBlock);
-    console.log("Blocker", blocker);
+    
+    react.useEffect(() => {
+        if (step === 2) {
+          const fetchInstitutions = async () => {
+            try {
+            let result = await apiBox.getRecord(
+                getSessionToken(),
+                "kdb",                 
+                "kswitchbinprefix",   
+                "recordStatus = 'A'"
+            );
+              
+            if (result.flag) {
+                const allIds = result.data.records.map(item => {
+                  if (item.recordData) {
+                    return item.recordData.institutionId; 
+                  }
+                  return item.institutionId; 
+                }).filter(Boolean);
+              
+                const uniqueSortedIds = [...new Set(allIds)].sort((a, b) =>
+                  a.localeCompare(b)
+                );
+              
+                console.log("Unique + Sorted Institution IDs:", uniqueSortedIds);
+                setInstitutionList(uniqueSortedIds);
+              }
+            } catch (err) {
+              console.error("Error fetching institutions:", err);
+            }
+          };
+      
+          fetchInstitutions();
+        }
+      }, [step]);
 
     if (blocker.state === "blocked") {
         if (debugMode) console.log("Show discard confirm dialog box");
@@ -150,7 +200,6 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
     const goBack = () => setStep(1);
 
     // event handling function here ...
-
     async function loadDataList() {
         showStateDialogBox();
 
@@ -202,7 +251,6 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
             window.scrollTo(0, 0);
             setRedraw((v) => v + 1);
         }
-
     };
 
     function getLabel(sl, value, prefix = "") {
@@ -344,11 +392,6 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
             }
         });
 
-        return;
-    };
-
-    function click4Echo(e, record, index) {
-        if (debugMode) console.log("Click for echo ", e, record, index);
         return;
     };
 
@@ -535,7 +578,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                 </div>
                             </div>
                             <div className="px-4 mt-4">
-                                <div>
+                                {/* <div>
                                     <InputLabel label={sl.l_institution_id} required />
                                     <select name="institutionId"
                                         className={`form-select ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
@@ -549,7 +592,100 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                     </select>
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
+                                </div> */}
+                                <div>
+                                    <InputLabel label={sl.l_institution_id} required />
+                                    <input name="institutionId"
+                                        type="text"
+                                        readOnly
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
+                                        placeholder={sl.p_select_inst_id}
+                                        value={inputData?.institutionId || ""}
+                                        onClick={() => setShowInstitutionDrawer(true)}
+                                        required />
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                                 </div>
+
+                                {/* Drawer component */}
+                                {showInstitutionDrawer && (
+                                    <div className="drawer-overlay" onClick={() => setShowInstitutionDrawer(false)}>
+                                        <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                            <div className="drawer-title">
+                                                {sl.l_institution}
+                                            </div>
+                                            <div className="drawer-description pb-16">
+                                                {sl.l_select_institution}
+                                            </div>
+                                            {/* <div className="input-group">
+                                                <button className="btn border-0"
+                                                    style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                                    type="button"
+                                                    onClick={click4Search}>
+                                                    <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
+                                                </button>
+                                                <input type="text" className="form-control border-0"
+                                                    placeholder={sl.p_search_query}
+                                                    value={searchObject.searchText || ""}
+                                                    onChange={change4SearchText}
+                                                    onKeyDown={keyPress4SearchText}
+                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                            </div> */}
+                                            <div className="">
+                                                <div className="input-group">
+                                                    <span className="input-group-text bg-light border-0">
+                                                        <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                            search
+                                                        </span>
+                                                    </span>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control border-0"
+                                                        placeholder={sl.p_search_query}
+                                                        value={searchTerm}
+                                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                                        style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                </div>
+                                            </div>
+                                            <hr></hr>
+                                            <div className="institution-list">
+                                                {filteredInstitutions.map((id, idx) => (
+                                                    <div key={idx} className="form-check">
+                                                        <input
+                                                        type="radio"
+                                                        id={`inst-${idx}`}
+                                                        name="institution"
+                                                        className="form-check-input"
+                                                        checked={selectedInstitution === id}
+                                                        onChange={() => setSelectedInstitution(id)}
+                                                        />
+                                                        <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                        {id}
+                                                        </label>
+                                                    </div>
+                                                ))}
+
+                                                {filteredInstitutions.length === 0 && (
+                                                    <div className="text-muted">
+                                                        {sl.l_no_result_found}
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <button className="btn btn-primary  mb-16"
+                                                disabled={!selectedInstitution}
+                                                onClick={() => {
+                                                    inputData.institutionId = selectedInstitution;
+                                                    setShowInstitutionDrawer(false);
+                                                    setRedraw(v => v + 1); }}>
+                                                    {sl.b_apply}
+                                            </button>
+                                            <button className="btn btn-ghost-unity"
+                                                onClick={() => setShowInstitutionDrawer(false)}>
+                                                    {sl.b_cancel}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    )}
                                 <div>
                                     <InputLabel label={sl.l_priority} required />
                                     <input name="priority"
@@ -567,7 +703,8 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                         {sl.b_back}
                                     </button>
                                     <button className="btn btn-primary"
-                                    type="submit" 
+                                    type="submit"
+                                    onClick={click4AddRecord}
                                     disabled={!formObject?.valid || !formObject?.dirty}>
                                         {sl.b_save}
                                     </button>

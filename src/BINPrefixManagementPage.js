@@ -252,7 +252,14 @@ export function BINPrefixManagementPage({ debugMode = true }) {
             pathname: "/editBINPrefix",
             search: sp.toString(),
         };
-        navigate(path);
+
+        let passInstitutionID = dataList.map(item => item.recordData.institutionId);
+        console.log("Institution IDs passed:", passInstitutionID);
+
+        navigate(path, {
+            state: {institutionList: passInstitutionID}
+        });
+
         return;
     };
 
