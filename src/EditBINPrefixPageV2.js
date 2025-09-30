@@ -76,7 +76,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
     let sl = tBox.getStringLabel(gsl, componentName);
 
     let [redraw, setRedraw] = react.useState(0);
-    const [step, setStep] = react.useState(1);
+    // const [step, setStep] = react.useState(1);
     const [showInstitutionDrawer, setShowInstitutionDrawer] = react.useState(false);
     const [institutionList, setInstitutionList] = react.useState([]);
     const [searchTerm, setSearchTerm] = react.useState("");
@@ -88,15 +88,23 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
         id.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    let [refresh, setRefresh] = react.useState(true);
-    let [reset, setReset] = react.useState(true);
-
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
-    const passedInstitutionList = location.state?.institutionList || [];
-    console.log("passedInstitutionList", passedInstitutionList);
+    const sp = new URLSearchParams(location.search);
     
+    editMode = parseInt(sp.get("editMode"));
+    const initialStep = Number(sp.get("step")) || 1;
+
+    const [step, setStep] = react.useState(initialStep);
+    const fromTab = initialStep;
+
+    // keep step in sync with query param when component mounts
+    react.useEffect(() => {
+    setStep(initialStep);
+    }, [initialStep]);
+
+    // const passedInstitutionList = location.state?.institutionList || [];
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -489,7 +497,8 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                             placeholder={sl.p_prefix_value}
                                             value={inputData?.prefix || ""}
                                             onChange={change4Input}
-                                            required />
+                                            required
+                                            disabled={editMode === 1 && fromTab === 1} />
 
                                         <ErrorLine message={tBox.getFieldErrorMessage2('prefix', sl, formObject)} />
                                     </div>
@@ -536,14 +545,14 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
                                     <div>
                                         <InputLabel label={sl.l_product_category} />
-                                        <input name="productCategory"
+                                        <input name="productCatagory"
                                             type="text"
-                                            className={`form-control ${tBox.getClass4IsInvalid2('productCategory', formObject)}`}
+                                            className={`form-control ${tBox.getClass4IsInvalid2('productCatagory', formObject)}`}
                                             placeholder={sl.p_product_category}
-                                            value={inputData?.productCategory || ""}
+                                            value={inputData?.productCatagory|| ""}
                                             onChange={change4Input} />
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('productCategory', sl, formObject)} />
+                                        <ErrorLine message={tBox.getFieldErrorMessage2('productCatagory', sl, formObject)} />
                                     </div>
 
                                     <div>
@@ -558,9 +567,16 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                         <ErrorLine message={tBox.getFieldErrorMessage2('cvv', sl, formObject)} />
                                     </div>
                                     <div className="mt-4">
-                                        <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%"}}>
-                                            {sl.b_next}
-                                        </button>
+                                        {editMode === 0 ? (
+                                            <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%"}}>
+                                                {sl.b_next}
+                                            </button>
+                                            ) : (
+                                                <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                                    {sl.b_save}
+                                                </button>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -578,21 +594,6 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                 </div>
                             </div>
                             <div className="px-4 mt-4">
-                                {/* <div>
-                                    <InputLabel label={sl.l_institution_id} required />
-                                    <select name="institutionId"
-                                        className={`form-select ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
-                                        value={inputData?.institutionId || ""}
-                                        onChange={change4Input}
-                                        required>
-                                        <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
-                                        <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
-                                        <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
-                                        <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
-                                    </select>
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
-                                </div> */}
                                 <div>
                                     <InputLabel label={sl.l_institution_id} required />
                                     <input name="institutionId"
@@ -602,7 +603,8 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                         placeholder={sl.p_select_inst_id}
                                         value={inputData?.institutionId || ""}
                                         onClick={() => setShowInstitutionDrawer(true)}
-                                        required />
+                                        required
+                                        disabled={editMode === 1 && fromTab === 2} />
                                     <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                                 </div>
 
@@ -685,7 +687,26 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                             </button>
                                         </div>
                                     </div>
-                                    )}
+                                )}
+
+                                {editMode === 1 && (
+                                    <div>
+                                        <InputLabel label={sl.l_record_status} required />
+                                        <select name="recordStatus"
+                                            className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
+                                            value={inputData?.recordStatus || ""}
+                                            onChange={change4Input}
+                                            required>
+                                            <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
+                                            <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
+                                            <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
+                                            <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
+                                        </select>
+
+                                        <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
+                                    </div>
+                                )}
+                                
                                 <div>
                                     <InputLabel label={sl.l_priority} required />
                                     <input name="priority"
@@ -698,17 +719,26 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('priority', sl, formObject)} />
                                 </div>
-                                <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "410px"}}>
-                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                        {sl.b_back}
-                                    </button>
-                                    <button className="btn btn-primary"
-                                    type="submit"
-                                    onClick={click4AddRecord}
-                                    disabled={!formObject?.valid || !formObject?.dirty}>
-                                        {sl.b_save}
-                                    </button>
-                                </div>
+                                {editMode === 0 ? (
+                                    <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                        <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                            {sl.b_back}
+                                        </button>
+                                        <button className="btn btn-primary"
+                                        type="button"
+                                        onClick={click4AddRecord}
+                                        disabled={!formObject?.valid || !formObject?.dirty}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                    ) : (
+                                    <div className="mt-4">
+                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                    )
+                                }
                             </div>
                         </>
                     )}

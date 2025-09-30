@@ -179,16 +179,17 @@ export function BINPrefixDetailPage({ debugMode = true }) {
         return;
     };
 
-    function click4EditRecord(e, record) {
+    function click4EditRecord(e, record, step = 1) {
         if (debugMode) console.log("Click for edit record", e, record);
 
         let sp = new URLSearchParams({
             rowId: record.rowId,
-            editMode: 1
+            editMode: 1, 
+            step: step
         });
 
         let path = {
-            pathname: "/editBINPrefix",
+            pathname: "/editBINPrefixV2",
             search: sp.toString(),
         };
         navigate(path);
@@ -280,7 +281,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                                         {sl.l_institution}
                                                     </div>
                                                     <div className="fw-semibold">
-                                                        {"-"}
+                                                        {dataRecord?.institutionId}
                                                     </div>
                                                 </div>
                                                 <div className="fs-14-unity info-synap">
@@ -335,7 +336,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                                                 style={{ minHeight: "56px" }}>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord)}>
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 1)}>
                                                                     <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                                     {sl.b_edit}
                                                                 </button>
@@ -356,7 +357,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                                         style={{ minHeight: "168px" }} >
                                                         <div className="px-5 py-1 w-100">
 
-                                                            <DisplayLine label={sl.l_institution} value={"-"} />
+                                                            <DisplayLine label={sl.l_institution} value={dataRecord?.institutionId} />
                                                             <DisplayLine label={sl.l_priority} value={dataRecord?.priority} />
                                                             <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
 
@@ -369,7 +370,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                                                 style={{ minHeight: "56px" }}>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord)}>
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 2)}>
                                                                     <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                                     {sl.b_edit}
                                                                 </button>
