@@ -40,6 +40,7 @@ import { EditRoutePage } from "./EditRoutePage.js";
 import { TimerManagementPage } from "./TimerManagementPage.js";
 import { TimerDetailPage } from "./TimerDetailPage.js";
 import { EditTimerPage } from "./EditTimerPage.js";
+import { EditTimerPageV2 } from "./EditTimerPageV2.js";
 
 import { BINPrefixManagementPage } from "./BINPrefixManagementPage.js";
 import { BINPrefixDetailPage } from "./BINPrefixDetailPage.js";
@@ -150,6 +151,10 @@ export let appRouterDefination = [
             {
                 path: "editTimer",
                 Component: EditTimerPage,
+            },
+            {
+                path: "editTimerV2",
+                Component: EditTimerPageV2,
             },
             {
                 path: "binPrefixManagement",

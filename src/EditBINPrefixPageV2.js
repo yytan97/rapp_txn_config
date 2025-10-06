@@ -480,10 +480,10 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                     {step === 1 && (
                         <>
                             <div className="pb-3 border-bottom">
-                                <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
+                                <div className="edit-title-font">
                                     {(editMode === 0) ? sl.l_add_timer : sl.l_edit_timer}
                                 </div>
-                                <div style={{ color: "#76797B", fontSize: "12px" }}>
+                                <div className="edit-desc-font">
                                     {sl.l_desc}
                                 </div>
                             </div>
