@@ -447,11 +447,11 @@ export function EditTimerPageV2({ debugMode = true }) {
                                     {sl.l_timer_desc}
                                 </div>
                             </div>
-                            <div className="px-4 mt-4">
+                            <div className="mt-4">
                                 <div style={{ color: "#494D4F", fontSize: "16px", fontWeight: "bold" }} >
                                     {sl.l_cryptogram_information}
                                 </div>
-                                <div className="my-3 px-3">
+                                <div className="my-3">
                                     {/* {
                                         (editMode === 1) ? (
                                             <div>
@@ -513,9 +513,9 @@ export function EditTimerPageV2({ debugMode = true }) {
 
                                     <div className="mt-4">
                                         {editMode === 0 ? (
-                                            <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%"}}>
-                                                {sl.b_next}
-                                            </button>
+                                                <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%", marginTop: "345px"}}>
+                                                    {sl.b_next}
+                                                </button>
                                             ) : (
                                                 <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
                                                     {sl.b_save}
@@ -523,10 +523,6 @@ export function EditTimerPageV2({ debugMode = true }) {
                                             )
                                         }
                                     </div>
-
-                                    
-
-                                    
                                 </div>  
                                 {/* end of field inner panel */}
                             </div>
@@ -543,7 +539,7 @@ export function EditTimerPageV2({ debugMode = true }) {
                                     {(editMode === 0) ? sl.l_new_timer_desc : sl.l_edit_timer_desc}
                                 </div>
                             </div>
-                            <div className="px-4 mt-4">
+                            <div className="mt-4">
                                 <div>
                                     <InputLabel label={sl.l_timer_0} />
                                     <input name="timer0"
@@ -722,6 +718,26 @@ export function EditTimerPageV2({ debugMode = true }) {
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('timer11', sl, formObject)} />
                                 </div>
+                                {editMode === 0 ? (
+                                    <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                        <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                            {sl.b_back}
+                                        </button>
+                                        <button className="btn btn-primary"
+                                        type="button"
+                                        onClick={click4AddRecord}
+                                        disabled={!formObject?.valid || !formObject?.dirty}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                    ) : (
+                                    <div className="mt-4">
+                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                    )
+                                }
                             </div>
                         </>
                     )}

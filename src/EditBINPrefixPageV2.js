@@ -479,7 +479,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                 <div className="col-7" style={{ minHeight: "80vh" }}>
                     {step === 1 && (
                         <>
-                            <div className="pb-3 border-bottom">
+                            <div className="pb-3">
                                 <div className="edit-title-font">
                                     {(editMode === 0) ? sl.l_add_timer : sl.l_edit_timer}
                                 </div>
@@ -487,8 +487,8 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                     {sl.l_desc}
                                 </div>
                             </div>
-                            <div className="px-4 mt-4">
-                                <div className="my-3 px-3">
+                            <div className="mt-4">
+                                <div className="my-3">
                                     <div>
                                         <InputLabel label={sl.l_prefix} required />
                                         <input name="prefix"
@@ -585,7 +585,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
                     {step === 2 && (
                         <>
-                            <div className="pb-3 border-bottom">
+                            <div className="pb-3">
                                 <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
                                     {(editMode === 0) ? sl.l_assign_prefix : sl.l_edit_assign_prefix}
                                 </div>
@@ -593,7 +593,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                     {sl.l_prefix_desc}
                                 </div>
                             </div>
-                            <div className="px-4 mt-4">
+                            <div className="mt-4">
                                 <div>
                                     <InputLabel label={sl.l_institution_id} required />
                                     <input name="institutionId"
