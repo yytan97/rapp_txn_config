@@ -25,6 +25,7 @@ import { EditTablePage } from "./EditTablePage.js";
 import { CryptogramManagementPage } from "./CryptogramManagementPage.js";
 import { CryptogramDetailPage } from "./CryptogramDetailPage.js";
 import { EditCryptogramPage } from "./EditCryptogramPage.js";
+import { EditCryptogramPageV2 } from "./EditCryptogramPageV2.js";
 
 import { InstitutionManagementPage } from "./InstitutionManagementPage.js";
 import { InstitutionDetailPage } from "./InstitutionDetailPage.js";
@@ -139,6 +140,10 @@ export let appRouterDefination = [
             {
                 path: "editCryptogram",
                 Component: EditCryptogramPage,
+            },
+            {
+                path: "editCryptogramV2",
+                Component: EditCryptogramPageV2,
             },
             {
                 path: "timerManagement",

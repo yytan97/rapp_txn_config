@@ -625,3 +625,9 @@ body {
 	font-size: 12px;
 }
 
+.default-font {
+	font-size: 12px;
+	color: #6D7172;
+	padding-left: 16px;
+}
+
