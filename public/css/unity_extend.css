@@ -431,6 +431,7 @@ body {
 	font-size: 14px;
 	color: #494D4F;
 	font-weight: 600;
+	word-break: break-all;
 }
 
 .table-content-padding {

@@ -290,14 +290,17 @@ export function CryptogramDetailPage({ debugMode = true }) {
                                                     style={{ minHeight: "168px" }} >
                                                     <div className="px-5 py-1 w-100">
 
-                                                        <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} />
-                                                        <DisplayLine label={sl.l_owner_id} value={dataRecord?.ownerId} />
+                                                        {/* <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} /> */}
+                                                        <DisplayLine label={sl.l_cryptogram_id} value={dataRecord?.ownerId} />
                                                         <DisplayLine label={sl.l_key_function} value={dataRecord?.keyFunction} />
                                                         <DisplayLine label={sl.l_key_algo} value={dataRecord?.keyAlgo} />
                                                         <DisplayLine label={sl.l_bit_size} value={dataRecord?.bitSize} />
                                                         <DisplayLine label={sl.l_iv} value={dataRecord?.iv} />
                                                         <DisplayLine label={sl.l_cryptogram} value={dataRecord?.cryptogram} />
                                                         <DisplayLine label={sl.l_kcv} value={dataRecord?.kcv} />
+                                                        <DisplayLine label={sl.l_key_index} value={dataRecord?.keyIndex} />
+                                                        <DisplayLine label={sl.l_last_updated_time} value={dataRecord?.recordDate} />
+                                                        <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
 
                                                     </div>
                                                 </div>
@@ -347,7 +350,7 @@ export function DisplayLine({ label, value, debugMode = false }) {
             <div className="col-4 table-key">
                 {label}
             </div>
-            <div className="lol-8 table-value">
+            <div className="col-8 table-value">
                 {value || "-"}
             </div>
         </div>

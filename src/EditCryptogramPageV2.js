@@ -76,6 +76,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
     let sl = tBox.getStringLabel(gsl, componentName);
 
     let [redraw, setRedraw] = react.useState(0);
+    const [showAttachModal, setShowAttachModal] = react.useState(false);
 
     const ref4Form = react.useRef();
 
@@ -305,8 +306,9 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
 
-                    let message = sl.m_record_created;
-                    showInfoDialogBox(message, () => navigate(-1));
+                    // let message = sl.m_record_created;
+                    // showInfoDialogBox(message, () => navigate(-1));
+                    setShowAttachModal(true);
                 }
                 else throw result1;
             }
@@ -403,40 +405,13 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                 <div className="close-btn" onClick={() => navigate(-1)}>
                     <span class="material-symbols-outlined">close</span>
                 </div>
-
-                {/* <div>
-                    {
-                        (editMode === 0 && check4Right(accessObjectName, `${accessActionPrefix}.add`)) ? (
-                            <button className="ms-1 btn btn-ghost-unity "
-                                type="button"
-                                onClick={click4AddRecord}
-                                title={sl.t_add}
-                                disabled={!formObject?.valid || !formObject?.dirty} >
-                                <span className="material-icons-outlined fs-24-unity">add</span>
-                            </button>
-
-                        ) : null
-                    }
-
-                    {
-                        (editMode === 1 && check4Right(accessObjectName, `${accessActionPrefix}.edit`)) ? (
-                            <button className="ms-1 btn btn-ghost-unity "
-                                type="button"
-                                onClick={click4UpdateRecord}
-                                title={sl.t_update}
-                                disabled={!formObject?.valid || !formObject?.dirty} >
-                                <span className="material-icons-outlined fs-24-unity">upload_file</span>
-                            </button>
-                        ) : null
-                    }
-                </div> */}
             </div>
 
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
                 ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
                 {renderStepper()}
                 <div className="col-7" style={{ minHeight: "80vh" }}>
-                    {step === 1 && (
+                    {editMode === 1 ? (
                         <>
                             <div className="pb-3">
                                 <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
@@ -449,23 +424,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                             </div>
                             <div className="mt-4">
                                 <div className="my-3">
-                                    {
-                                        (editMode === 1) ? (
-                                            <div>
-                                                <InputLabel label={sl.l_row_id} />
-                                                <input name="rowId"
-                                                    type="text"
-                                                    className={`form-control ${tBox.getClass4IsInvalid2('rowId', formObject)}`}
-                                                    placeholder={sl.p_row_id}
-                                                    value={inputData?.rowId || ""}
-                                                    onChange={change4Input}
-                                                    disabled={true} />
-
-                                                <ErrorLine message={tBox.getFieldErrorMessage2('rowId', sl, formObject)} />
-                                            </div>
-                                        ) : null
-                                    }
-
                                     <div>
                                         <InputLabel label={sl.l_cryptogram_id} required />
                                         <input name="ownerId"
@@ -480,192 +438,424 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                         <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
                                     </div>
 
-                                    {/* <div >
-                                        <InputLabel label={sl.l_record_status} required />
-                                        <select name="recordStatus"
-                                            className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
-                                            value={inputData?.recordStatus || ""}
-                                            onChange={change4Input}
-                                            required>
-                                            <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
-                                            <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
-                                            <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
-                                            <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
-                                        </select>
+                                    <div className="">
+                                        <div >
+                                            <InputLabel label={sl.l_key_function} required />
+                                            <input name="keyFunction"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
+                                                placeholder={sl.p_enter_key_value}
+                                                value={inputData?.keyFunction || ""}
+                                                onChange={change4Input}
+                                                list="datalist4KeyFunction"
+                                                disabled={editMode === 1}
+                                                required />
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
-                                    </div> */}
+                                            <datalist id="datalist4KeyFunction">
+                                                <option value="BDK"></option>
+                                                <option value="BDK2"></option>
+                                                <option value="BDK3"></option>
+                                                <option value="CVK"></option>
+                                                <option value="DEK"></option>
+                                                <option value="FPE"></option>
+                                                <option value="IPEK"></option>
 
-                                    <div className="mt-4">
-                                        {editMode === 0 ? (
-                                            <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%", marginTop: "430px"}}>
-                                                {sl.b_next}
+                                                <option value="KEK"></option>
+                                                <option value="LMK"></option>
+                                                <option value="MKAC"></option>
+                                                <option value="PVK"></option>
+
+                                                <option value="TAK"></option>
+                                                <option value="TEK"></option>
+                                                <option value="TMK"></option>
+                                                <option value="TPK"></option>
+
+                                                <option value="ZAK"></option>
+                                                <option value="ZEK"></option>
+                                                <option value="ZPK"></option>
+                                            </datalist>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
+                                        </div>
+
+                                        <div >
+                                            <InputLabel label={sl.l_record_status} required />
+                                            <select name="recordStatus"
+                                                className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
+                                                value={inputData?.recordStatus || ""}
+                                                onChange={change4Input}
+                                                required>
+                                                <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
+                                                <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
+                                                <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
+                                                <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
+                                            </select>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_key_algo} />
+                                            <input name="keyAlgo"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
+                                                placeholder="1"
+                                                value={inputData?.keyAlgo || "1"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_key_algo}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_bit_size} />
+                                            <input name="bitSize"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
+                                                placeholder={sl.p_bit_size}
+                                                value={inputData?.bitSize || "192"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_bit_size}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_initialization_vector} />
+                                            <input name="iv"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
+                                                placeholder={sl.p_enter_iv}
+                                                value={inputData?.iv || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_cryptogram} />
+                                            <input name="cryptogram"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
+                                                placeholder={sl.p_enter_encrypted}
+                                                value={inputData?.cryptogram || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_kcv} />
+                                            <input name="kcv"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
+                                                placeholder={sl.p_enter_kcv}
+                                                value={inputData?.kcv || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_key_index} />
+                                            <input name="keyAlgo"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
+                                                placeholder="1"
+                                                value={inputData?.keyAlgo || "0"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_key_index}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
+                                        </div>
+
+                                        <div className="mt-4">
+                                            <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                                {sl.b_save}
                                             </button>
-                                            ) : (
-                                                <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
-                                                    {sl.b_save}
-                                                </button>
-                                            )
-                                        }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </>
-                    )}
-
-                    {step === 2 && (
+                    ) : (
                         <>
-                            <div className="pb-3">
-                                <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
-                                    {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
-                                </div>
+                            {step === 1 && (
+                                <>
+                                    <div className="pb-3">
+                                        <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
+                                            {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
+                                        </div>
 
-                                <div style={{ color: "#76797B", fontSize: "12px" }}>
-                                    {sl.l_desc}
-                                </div>
-                            </div>
-                            <div className="mt-4">
-                                <div >
-                                    <InputLabel label={sl.l_key_function} required />
-                                    <input name="keyFunction"
-                                        type="text"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
-                                        placeholder={sl.p_enter_key_value}
-                                        value={inputData?.keyFunction || ""}
-                                        onChange={change4Input}
-                                        list="datalist4KeyFunction"
-                                        required />
-
-                                    <datalist id="datalist4KeyFunction">
-                                        <option value="BDK"></option>
-                                        <option value="BDK2"></option>
-                                        <option value="BDK3"></option>
-                                        <option value="CVK"></option>
-                                        <option value="DEK"></option>
-                                        <option value="FPE"></option>
-                                        <option value="IPEK"></option>
-
-                                        <option value="KEK"></option>
-                                        <option value="LMK"></option>
-                                        <option value="MKAC"></option>
-                                        <option value="PVK"></option>
-
-                                        <option value="TAK"></option>
-                                        <option value="TEK"></option>
-                                        <option value="TMK"></option>
-                                        <option value="TPK"></option>
-
-                                        <option value="ZAK"></option>
-                                        <option value="ZEK"></option>
-                                        <option value="ZPK"></option>
-                                    </datalist>
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
-
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_key_algo} />
-                                    <input name="keyAlgo"
-                                        type="number"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
-                                        placeholder="1"
-                                        value={inputData?.keyAlgo || "1"}
-                                        onChange={change4Input} />
-                                    <span className="default-font">
-                                        {sl.l_default_key_algo}
-                                    </span>
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_bit_size} />
-                                    <input name="bitSize"
-                                        type="number"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
-                                        placeholder={sl.p_bit_size}
-                                        value={inputData?.bitSize || "192"}
-                                        onChange={change4Input} />
-                                    <span className="default-font">
-                                        {sl.l_default_bit_size}
-                                    </span>
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_initialization_vector} />
-                                    <input name="iv"
-                                        type="text"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
-                                        placeholder={sl.p_enter_iv}
-                                        value={inputData?.iv || ""}
-                                        onChange={change4Input} />
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_cryptogram} />
-                                    <input name="cryptogram"
-                                        type="text"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
-                                        placeholder={sl.p_enter_encrypted}
-                                        value={inputData?.cryptogram || ""}
-                                        onChange={change4Input} />
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_kcv} />
-                                    <input name="kcv"
-                                        type="text"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
-                                        placeholder={sl.p_enter_kcv}
-                                        value={inputData?.kcv || ""}
-                                        onChange={change4Input} />
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
-                                </div>
-
-                                <div>
-                                    <InputLabel label={sl.l_key_index} />
-                                    <input name="keyAlgo"
-                                        type="number"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
-                                        placeholder="1"
-                                        value={inputData?.keyAlgo || "0"}
-                                        onChange={change4Input} />
-                                    <span className="default-font">
-                                        {sl.l_default_key_algo}
-                                    </span>
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
-                                </div>
-
-                                {editMode === 0 ? (
-                                    <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
-                                        <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                            {sl.b_back}
-                                        </button>
-                                        <button className="btn btn-primary"
-                                        type="button"
-                                        onClick={click4AddRecord}
-                                        disabled={!formObject?.valid || !formObject?.dirty}>
-                                            {sl.b_create_cryptogram}
-                                        </button>
+                                        <div style={{ color: "#76797B", fontSize: "12px" }}>
+                                            {sl.l_desc}
+                                        </div>
                                     </div>
-                                    ) : (
                                     <div className="mt-4">
-                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
-                                            {sl.b_save}
-                                        </button>
+                                        <div className="my-3">
+                                            {/* {
+                                                (editMode === 1) ? (
+                                                    <div>
+                                                        <InputLabel label={sl.l_row_id} />
+                                                        <input name="rowId"
+                                                            type="text"
+                                                            className={`form-control ${tBox.getClass4IsInvalid2('rowId', formObject)}`}
+                                                            placeholder={sl.p_row_id}
+                                                            value={inputData?.rowId || ""}
+                                                            onChange={change4Input}
+                                                            disabled={true} />
+
+                                                        <ErrorLine message={tBox.getFieldErrorMessage2('rowId', sl, formObject)} />
+                                                    </div>
+                                                ) : null
+                                            } */}
+
+                                            <div>
+                                                <InputLabel label={sl.l_cryptogram_id} required />
+                                                <input name="ownerId"
+                                                    type="text"
+                                                    className={`form-control ${tBox.getClass4IsInvalid2('ownerId', formObject)}`}
+                                                    placeholder={sl.p_takaful}
+                                                    value={inputData?.ownerId || ""}
+                                                    onChange={change4Input}
+                                                    disabled={editMode === 1}
+                                                    required />
+
+                                                <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
+                                            </div>
+
+                                            <div className="mt-4">
+                                                {editMode === 0 ? (
+                                                    <button type="button" className="col-7 btn btn-primary" onClick={goNext} style={{width: "100%", marginTop: "430px"}}>
+                                                        {sl.b_next}
+                                                    </button>
+                                                    ) : (
+                                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                                            {sl.b_save}
+                                                        </button>
+                                                    )
+                                                }
+                                            </div>
+                                        </div>
                                     </div>
-                                    )
-                                }
-                            </div>
+                                </>
+                            )}
+
+                            {step === 2 && (
+                                <>
+                                    <div className="pb-3">
+                                        <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
+                                            {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
+                                        </div>
+
+                                        <div style={{ color: "#76797B", fontSize: "12px" }}>
+                                            {sl.l_desc}
+                                        </div>
+                                    </div>
+                                    <div className="mt-4">
+                                        <div >
+                                            <InputLabel label={sl.l_key_function} required />
+                                            <input name="keyFunction"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyFunction', formObject)}`}
+                                                placeholder={sl.p_enter_key_value}
+                                                value={inputData?.keyFunction || ""}
+                                                onChange={change4Input}
+                                                list="datalist4KeyFunction"
+                                                required />
+
+                                            <datalist id="datalist4KeyFunction">
+                                                <option value="BDK"></option>
+                                                <option value="BDK2"></option>
+                                                <option value="BDK3"></option>
+                                                <option value="CVK"></option>
+                                                <option value="DEK"></option>
+                                                <option value="FPE"></option>
+                                                <option value="IPEK"></option>
+
+                                                <option value="KEK"></option>
+                                                <option value="LMK"></option>
+                                                <option value="MKAC"></option>
+                                                <option value="PVK"></option>
+
+                                                <option value="TAK"></option>
+                                                <option value="TEK"></option>
+                                                <option value="TMK"></option>
+                                                <option value="TPK"></option>
+
+                                                <option value="ZAK"></option>
+                                                <option value="ZEK"></option>
+                                                <option value="ZPK"></option>
+                                            </datalist>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyFunction', sl, formObject)} />
+
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_key_algo} />
+                                            <input name="keyAlgo"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
+                                                placeholder="1"
+                                                value={inputData?.keyAlgo || "1"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_key_algo}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_bit_size} />
+                                            <input name="bitSize"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('bitSize', formObject)}`}
+                                                placeholder={sl.p_bit_size}
+                                                value={inputData?.bitSize || "192"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_bit_size}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('bitSize', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_initialization_vector} />
+                                            <input name="iv"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('iv', formObject)}`}
+                                                placeholder={sl.p_enter_iv}
+                                                value={inputData?.iv || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('iv', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_cryptogram} />
+                                            <input name="cryptogram"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('cryptogram', formObject)}`}
+                                                placeholder={sl.p_enter_encrypted}
+                                                value={inputData?.cryptogram || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('cryptogram', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_kcv} />
+                                            <input name="kcv"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('kcv', formObject)}`}
+                                                placeholder={sl.p_enter_kcv}
+                                                value={inputData?.kcv || ""}
+                                                onChange={change4Input} />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('kcv', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_key_index} />
+                                            <input name="keyAlgo"
+                                                type="number"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('keyAlgo', formObject)}`}
+                                                placeholder="1"
+                                                value={inputData?.keyAlgo || "0"}
+                                                onChange={change4Input} />
+                                            <span className="default-font">
+                                                {sl.l_default_key_index}
+                                            </span>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('keyAlgo', sl, formObject)} />
+                                        </div>
+
+                                        <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                            <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                                {sl.b_back}
+                                            </button>
+                                            <button className="btn btn-primary"
+                                            type="button"
+                                            onClick={click4AddRecord}
+                                            disabled={!formObject?.valid || !formObject?.dirty}>
+                                                {sl.b_create_cryptogram}
+                                            </button>
+                                        </div>
+
+                                        {/* {editMode === 0 ? (
+                                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                                    {sl.b_back}
+                                                </button>
+                                                <button className="btn btn-primary"
+                                                type="button"
+                                                onClick={click4AddRecord}
+                                                disabled={!formObject?.valid || !formObject?.dirty}>
+                                                    {sl.b_create_cryptogram}
+                                                </button>
+                                            </div>
+                                            ) : (
+                                            <div className="mt-4">
+                                                <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                                    {sl.b_save}
+                                                </button>
+                                            </div>
+                                            )
+                                        } */}
+
+                                        {showAttachModal && (
+                                            <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
+                                                <div className="modal-dialog modal-dialog-centered" role="document">
+                                                <div className="modal-content border-0 shadow p-4 rounded-3">
+                                                    <div className="modal-body">
+                                                    <div className="d-flex align-items-center mb-3">
+                                                        <span className="material-icons text-primary me-2" style={{ fontSize: "32px" }}>info</span>
+                                                        <h5 className="fw-bold mb-0">{sl.l_attach_institution}</h5>
+                                                    </div>
+                                                    <p>
+                                                        {sl.l_your} <strong>{inputData?.ownerId}</strong> {sl.l_has_been_saved} 🎉
+                                                        <br />
+                                                        {sl.l_would_you_like}
+                                                    </p>
+                                                    </div>
+                                                    <div className="modal-footer border-0 d-flex justify-content-end">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-secondary"
+                                                        onClick={() => {
+                                                        setShowAttachModal(false);
+                                                        navigate(-1); // Skip for now
+                                                        }}
+                                                    >
+                                                        {sl.b_skip_for_now}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-primary"
+                                                        onClick={() => {
+                                                        setShowAttachModal(false);
+                                                        // setStep(2); // ✅ Move to Step 2
+                                                        }}
+                                                    >
+                                                        {sl.b_attach_now}
+                                                    </button>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </>
+                            )}
                         </>
                     )}
                 </div >
