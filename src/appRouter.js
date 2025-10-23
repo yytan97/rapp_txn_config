@@ -29,13 +29,14 @@ import { EditCryptogramPageV2 } from "./EditCryptogramPageV2.js";
 
 import { InstitutionManagementPage } from "./InstitutionManagementPage.js";
 import { InstitutionDetailPage } from "./InstitutionDetailPage.js";
+import { EditInstitutionPage } from "./EditInstitutionPage.js";
+import { EditInstitutionPageV2 } from "./EditInstitutionPageV2.js";
 
 import { ConfigurationFileManagementPage } from "./ConfigurationFileManagementPage.js";
 import { EditConfigurationPage } from "./EditConfigurationPage.js";
 import { ForgotPasswordPage } from "./ForgotPasswordPage.js";
 import { ResetPasswordPage } from "./ResetPasswordPage.js";
 
-import { EditInstitutionPage } from "./EditInstitutionPage.js";
 import { EditRoutePage } from "./EditRoutePage.js";
 
 import { TimerManagementPage } from "./TimerManagementPage.js";
@@ -124,6 +125,10 @@ export let appRouterDefination = [
             {
                 path: "editInstitution",
                 Component: EditInstitutionPage,
+            },
+            {
+                path: "editInstitutionV2",
+                Component: EditInstitutionPageV2,
             },
             {
                 path: "editRoute",
