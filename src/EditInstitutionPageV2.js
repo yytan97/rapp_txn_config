@@ -100,13 +100,31 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     let sl = tBox.getStringLabel(gsl, componentName);
 
     let [redraw, setRedraw] = react.useState(0);
-
+    const [showTimerIdDrawer, setShowTimerIdDrawer] = react.useState(false);
+    const [timerIdList, setTimerIdList] = react.useState([]);
+    const [searchTerm, setSearchTerm] = react.useState("");
+    const [selectedTimerId, setSelectedTimerId] = react.useState("");
     const ref4Form = react.useRef();
+
+    const filteredTimerIds = timerIdList.filter(id =>
+        id.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
-    const [step, setStep] = react.useState(1);
+    const sp = new URLSearchParams(location.search);
+        
+    editMode = parseInt(sp.get("editMode"));
+    const initialStep = Number(sp.get("step")) || 1;
+
+    const [step, setStep] = react.useState(initialStep);
+    const fromTab = initialStep;
+
+    // keep step in sync with query param when component mounts
+    react.useEffect(() => {
+    setStep(initialStep);
+    }, [initialStep]);
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -173,37 +191,61 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         }, 100);
     }
 
+    react.useEffect(() => {
+        if (step === 5) {
+          const fetchTimerId = async () => {
+            try {
+            let result = await apiBox.getRecord(
+                getSessionToken(),
+                "kdb",                 
+                "kswitchinstitution",   
+                "recordStatus = 'A'"
+            );
+              
+            if (result.flag) {
+                const allIds = result.data.records.map(item => {
+                  if (item.recordData) {
+                    return item.recordData.institutionTimerId; 
+                  }
+                  return item.institutionTimerId; 
+                }).filter(Boolean);
+              
+                const uniqueSortedIds = [...new Set(allIds)].sort((a, b) =>
+                  a.localeCompare(b)
+                );
+              
+                console.log("Unique + Sorted Timer IDs:", uniqueSortedIds);
+                setTimerIdList(uniqueSortedIds);
+              }
+            } catch (err) {
+              console.error("Error fetching timer:", err);
+            }
+          };
+      
+          fetchTimerId();
+        }
+      }, [step]);
+
     const goNext = () => {
         formObject.valid = ref4Form.current.checkValidity();
 
         if (formObject.valid) {
-            setStep(2);
+            setStep(prev => {
+                const nextStep = prev + 1;
 
-            setTimeout(() => {
-                formObject.valid = ref4Form.current.checkValidity();
-                setRedraw(v => v + 1); // trigger re-render for button state
-            }, 0);
-        } else {
-            alert("Please fill all required fields before proceeding.");
-        }
-    };
-    const goNext2 = () => {
-        formObject.valid = ref4Form.current.checkValidity();
+                setTimeout(() => {
+                    formObject.valid = ref4Form.current.checkValidity();
+                    setRedraw(v => v + 1); // trigger re-render for button state
+                }, 0);
 
-        if (formObject.valid) {
-            setStep(3);
-
-            setTimeout(() => {
-                formObject.valid = ref4Form.current.checkValidity();
-                setRedraw(v => v + 1); // trigger re-render for button state
-            }, 0);
+                return nextStep;
+            })
         } else {
             alert("Please fill all required fields before proceeding.");
         }
     };
 
-    const goBack = () => setStep(1);
-
+    const goBack = () => setStep(prev => Math.max(prev - 1, 1));
 
     // event handling function here ...
     async function loadDataList() {
@@ -596,11 +638,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         }
     };
 
-    function click4Echo(e, record, index) {
-        if (debugMode) console.log("Click for echo ", e, record, index);
-        return;
-    };
-
     function click4RemoveProcessingCode(code, index) {
         if (debugMode) console.log("Click for remove processing code", code, index);
         let list = inputData.processingCodeList;
@@ -935,7 +972,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
                 ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
                 {renderStepper()}
-                <div className="col-8" style={{ minHeight: "50vh" }}>
+                <div className="col-7" style={{ minHeight: "50vh" }}>
                     {step === 1 && (
                         <>
                             <div className="pb-3">
@@ -1123,7 +1160,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     <button type="button" className="btn btn-outline-dark" onClick={goBack}>
                                         {sl.b_back}
                                     </button>
-                                    <button type="button" className="btn btn-primary" onClick={goNext2}>
+                                    <button type="button" className="btn btn-primary" onClick={goNext}>
                                         {sl.b_next}
                                     </button>
                                 </div>
@@ -1150,7 +1187,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                             name={"processingFlag" + item}
                                                             checked={inputData?.["processingFlag" + item] || ""}
                                                             onChange={change4Input} />
-                                                        <label className="form-check-label" htmlFor={"processingFlag" + item}>
+                                                        <label className="form-check-label grey-font fs-14-unity" htmlFor={"processingFlag" + item}>
                                                             {tBox.getLabel(sl, item, "o_processing_flag")}
                                                         </label>
                                                         <span className="ms-1 material-icons text-dark"
@@ -1186,7 +1223,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                             name={"shutdownFlag" + item}
                                                             checked={inputData?.["shutdownFlag" + item] || ""}
                                                             onChange={change4Input} />
-                                                        <label className="form-check-label" htmlFor={"shutdownFlag" + item}>
+                                                        <label className="form-check-label grey-font fs-14-unity" htmlFor={"shutdownFlag" + item}>
                                                             {tBox.getLabel(sl, item, "o_shutdown_flag")}
                                                         </label>
                                                         <span className="ms-1 material-icons text-dark"
@@ -1222,7 +1259,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                             name={"authorizationFlag" + item}
                                                             checked={inputData?.["authorizationFlag" + item] || ""}
                                                             onChange={change4Input} />
-                                                        <label className="form-check-label" htmlFor={"authorizationFlag" + item}>
+                                                        <label className="form-check-label grey-font fs-14-unity" htmlFor={"authorizationFlag" + item}>
                                                             {tBox.getLabel(sl, item, "o_authorization_flag")}
                                                         </label>
 
@@ -1236,11 +1273,212 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     <button type="button" className="btn btn-outline-dark" onClick={goBack}>
                                         {sl.b_back}
                                     </button>
-                                    <button type="button" className="btn btn-primary" onClick={goNext2}>
+                                    <button type="button" className="btn btn-primary" onClick={goNext}>
                                         {sl.b_next}
                                     </button>
                                 </div>
                             </div>
+                        </>
+                    )}
+
+                    {step === 4 && (
+                        <>
+                            <div className="pb-3">
+                                <div className="edit-title-font">
+                                    {(editMode === 0) ? sl.l_institution_saf_interleave_policy : sl.l_edit_institution_saf_interleave_policy}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.l_interleave_policy_desc}
+                                </div>
+                            </div>
+                            <div className="">
+                                {
+                                    ["standin", "reject", "reject-card"].map((item, index) => {
+                                        return (
+                                            <div key={index} className="form-check " >
+                                                <input className="form-check-input"
+                                                    type="radio"
+                                                    id={"institutionSafInterleavePolicy" + item}
+                                                    name="institutionSafInterleavePolicy"
+                                                    value={item}
+                                                    checked={inputData?.institutionSafInterleavePolicy === item}
+                                                    onChange={change4Input} />
+                                                <label className="form-check-label pb-16" htmlFor={"institutionSafInterleavePolicy" + item}>
+                                                    <div className="saf_option_title">
+                                                        {item}
+                                                    </div>
+                                                    <span className="saf_option_desc">
+                                                        {tBox.getLabel(sl, item, "o_institution_v2_saf_interleave_policy_")}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        );
+                                    })
+                                }
+                            </div>
+                            <hr/>
+
+                            <div className="mt-3">
+                                <InputLabel label={sl.l_institution_saf_max_concurrent} tip={sl.t_institution_saf_max_concurrent} />
+                                <input name="institutionSafMaxConcurrent"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionSafMaxConcurrent', formObject)}`}
+                                    placeholder={sl.p_institution_saf_max_concurrent}
+                                    value={inputData?.institutionSafMaxConcurrent || "0"}
+                                    onChange={change4Input}/>
+                                    <span className="default-font">
+                                        {sl.l_default_saf_value}
+                                    </span>
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionSafMaxConcurrent', sl, formObject)} />
+                            </div>
+
+                            <div className="">
+                                <InputLabel label={sl.l_institution_saf_max_timeout} tip={sl.t_institution_saf_max_timeout} />
+                                <input name="institutionSafMaxTimeout"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionSafMaxTimeout', formObject)}`}
+                                    placeholder={sl.p_institution_saf_max_timeout}
+                                    value={inputData?.institutionSafMaxTimeout || "0"}
+                                    onChange={change4Input} />
+                                    <span className="default-font">
+                                        {sl.l_default_saf_value}
+                                    </span>
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionSafMaxTimeout', sl, formObject)} />
+                            </div>
+
+                            <div className="">
+                                <InputLabel label={sl.l_institution_saf_retry} tip={sl.t_institution_saf_retry} />
+                                <input name="institutionSafRetry"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionSafRetry', formObject)}`}
+                                    placeholder={sl.p_institution_saf_retry}
+                                    value={inputData?.institutionSafRetry || "0"}
+                                    onChange={change4Input} />
+                                    <span className="default-font">
+                                        {sl.l_default_saf_value}
+                                    </span>
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionSafRetry', sl, formObject)} />
+                            </div>
+
+                            <div className="">
+                                <InputLabel label={sl.l_institution_consecutive_timeout_count} tip={sl.t_institution_consecutive_timeout_count} />
+                                <input name="institutionConsecutiveTimeoutCount"
+                                    type="number"
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionConsecutiveTimeoutCount', formObject)}`}
+                                    placeholder={sl.p_institution_consecutive_timeout_count}
+                                    value={inputData?.institutionConsecutiveTimeoutCount || "0"}
+                                    onChange={change4Input} />
+                                    <span className="default-font">
+                                        {sl.l_default_saf_value}
+                                    </span>
+
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionConsecutiveTimeoutCount', sl, formObject)} />
+                            </div>
+
+                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                    {sl.b_back}
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={goNext}>
+                                    {sl.b_next}
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {step === 5 && (
+                        <>
+                            <div className="pb-3">
+                                <div className="edit-title-font">
+                                    {sl.l_attach_timer_id}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.l_attach_timer_desc}
+                                </div>
+                            </div>
+                            <div>
+                                <InputLabel label={sl.l_institution_timer_id} required />
+                                <input name="institutionTimerId"
+                                    type="text"
+                                    readOnly
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionTimerId', formObject)}`}
+                                    placeholder={sl.p_select_inst_id}
+                                    value={inputData?.institutionTimerId || ""}
+                                    onClick={() => setShowTimerIdDrawer(true)}
+                                    required
+                                    disabled={editMode === 1 && fromTab === 2} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionTimerId', sl, formObject)} />
+                            </div>
+
+                            {/* Drawer component */}
+                            {showTimerIdDrawer && (
+                                <div className="drawer-overlay" onClick={() => setShowTimerIdDrawer(false)}>
+                                    <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                        <div className="drawer-title">
+                                            {sl.l_institution_timer_id}
+                                        </div>
+                                        <div className="drawer-description pb-16">
+                                            {sl.l_select_timerId}
+                                        </div>
+                                        <div className="">
+                                            <div className="input-group">
+                                                <span className="input-group-text bg-light border-0">
+                                                    <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                        search
+                                                    </span>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control border-0"
+                                                    placeholder={sl.p_search_query}
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                            </div>
+                                        </div>
+                                        <hr></hr>
+                                        <div className="institution-list">
+                                            {filteredTimerIds.map((id, idx) => (
+                                                <div key={idx} className="form-check">
+                                                    <input
+                                                    type="radio"
+                                                    id={`inst-${idx}`}
+                                                    name="institution"
+                                                    className="form-check-input"
+                                                    checked={selectedTimerId === id}
+                                                    onChange={() => setSelectedTimerId(id)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                    {id}
+                                                    </label>
+                                                </div>
+                                            ))}
+
+                                            {filteredTimerIds.length === 0 && (
+                                                <div className="text-muted">
+                                                    {sl.l_no_result_found}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <button className="btn btn-primary  mb-16"
+                                            disabled={!selectedTimerId}
+                                            onClick={() => {
+                                                inputData.institutionId = selectedTimerId;
+                                                setShowTimerIdDrawer(false);
+                                                setRedraw(v => v + 1); }}>
+                                                {sl.b_apply}
+                                        </button>
+                                        <button className="btn btn-ghost-unity"
+                                            onClick={() => setShowTimerIdDrawer(false)}>
+                                                {sl.b_cancel}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </>
                     )}
 

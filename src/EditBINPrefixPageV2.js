@@ -143,6 +143,16 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
     }, [redraw]);
 
     let blocker = reactRouter.useBlocker(shouldBlock);
+
+    if (blocker.state === "blocked") {
+        if (debugMode) console.log("Show discard confirm dialog box");
+        // only in this case need to wrap in other thread else react warning ...
+        setTimeout(() => {
+            showConfirmDialogBox(sl.m_changes_not_saved,
+                callback4BlockerProceed, sl.b_discard,
+                callback4BlockerReset);
+        }, 100);
+    }
     
     react.useEffect(() => {
         if (step === 2) {
@@ -178,16 +188,6 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
           fetchInstitutions();
         }
       }, [step]);
-
-    if (blocker.state === "blocked") {
-        if (debugMode) console.log("Show discard confirm dialog box");
-        // only in this case need to wrap in other thread else react warning ...
-        setTimeout(() => {
-            showConfirmDialogBox(sl.m_changes_not_saved,
-                callback4BlockerProceed, sl.b_discard,
-                callback4BlockerReset);
-        }, 100);
-    }
 
     // 👉 Navigation Handlers
     const goNext = () => {

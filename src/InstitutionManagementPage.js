@@ -261,7 +261,14 @@ export function InstitutionManagementPage({ debugMode = true }) {
             pathname: "/editInstitution",
             search: sp.toString(),
         };
-        navigate(path);
+
+        let passTimerID = dataList.map(item => item.recordData.institutionTimerId);
+        console.log("timer IDs passed:", passTimerID);
+
+        navigate(path, {
+            state: {timerIDList: passTimerID}
+        });
+
         return;
     };
 

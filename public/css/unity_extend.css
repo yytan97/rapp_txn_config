@@ -632,5 +632,18 @@ body {
 	padding-left: 16px;
 }
 
+.saf_option_title {
+	font-size: 14px;
+	font-weight: 600;
+	color: #6D7172;
+	text-transform: capitalize;
+}
+
+.saf_option_desc {
+	font-size: 12px;
+	font-weight: 400;
+	color: #6D7172;
+}
+
 
 
