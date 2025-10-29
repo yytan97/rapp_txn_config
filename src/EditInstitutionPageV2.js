@@ -101,9 +101,16 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
     let [redraw, setRedraw] = react.useState(0);
     const [showTimerIdDrawer, setShowTimerIdDrawer] = react.useState(false);
+    const [showCryptoIdDrawer, setShowCryptoIdDrawer] = react.useState(false);
+    const [showRoutingIdDrawer, setShowRoutingIdDrawer] = react.useState(false);
     const [timerIdList, setTimerIdList] = react.useState([]);
+    const [crytoIdList, setCrytoIdList] = react.useState([]);
+    const [routingIdList, setRoutingIdList] = react.useState([]);
+    
     const [searchTerm, setSearchTerm] = react.useState("");
     const [selectedTimerId, setSelectedTimerId] = react.useState("");
+    const [selectedCryptoId, setSelectedCryptoId] = react.useState("");
+    const [selectedRoutingId, setSelectedRoutingId] = react.useState("");
     const ref4Form = react.useRef();
 
     const filteredTimerIds = timerIdList.filter(id =>
@@ -121,6 +128,24 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     const [step, setStep] = react.useState(initialStep);
     const fromTab = initialStep;
 
+    const filteredIds = react.useMemo(() => {
+        const lowerSearch = searchTerm.toLowerCase();
+        
+        if (step === 5) {
+            return timerIdList.filter(id => id.toLowerCase().includes(lowerSearch));
+        }
+
+        if (step === 6) {
+            return crytoIdList.filter(id => id.toLowerCase().includes(lowerSearch));
+        }
+
+        if (step === 7) {
+            return routingIdList.filter(id => id.toLowerCase().includes(lowerSearch));
+        }
+
+        return[];
+    }, [searchTerm, step, timerIdList, crytoIdList, routingIdList]);
+
     // keep step in sync with query param when component mounts
     react.useEffect(() => {
     setStep(initialStep);
@@ -132,9 +157,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         const sp = new URLSearchParams(location.search);
         institutionId = sp.get('id');
         editMode = parseInt(sp.get('editMode')) || 0;
-
-        console.log("Institution ID", institutionId);
-        console.log("Edit mode", editMode);
 
         let timer = setTimeout(async () => {
             await loadDataList();
@@ -192,38 +214,58 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     }
 
     react.useEffect(() => {
-        if (step === 5) {
-          const fetchTimerId = async () => {
+        const fetchIds = async () => {
             try {
-            let result = await apiBox.getRecord(
-                getSessionToken(),
-                "kdb",                 
-                "kswitchinstitution",   
-                "recordStatus = 'A'"
-            );
-              
+                let tableName = "";
+                let fieldName = "";
+                let setterFn = null;
+
+                if (step === 5) {
+                    tableName = "kswitchinstitution";
+                    fieldName = "institutionTimerId";
+                    setterFn = setTimerIdList;
+                }
+                else if (step === 6) {
+                    tableName = "kswitchinstitution";
+                    fieldName = "institutionCryptoId";
+                    setterFn = setCrytoIdList;
+                }
+                else if (step === 7) {
+                    tableName = "kswitchinstitution";
+                    fieldName = "institutionRoutingId";
+                    setterFn = setRoutingIdList;
+                }
+                else {
+                    return;
+                }
+
+                let result = await apiBox.getRecord(
+                    getSessionToken(),
+                    "kdb",
+                    tableName,
+                    "recordStatus = 'A'"
+                );
+                
             if (result.flag) {
                 const allIds = result.data.records.map(item => {
-                  if (item.recordData) {
-                    return item.recordData.institutionTimerId; 
-                  }
-                  return item.institutionTimerId; 
+                    if (item.recordData) {
+                        return item.recordData[fieldName]; 
+                    }
+                    return item[fieldName]; 
                 }).filter(Boolean);
-              
+                
                 const uniqueSortedIds = [...new Set(allIds)].sort((a, b) =>
-                  a.localeCompare(b)
+                    a.localeCompare(b)
                 );
-              
+                
                 console.log("Unique + Sorted Timer IDs:", uniqueSortedIds);
-                setTimerIdList(uniqueSortedIds);
-              }
+                setterFn(uniqueSortedIds);
+                }
             } catch (err) {
-              console.error("Error fetching timer:", err);
+                console.error("Error fetching timer:", err);
             }
-          };
-      
-          fetchTimerId();
-        }
+        };
+        fetchIds();   
       }, [step]);
 
     const goNext = () => {
@@ -1405,12 +1447,21 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     type="text"
                                     readOnly
                                     className={`form-control ${tBox.getClass4IsInvalid2('institutionTimerId', formObject)}`}
-                                    placeholder={sl.p_select_inst_id}
+                                    placeholder={sl.l_leave_blank}
                                     value={inputData?.institutionTimerId || ""}
                                     onClick={() => setShowTimerIdDrawer(true)}
                                     required
                                     disabled={editMode === 1 && fromTab === 2} />
                                 <ErrorLine message={tBox.getFieldErrorMessage2('institutionTimerId', sl, formObject)} />
+                            </div>
+
+                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "300px"}}>
+                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                    {sl.b_back}
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={goNext}>
+                                    {sl.b_next}
+                                </button>
                             </div>
 
                             {/* Drawer component */}
@@ -1441,7 +1492,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         </div>
                                         <hr></hr>
                                         <div className="institution-list">
-                                            {filteredTimerIds.map((id, idx) => (
+                                            {filteredIds.map((id, idx) => (
                                                 <div key={idx} className="form-check">
                                                     <input
                                                     type="radio"
@@ -1457,7 +1508,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                 </div>
                                             ))}
 
-                                            {filteredTimerIds.length === 0 && (
+                                            {filteredIds.length === 0 && (
                                                 <div className="text-muted">
                                                     {sl.l_no_result_found}
                                                 </div>
@@ -1467,13 +1518,216 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         <button className="btn btn-primary  mb-16"
                                             disabled={!selectedTimerId}
                                             onClick={() => {
-                                                inputData.institutionId = selectedTimerId;
+                                                inputData.institutionTimerId = selectedTimerId;
                                                 setShowTimerIdDrawer(false);
                                                 setRedraw(v => v + 1); }}>
                                                 {sl.b_apply}
                                         </button>
                                         <button className="btn btn-ghost-unity"
                                             onClick={() => setShowTimerIdDrawer(false)}>
+                                                {sl.b_cancel}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {step === 6 && (
+                        <>
+                            <div className="pb-3">
+                                <div className="edit-title-font">
+                                    {sl.l_attach_cryptogram_id}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.l_attach_crypto_desc}
+                                </div>
+                            </div>
+                            <div>
+                                <InputLabel label={sl.l_cryptogram_id} required />
+                                <input name="institutionCryptoId"
+                                    type="text"
+                                    readOnly
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionCryptoId', formObject)}`}
+                                    placeholder={sl.l_leave_blank}
+                                    value={inputData?.institutionCryptoId || ""}
+                                    onClick={() => setShowCryptoIdDrawer(true)}
+                                    required
+                                    disabled={editMode === 1 && fromTab === 2} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionCryptoId', sl, formObject)} />
+                            </div>
+
+                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "300px"}}>
+                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                    {sl.b_back}
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={goNext}>
+                                    {sl.b_next}
+                                </button>
+                            </div>
+
+                            {/* Drawer component */}
+                            {showCryptoIdDrawer && (
+                                <div className="drawer-overlay" onClick={() => setShowCryptoIdDrawer(false)}>
+                                    <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                        <div className="drawer-title">
+                                            {sl.l_cryptogram_id}
+                                        </div>
+                                        <div className="drawer-description pb-16">
+                                            {sl.l_select_cryptoId}
+                                        </div>
+                                        <div className="">
+                                            <div className="input-group">
+                                                <span className="input-group-text bg-light border-0">
+                                                    <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                        search
+                                                    </span>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control border-0"
+                                                    placeholder={sl.p_search_query}
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                            </div>
+                                        </div>
+                                        <hr></hr>
+                                        <div className="institution-list">
+                                            {filteredIds.map((id, idx) => (
+                                                <div key={idx} className="form-check">
+                                                    <input
+                                                    type="radio"
+                                                    id={`inst-${idx}`}
+                                                    name="institution"
+                                                    className="form-check-input"
+                                                    checked={(step === 6 && selectedCryptoId === id)}
+                                                    onChange={() => setSelectedCryptoId(id)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                    {id}
+                                                    </label>
+                                                </div>
+                                            ))}
+
+                                            {filteredIds.length === 0 && (
+                                                <div className="text-muted">
+                                                    {sl.l_no_result_found}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <button className="btn btn-primary  mb-16"
+                                            disabled={!selectedCryptoId}
+                                            onClick={() => {
+                                                inputData.institutionCryptoId = selectedCryptoId;
+                                                setShowCryptoIdDrawer(false);
+                                                setRedraw(v => v + 1); }}>
+                                                {sl.b_apply}
+                                        </button>
+                                        <button className="btn btn-ghost-unity"
+                                            onClick={() => setShowCryptoIdDrawer(false)}>
+                                                {sl.b_cancel}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
+
+                    {step === 7 && (
+                        <>
+                            <div className="pb-3">
+                                <div className="edit-title-font">
+                                    {sl.l_attach_routing_id}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.l_select_routingId}
+                                </div>
+                            </div>
+                            <div>
+                                <InputLabel label={sl.l_routing_id} required />
+                                <input name="institutionRoutingId"
+                                    type="text"
+                                    readOnly
+                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionRoutingId', formObject)}`}
+                                    placeholder={sl.l_leave_blank}
+                                    value={inputData?.institutionRoutingId || ""}
+                                    onClick={() => setShowRoutingIdDrawer(true)}
+                                    required
+                                    disabled={editMode === 1 && fromTab === 2} />
+                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionRoutingId', sl, formObject)} />
+                            </div>
+                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "300px"}}>
+                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                    {sl.b_back}
+                                </button>
+                                <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
+                                    {sl.b_create_institution}
+                                </button>
+                            </div>
+
+                            {/* Drawer component */}
+                            {showRoutingIdDrawer && (
+                                <div className="drawer-overlay" onClick={() => setShowRoutingIdDrawer(false)}>
+                                    <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                        <div className="drawer-title">
+                                            {sl.l_routing_id}
+                                        </div>
+                                        <div className="drawer-description pb-16">
+                                            {sl.l_attach_routing_desc}
+                                        </div>
+                                        <div className="">
+                                            <div className="input-group">
+                                                <span className="input-group-text bg-light border-0">
+                                                    <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                        search
+                                                    </span>
+                                                </span>
+                                                <input
+                                                    type="text"
+                                                    className="form-control border-0"
+                                                    placeholder={sl.p_search_query}
+                                                    value={searchTerm}
+                                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                            </div>
+                                        </div>
+                                        <hr></hr>
+                                        <div className="institution-list">
+                                            {filteredIds.map((id, idx) => (
+                                                <div key={idx} className="form-check">
+                                                    <input
+                                                    type="radio"
+                                                    id={`inst-${idx}`}
+                                                    name="institution"
+                                                    className="form-check-input"
+                                                    checked={(step === 7 && selectedRoutingId === id)}
+                                                    onChange={() => setSelectedRoutingId(id)}
+                                                    />
+                                                    <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                    {id}
+                                                    </label>
+                                                </div>
+                                            ))}
+
+                                            {filteredIds.length === 0 && (
+                                                <div className="text-muted">
+                                                    {sl.l_no_result_found}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <button className="btn btn-primary  mb-16"
+                                            disabled={!selectedRoutingId}
+                                            onClick={() => {
+                                                inputData.institutionRoutingId = selectedRoutingId;
+                                                setShowRoutingIdDrawer(false);
+                                                setRedraw(v => v + 1); }}>
+                                                {sl.b_apply}
+                                        </button>
+                                        <button className="btn btn-ghost-unity"
+                                            onClick={() => setShowRoutingIdDrawer(false)}>
                                                 {sl.b_cancel}
                                         </button>
                                     </div>

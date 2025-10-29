@@ -263,10 +263,16 @@ export function InstitutionManagementPage({ debugMode = true }) {
         };
 
         let passTimerID = dataList.map(item => item.recordData.institutionTimerId);
-        console.log("timer IDs passed:", passTimerID);
+        let passCryptoID = dataList.map(item => item.recordData.institutionCryptoId
+        );
+        let passRoutingID = dataList.map(item => item.recordData.institutionRoutingId);;
 
         navigate(path, {
-            state: {timerIDList: passTimerID}
+            state: {
+                timerIDList: passTimerID,
+                crytoIDList: passCryptoID,
+                routingIDList: passRoutingID
+            }
         });
 
         return;
