@@ -87,6 +87,8 @@ export function InstitutionManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+    const [totalRecord, setTotalRecord] = react.useState(0);
+    const [activeRecord, setActiveRecord] = react.useState(0);
 
     const navigate = reactRouter.useNavigate();
 
@@ -146,24 +148,39 @@ export function InstitutionManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
+                    setTotalRecord(result2.data?.cursor?.totalRecords || 0);
                 }
                 else throw (result2);
             }
 
             // fetch data from cursor
             fixPage();
+
+            // let allRecords = [];
+            // let totalPages = Math.ceil(pageObject.totalRecord / pageObject.pageSize);
+
+            // for (let page = 1; page <= totalPages; page++) {
+            //     let result4 = await apiBox.rewindNFetch(getSessionToken(), cursorId, pageObject.page, pageObject.pageSize);
+            //     if (result4.flag && result4.data?.records) {
+            //         allRecords.push(...result4.data.records);
+            //     }
+            // }
+
+            // dataList = [...allRecords];
+            // setTotalRecord(pageObject.totalRecord);
+
+            // const activeCount = allRecords.filter(item => item.recordData?.institutionStatus === "1").length;
+            // setActiveRecord(activeCount);
+
             let result4 = await apiBox.rewindNFetch(getSessionToken(), cursorId, pageObject.page, pageObject.pageSize);
 
             if (result4.flag) {
                 let list1 = result4.data.records;
-                /* preprocess 
-                list1 = list1.map((item) => {
-                    return item
-                });
-                */
-
                 dataList = [...list1];
-                console.log("Data list", dataList);
+
+                setTotalRecord(pageObject.totalRecord);
+                const activeCount = list1.filter(item => item.recordData.institutionStatus === "1").length;
+                setActiveRecord(activeCount);
             }
             else throw (result4);
 
@@ -178,7 +195,6 @@ export function InstitutionManagementPage({ debugMode = true }) {
             closeStateDialogBox();
             setRefresh(false);
             setReset(false);
-
             window.scrollTo(0, 0);
         }
 
@@ -379,8 +395,8 @@ export function InstitutionManagementPage({ debugMode = true }) {
 
                         <div className="col-12 d-flex">
                             <Card label={sl.l_institution_last_updated} tip={sl.t_insti_last} numCount="150"/>
-                            <Card label={sl.l_active_institution} tip={sl.t_insti_last} numCount="15"/>
-                            <Card label={sl.l_total_institution} tip={sl.t_insti_last} numCount="10"/>
+                            <Card label={sl.l_active_institution} tip={sl.t_insti_last} numCount={activeRecord}/>
+                            <Card label={sl.l_total_institution} tip={sl.t_insti_last} numCount={totalRecord}/>
                         </div>
 
                         <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>

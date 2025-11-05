@@ -1,6 +1,6 @@
 import * as react from "react";
 
-export function Card({ label, tip, numCount, debugMode = false }) {
+export function Card({ label, tip, numCount, days, debugMode = false }) {
     const componentName = "Card";
     if (debugMode) console.log(`${componentName} component start ...`);
 
@@ -21,7 +21,7 @@ export function Card({ label, tip, numCount, debugMode = false }) {
                 </span>
             </div>
             <div className="value">
-                <span className="num-count">{numCount}</span> <span className="fs-14-unity">Last 7 days</span>
+                <span className="num-count">{numCount}</span> <span className="fs-14-unity">{days}</span>
             </div>
         </div>
     );

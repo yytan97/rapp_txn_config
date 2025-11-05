@@ -483,6 +483,12 @@ body {
 	font-size: 0.8em; /* Adjust font size */
 }
 
+.owner-text {
+	font-weight: 400;
+	font-size: 12px;
+	color: #6D7172;
+}
+
 /* stepper */
 .stepper-background {
 	background-color: #F2F4F7;
@@ -645,5 +651,78 @@ body {
 	color: #6D7172;
 }
 
+/* toggle switch */
 
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 70px;
+  height: 30px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  background-color: #c7c7c7;
+  border-radius: 30px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #619fcb;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+}
+
+/* When ON (Yes) */
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #619fcb;
+}
+
+.toggle-switch input:checked + .toggle-slider .toggle-knob {
+  transform: translateX(40px);
+  background-color: white;
+  color: #619fcb;
+}
+
+/* When OFF (No) */
+.toggle-switch input:not(:checked) + .toggle-slider .toggle-knob {
+  background-color: white;
+  color: #c7c7c7;
+}
+
+/* toggle switch */
+
+.fade-in {
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 

@@ -449,17 +449,33 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         let name = e.target.name;
         let input = e.target;
         let value = e.target.value;
+        let checked = e.target.checked;
 
-        if (name.startsWith('processingFlag')) {
-            inputData[name] = input.checked;
-        }
-        else if (name.startsWith('shutdownFlag')) {
-            inputData[name] = input.checked;
-        }
-        else if (name.startsWith('authorizationFlag')) {
-            inputData[name] = input.checked;
-        }
-        else inputData[name] = value;
+        // if (name.startsWith('processingFlag')) {
+        //     inputData[name] = input.checked;
+        // }
+        // else if (name.startsWith('shutdownFlag')) {
+        //     inputData[name] = input.checked;
+        // }
+        // else if (name.startsWith('authorizationFlag')) {
+        //     inputData[name] = input.checked;
+        // }
+        // else if (inputData[name] === "isOwner") {
+        //     inputData[name] = checked;
+        // }
+        // else inputData[name] = value;
+            // Handle checkbox / toggle cases
+    if (
+        name.startsWith('processingFlag') ||
+        name.startsWith('shutdownFlag') ||
+        name.startsWith('authorizationFlag') ||
+        name === 'isOwner' // ✅ added this for your toggle switch
+    ) {
+        inputData[name] = checked;
+    } 
+    else {
+        inputData[name] = value;
+    }
 
         if (debugMode) console.log("Input data", inputData);
 
@@ -931,6 +947,17 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     // 👉 Render Stepper (only in Add mode)
     const renderStepper = () => {
         if (editMode !== 0) return null; // hide in Edit mode
+
+        const steps = [
+            {id : 1, label: sl.l_basic_info},
+            {id : 2, label: sl.l_additional_info},
+            {id : 3, label: sl.l_processing},
+            {id : 4, label: sl.l_store_forward},
+            {id : 5, label: sl.l_timer},
+            {id : 6, label: sl.l_cryptogram},
+            {id : 7, label: sl.l_routing},
+        ];
+
         return (
             <div className="col-3 mr-24">
                 <div className="stepper-background">
@@ -938,70 +965,23 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                         {sl.l_create_institution}
                     </div>
                     <div className="steps-vertical">
-                        <div className={`step-vertical ${step >= 1 ? "active" : ""} d-flex align-items-center`}>
-                            <div className="step-vertical-icon">
-                                <span className={`material-symbols-outlined ${step > 1 ? "completed" : "pending"}`} style={{
-                                    fontSize: "19px"}}>
-                                    {step > 1 ? "check_circle" : "adjust"}
-                                </span>
+                        {steps.map((stepItem) => (
+                            <div key={stepItem.id} className={`step-vertical ${step >= stepItem.id ? "active" : ""} d-flex align-items-center`}>
+                                <div className="step-vertical-icon">
+                                    <span className={`material-symbols-outlined ${step > stepItem.id ? "completed" : "pending"}`} style={{ fontSize: "19px" }}>
+                                        {step > stepItem.id ? "check_circle" : "adjust"}
+                                    </span>
+                                </div>
+                                <div className="step-vertical-content" style={{ fontWeight: step === stepItem.id ? "400" : "600" }}>
+                                    {stepItem.label}
+                                </div>
                             </div>
-                            <div className="step-vertical-content" style={{fontWeight: step === 2 ? "400" : "600"}}>
-                                {sl.l_basic_info}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 2 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_additional_info}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 3 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_processing}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 4 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_store_forward}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 5 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_timer}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 6 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_cryptogram}
-                            </div>
-                        </div>
-                        <div className={`step-vertical ${step === 7 ? "active" : ""} d-flex`}>
-                            <div className="step-vertical-icon">
-                                <span className="material-symbols-outlined" style={{fontSize: "19px"}}>adjust</span>
-                            </div>
-                            <div className="step-vertical-content">
-                                {sl.l_routing}
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
-        );
-    };
+        )
+    }
 
     return (
         <div className="container-fluid px-0">
@@ -1063,11 +1043,10 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 {/* === Toggle Switch === */}
                                 {/* <div>
                                     <InputLabel label={sl.l_owner_of_institution} />
-                                    <div className="d-flex align-items-center justify-content-between bg-white px-3 py-2 rounded-3 border">
+                                    <div className="d-flex align-items-center justify-content-between bg-white px-3 py-2">
                                         <div className="text-secondary" style={{ fontSize: "14px" }}>
-                                            Assign as Institution Owner
+                                            {sl.l_assign_institution_owner}
                                         </div>
-                                        
                                         <label className="unity-switch">
                                             <input
                                                 type="checkbox"
@@ -1077,22 +1056,44 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                             />
                                             <span className="unity-slider round"></span>
                                         </label>
-                                        
                                     </div>
                                 </div> */}
-
-                                <div>
-                                    <InputLabel label={sl.l_institution_parent} />
-                                    <input name="institutionParent"
-                                        type="text"
-                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionParent', formObject)}`}
-                                        placeholder={sl.p_institution_parent}
-                                        value={inputData?.institutionParent || ""}
-                                        onChange={change4Input} />
-
-                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionParent', sl, formObject)} />
+                                <div className="owner-toggle-container">
+                                    <InputLabel label={sl.l_owner_of_institution} />
+                                    <div className="d-flex align-items-center justify-content-between bg-white px-3 pb-12">
+                                        <div className="owner-text">
+                                           {sl.l_assign_institution_owner}
+                                        </div>
+                                        <label className="toggle-switch">
+                                            <input
+                                                type="checkbox"
+                                                name="isOwner"
+                                                checked={!!inputData?.isOwner}
+                                                onChange={change4Input}
+                                            />
+                                            <span className="toggle-slider">
+                                                <span className="toggle-knob">
+                                                {inputData?.isOwner ? "Yes" : "No"}
+                                                </span>
+                                            </span>
+                                        </label>
+                                    </div>
                                 </div>
 
+                                {!inputData?.isOwner && (
+                                    <div className="fade-in">
+                                        <InputLabel label={sl.l_institution_parent} />
+                                        <input name="institutionParent"
+                                            type="text"
+                                            className={`form-control ${tBox.getClass4IsInvalid2('institutionParent', formObject)}`}
+                                            placeholder={sl.p_institution_parent}
+                                            value={inputData?.institutionParent || ""}
+                                            onChange={change4Input} />
+
+                                        <ErrorLine message={tBox.getFieldErrorMessage2('institutionParent', sl, formObject)} />
+                                    </div>
+                                )}
+                                
                                 <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "250px"}}>
                                     <button type="button" className="btn btn-outline-dark" onClick={goNext}>
                                         {sl.b_next_advance}
