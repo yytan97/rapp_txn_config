@@ -26,23 +26,23 @@ import { cleanUp as cleanUp4Detail } from "./InstitutionDetailPage.js";
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-let dataList = [];
+export let dataList = [];
 let fieldList = [];
 
 let tableName = "kswitchinstitution";
 let databaseName = "kdb";
 
-const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "cryptogram_management";
+export const accessObjectName = "webapp_configuration_access";
+export const accessActionPrefix = "cryptogram_management";
 
 let cursorId = undefined;
-let pageObject = {
+export let pageObject = {
     totalRecord: 0,
     pageSize: 10,
     page: 1
 };
 
-let searchObject = {
+export let searchObject = {
     searchText: ""
 };
 
