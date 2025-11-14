@@ -93,7 +93,13 @@ export function InstitutionDetailPage({ debugMode = true }) {
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
-    console.log("Location", location);
+    // const [showPcodeDrawer, setShowPcodeDrawer] = react.useState(false);
+    // const [pcodeList, setPcodeList] = react.useState([]);
+    // const [searchTerm, setSearchTerm] = react.useState("");
+    // const [selectedPcode, setSelectedPcode] = react.useState("");
+    // const filteredPcodes = pcodeList.filter(id =>
+    //     id.toLowerCase().includes(searchTerm.toLowerCase())
+    // );
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -943,8 +949,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
 
                                 {
                                     tabIndex === 4 ? (
-                                        <>
-                                        
+                                        <>       
                                             <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
                                                 <div className="d-flex justify-content-end align-items-center">
                                                     <div className="col-4 pe-3">
@@ -964,16 +969,81 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         </div>
                                                     </div>
 
-                                                    {/* <div>
+                                                    <div>
                                                         {
                                                             check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                                                <button className="btn btn-unity " role="button" title={sl.t_add_record}
-                                                                    onClick={click4AddRecord}>
-                                                                    {sl.b_add_institution}
+                                                                <button className="btn btn-unity " role="button" title={sl.t_add_processing_code}>
+                                                                    {sl.b_add_processing_code}
                                                                 </button>
                                                             ) : null
                                                         }
-                                                    </div> */}
+                                                    </div>
+                                                    {/* Drawer component */}
+                                                    {/* {showPcodeDrawer && (
+                                                        <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
+                                                            <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                                                <div className="drawer-title">
+                                                                    {sl.l_institution}
+                                                                </div>
+                                                                <div className="drawer-description pb-16">
+                                                                    {sl.l_select_institution}
+                                                                </div>
+                                                                <div className="">
+                                                                    <div className="input-group">
+                                                                        <span className="input-group-text bg-light border-0">
+                                                                            <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                                                search
+                                                                            </span>
+                                                                        </span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control border-0"
+                                                                            placeholder={sl.p_search_query}
+                                                                            value={searchTerm}
+                                                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                                    </div>
+                                                                </div>
+                                                                <hr></hr>
+                                                                <div className="institution-list">
+                                                                    {filteredInstitutions.map((id, idx) => (
+                                                                        <div key={idx} className="form-check">
+                                                                            <input
+                                                                            type="radio"
+                                                                            id={`inst-${idx}`}
+                                                                            name="institution"
+                                                                            className="form-check-input"
+                                                                            checked={selectedInstitution === id}
+                                                                            onChange={() => setSelectedInstitution(id)}
+                                                                            />
+                                                                            <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                                            {id}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+
+                                                                    {filteredInstitutions.length === 0 && (
+                                                                        <div className="text-muted">
+                                                                            {sl.l_no_result_found}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <button className="btn btn-primary  mb-16"
+                                                                    disabled={!selectedInstitution}
+                                                                    onClick={() => {
+                                                                        inputData.institutionId = selectedInstitution;
+                                                                        setShowPcodeDrawer(false);
+                                                                        setRedraw(v => v + 1); }}>
+                                                                        {sl.b_apply}
+                                                                </button>
+                                                                <button className="btn btn-ghost-unity"
+                                                                    onClick={() => setShowPcodeDrawer(false)}>
+                                                                        {sl.b_cancel}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )} */}
                                                 </div>
 
                                                 <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
@@ -1061,6 +1131,381 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                 </div>
                                             </div>
 
+                                            {/* {
+                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                    <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                        style={{ minHeight: "56px" }}>
+                                                        <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                            type="button"
+                                                            style={{ color: "#494D4F", fontWeight: "500" }}
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                            {sl.b_edit}
+                                                        </button>
+                                                    </div>
+                                                ) : null
+                                            } */}
+
+                                        </>
+                                    ) : null
+                                }
+
+                                {
+                                    tabIndex === 5 ? (
+                                        <>  
+                                            <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                <div className="pl-14 detail-title-font">
+                                                    {sl.l_timer_info}
+                                                </div>
+                                                <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                    <table className="table table-hover mb-0">
+                                                        <thead>
+                                                            <tr className="text-nowrap tableRow-title">
+                                                                <th className="">
+                                                                    {sl.h_timer_id}
+                                                                </th>
+                                                                 <th className="">
+                                                                    {sl.h_chrono_unit}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_last_updated}
+                                                                </th>
+                                                                <th className="" >
+                                                                    {sl.h_status}
+                                                                </th>
+                                                                <th className="" style={{ width: "24px" }} >
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {
+                                                                processingCodeList.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                            <td className="">
+                                                                                {record.code || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {"-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {record.recordDate || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                <div className={`${getStatusLabelClass(record.status)}`}
+                                                                                    style={{ width: "110px", height: "24px" }} >
+                                                                                    {getLabel(sl, record.status, "o_status_")}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="dropdown dropstart ">
+                                                                                    <span className="d-inline-flex align-items-center " role="button"
+                                                                                        data-bs-toggle="dropdown">
+                                                                                        <div className="d-flex align-items-center ">
+                                                                                            <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                        </div>
+                                                                                    </span>
+
+                                                                                    <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                        style={{ borderRadius: "8px" }} >
+                                                                                        <ul className="list-unstyled p-2 mb-0">
+                                                                                            <li >
+                                                                                                <button
+                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                    type="button">
+                                                                                                    <span
+                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                </button>
+                                                                                            </li>
+                                                                                            {
+                                                                                                check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                    <li>
+                                                                                                        <button
+                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                            type="button"
+                                                                                                            onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                                            <span
+                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                ) : null
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                        </tr>
+
+                                                                    );
+                                                                })
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            {/* {
+                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                    <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                        style={{ minHeight: "56px" }}>
+                                                        <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                            type="button"
+                                                            style={{ color: "#494D4F", fontWeight: "500" }}
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                            {sl.b_edit}
+                                                        </button>
+                                                    </div>
+                                                ) : null
+                                            } */}
+
+                                        </>
+                                    ) : null
+                                }
+
+                                {
+                                    tabIndex === 6 ? (
+                                        <>  
+                                            <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                <div className="pl-14 detail-title-font">
+                                                    {sl.l_crypto_info}
+                                                </div>
+                                                <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                    <table className="table table-hover mb-0">
+                                                        <thead>
+                                                            <tr className="text-nowrap tableRow-title">
+                                                                <th className="">
+                                                                    {sl.h_crypto_id}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_key_function}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_key_algo}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_bit_size}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_last_updated}
+                                                                </th>
+                                                                <th className="" >
+                                                                    {sl.h_status}
+                                                                </th>
+                                                                <th className="" style={{ width: "24px" }} >
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {
+                                                                processingCodeList.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                            <td className="">
+                                                                                {record.code || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {"-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {"-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {"-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {record.recordDate || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                <div className={`${getStatusLabelClass(record.status)}`}
+                                                                                    style={{ width: "110px", height: "24px" }} >
+                                                                                    {getLabel(sl, record.status, "o_status_")}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="dropdown dropstart ">
+                                                                                    <span className="d-inline-flex align-items-center " role="button"
+                                                                                        data-bs-toggle="dropdown">
+                                                                                        <div className="d-flex align-items-center ">
+                                                                                            <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                        </div>
+                                                                                    </span>
+
+                                                                                    <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                        style={{ borderRadius: "8px" }} >
+                                                                                        <ul className="list-unstyled p-2 mb-0">
+                                                                                            <li >
+                                                                                                <button
+                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                    type="button">
+                                                                                                    <span
+                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                </button>
+                                                                                            </li>
+                                                                                            {
+                                                                                                check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                    <li>
+                                                                                                        <button
+                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                            type="button"
+                                                                                                            onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                                            <span
+                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                ) : null
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                        </tr>
+
+                                                                    );
+                                                                })
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            {/* {
+                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                    <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                        style={{ minHeight: "56px" }}>
+                                                        <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                            type="button"
+                                                            style={{ color: "#494D4F", fontWeight: "500" }}
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                            {sl.b_edit}
+                                                        </button>
+                                                    </div>
+                                                ) : null
+                                            } */}
+
+                                        </>
+                                    ) : null
+                                }
+
+                                {
+                                    tabIndex === 7 ? (
+                                        <>  
+                                            <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                <div className="pl-14 detail-title-font">
+                                                    {sl.l_routing_info}
+                                                </div>
+                                                <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                    <table className="table table-hover mb-0">
+                                                        <thead>
+                                                            <tr className="text-nowrap tableRow-title">
+                                                                <th className="">
+                                                                    {sl.h_routing_id}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_connector_name}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_routing_order}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_link_type}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_last_updated}
+                                                                </th>
+                                                                <th className="" >
+                                                                    {sl.h_status}
+                                                                </th>
+                                                                <th className="" style={{ width: "24px" }} >
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {
+                                                                routingList.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                            <td className="">
+                                                                                {record?.routingKey || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {record?.routingName || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {record?.routingOrder || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {record?.linkType || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {tBox.formatDate(record?.recordDate)}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                <div className={`${getStatusLabelClass(record.recordStatus)}`}
+                                                                                    style={{ width: "110px", height: "24px" }} >
+                                                                                    {getLabel(sl, record.recordStatus, "o_status_")}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="dropdown dropstart ">
+                                                                                    <span className="d-inline-flex align-items-center " role="button"
+                                                                                        data-bs-toggle="dropdown">
+                                                                                        <div className="d-flex align-items-center ">
+                                                                                            <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                        </div>
+                                                                                    </span>
+
+                                                                                    <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                        style={{ borderRadius: "8px" }} >
+                                                                                        <ul className="list-unstyled p-2 mb-0">
+                                                                                            <li >
+                                                                                                <button
+                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                    type="button">
+                                                                                                    <span
+                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                </button>
+                                                                                            </li>
+                                                                                            {
+                                                                                                check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                    <li>
+                                                                                                        <button
+                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                            type="button"
+                                                                                                            onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                                            <span
+                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                ) : null
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                        </tr>
+
+                                                                    );
+                                                                })
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
                                             {
                                                 check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
                                                     <div className="d-flex justify-content-end align-items-center px-4 border-top"
@@ -1076,6 +1521,214 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                 ) : null
                                             }
 
+                                        </>
+                                    ) : null
+                                }
+
+                                {
+                                    tabIndex === 8 ? (
+                                        <>       
+                                            <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                <div className="d-flex justify-content-end align-items-center">
+                                                    <div className="col-4 pe-3">
+                                                        <div className="input-group">
+                                                            <button className="btn border-0"
+                                                                style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                                                type="button"
+                                                                onClick={click4Search}>
+                                                                <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
+                                                            </button>
+                                                            <input type="text" className="form-control border-0"
+                                                                placeholder={sl.p_search_query}
+                                                                value={searchObject.searchText || ""}
+                                                                onChange={change4SearchText}
+                                                                onKeyDown={keyPress4SearchText}
+                                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        {
+                                                            check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                                <button className="btn btn-unity " role="button" title={sl.t_attach_prefix}>
+                                                                    {sl.b_attach_prefix}
+                                                                </button>
+                                                            ) : null
+                                                        }
+                                                    </div>
+                                                    {/* Drawer component */}
+                                                    {/* {showPcodeDrawer && (
+                                                        <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
+                                                            <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                                                <div className="drawer-title">
+                                                                    {sl.l_institution}
+                                                                </div>
+                                                                <div className="drawer-description pb-16">
+                                                                    {sl.l_select_institution}
+                                                                </div>
+                                                                <div className="">
+                                                                    <div className="input-group">
+                                                                        <span className="input-group-text bg-light border-0">
+                                                                            <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                                                search
+                                                                            </span>
+                                                                        </span>
+                                                                        <input
+                                                                            type="text"
+                                                                            className="form-control border-0"
+                                                                            placeholder={sl.p_search_query}
+                                                                            value={searchTerm}
+                                                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                                    </div>
+                                                                </div>
+                                                                <hr></hr>
+                                                                <div className="institution-list">
+                                                                    {filteredInstitutions.map((id, idx) => (
+                                                                        <div key={idx} className="form-check">
+                                                                            <input
+                                                                            type="radio"
+                                                                            id={`inst-${idx}`}
+                                                                            name="institution"
+                                                                            className="form-check-input"
+                                                                            checked={selectedInstitution === id}
+                                                                            onChange={() => setSelectedInstitution(id)}
+                                                                            />
+                                                                            <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                                            {id}
+                                                                            </label>
+                                                                        </div>
+                                                                    ))}
+
+                                                                    {filteredInstitutions.length === 0 && (
+                                                                        <div className="text-muted">
+                                                                            {sl.l_no_result_found}
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+
+                                                                <button className="btn btn-primary  mb-16"
+                                                                    disabled={!selectedInstitution}
+                                                                    onClick={() => {
+                                                                        inputData.institutionId = selectedInstitution;
+                                                                        setShowPcodeDrawer(false);
+                                                                        setRedraw(v => v + 1); }}>
+                                                                        {sl.b_apply}
+                                                                </button>
+                                                                <button className="btn btn-ghost-unity"
+                                                                    onClick={() => setShowPcodeDrawer(false)}>
+                                                                        {sl.b_cancel}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )} */}
+                                                </div>
+
+                                                <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                    <table className="table table-hover mb-0">
+                                                        <thead>
+                                                            <tr className="text-nowrap tableRow-title">
+                                                                <th className="">
+                                                                    {sl.h_prefix}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_priority}
+                                                                </th>
+                                                                <th className="">
+                                                                    {sl.h_last_updated}
+                                                                </th>
+                                                                <th className="" >
+                                                                    {sl.h_status}
+                                                                </th>
+                                                                <th className="" style={{ width: "24px" }} >
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+                                                            {
+                                                                processingCodeList.map((record, index) => {
+                                                                    return (
+                                                                        <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                            <td className="">
+                                                                                {record.code || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {"1"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                {tBox.formatDate(record?.recordDate) || "-"}
+                                                                            </td>
+                                                                            <td className="">
+                                                                                <div className={`${getStatusLabelClass(record.status)}`}
+                                                                                    style={{ width: "110px", height: "24px" }} >
+                                                                                    {getLabel(sl, record.status, "o_status_")}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div className="dropdown dropstart ">
+                                                                                    <span className="d-inline-flex align-items-center " role="button"
+                                                                                        data-bs-toggle="dropdown">
+                                                                                        <div className="d-flex align-items-center ">
+                                                                                            <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                        </div>
+                                                                                    </span>
+
+                                                                                    <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                        style={{ borderRadius: "8px" }} >
+                                                                                        <ul className="list-unstyled p-2 mb-0">
+                                                                                            <li >
+                                                                                                <button
+                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                    type="button">
+                                                                                                    <span
+                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                </button>
+                                                                                            </li>
+                                                                                            {
+                                                                                                check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                    <li>
+                                                                                                        <button
+                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                            type="button"
+                                                                                                            onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                                            <span
+                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                ) : null
+                                                                                            }
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </td>
+
+                                                                        </tr>
+
+                                                                    );
+                                                                })
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            {/* {
+                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                    <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                        style={{ minHeight: "56px" }}>
+                                                        <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                            type="button"
+                                                            style={{ color: "#494D4F", fontWeight: "500" }}
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                            {sl.b_edit}
+                                                        </button>
+                                                    </div>
+                                                ) : null
+                                            } */}
                                         </>
                                     ) : null
                                 }

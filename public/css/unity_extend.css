@@ -210,6 +210,10 @@ body {
 }
 
 /* padding-left */
+.pl-14 {
+	padding-left: 14px;
+}
+
 .pl-24 {
 	padding-left: 24px;
 }
@@ -474,6 +478,12 @@ body {
 	font-size: 14px;
 	color: #6D7172;
 
+}
+
+.detail-title-font {
+	font-weight: 700;
+	font-size: 16px;
+	color: #1D1F20;
 }
 
 .char-count {
