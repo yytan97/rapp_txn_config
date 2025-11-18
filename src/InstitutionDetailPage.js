@@ -93,13 +93,40 @@ export function InstitutionDetailPage({ debugMode = true }) {
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
-    // const [showPcodeDrawer, setShowPcodeDrawer] = react.useState(false);
-    // const [pcodeList, setPcodeList] = react.useState([]);
-    // const [searchTerm, setSearchTerm] = react.useState("");
-    // const [selectedPcode, setSelectedPcode] = react.useState("");
-    // const filteredPcodes = pcodeList.filter(id =>
-    //     id.toLowerCase().includes(searchTerm.toLowerCase())
-    // );
+    const [showPcodeDrawer, setShowPcodeDrawer] = react.useState(false);
+    const [searchTerm, setSearchTerm] = react.useState("");
+    const [selectedPcode, setSelectedPcode] = react.useState([]);
+    const processingCode = [
+        {code: "00", desc: sl.o_pcode_00 },
+        {code: "01", desc: sl.o_pcode_01 },
+        {code: "03", desc: sl.o_pcode_03 },
+        {code: "09", desc: sl.o_pcode_09 },
+        {code: "17", desc: sl.o_pcode_17 },
+        {code: "20", desc: sl.o_pcode_20 },
+        {code: "21", desc: sl.o_pcode_21 },
+        {code: "30", desc: sl.o_pcode_30 },
+        {code: "31", desc: sl.o_pcode_31 },
+        {code: "32", desc: sl.o_pcode_32 },
+        {code: "33", desc: sl.o_pcode_33 },
+        {code: "37", desc: sl.o_pcode_37 },
+        {code: "38", desc: sl.o_pcode_38 },
+        {code: "40", desc: sl.o_pcode_40 },
+        {code: "41", desc: sl.o_pcode_41 },
+        {code: "42", desc: sl.o_pcode_42 },
+        {code: "43", desc: sl.o_pcode_43 },
+        {code: "49", desc: sl.o_pcode_49 },
+    ];
+    const filteredPcodes = processingCode.filter(item =>
+        item.code.includes(searchTerm) || item.desc.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const togglePcode = (code) => {
+        setSelectedPcode(prev => {
+            if (prev.includes(code)) {
+                return prev.filter(x => x !== code);
+            }
+            return [...prev, code];
+        })
+    };
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -133,58 +160,68 @@ export function InstitutionDetailPage({ debugMode = true }) {
             rowId = sp.get('rowId');
 
             // fetch data 
-
             let result2 = await apiBox.getRecord(getSessionToken(), databaseName, tableName, `rowId = ${rowId}`);
             if (result2.flag) {
                 let list2 = result2.data.records;
-                /* preprocess 
-                list1 = list2.map((item) => {
-                    return item
-                });
-                */
-
                 institutionRecord = list2[0];
-                console.log("Record", institutionRecord);
 
-                let result3 = await apiBox.getRecord(getSessionToken(), databaseName, "kswitchinstitution_txn", `institutionId = '${institutionRecord.institutionId}'`);
-
-                // if (result3.flag) {
-                //     let list3 = result3.data.records;
-                //     list3 = list3.map((record) => {
-                //         record.code = record.institutionPcode;
-                //         if (record.code.length == 1) record.code = "0" + record.code;
-                //         return record;
-                //     });
-
-                //     list3.sort(function (a, b) {
-                //         if (a.code == b.code) return 0;
-                //         if (a.code < b.code) return -1;
-                //         return 1;
-                //     });
-                //     processingCodeList = list3;
-                // }
-                // else processingCodeList = [];
+                let result3 = await apiBox.getRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution_txn",
+                    `institutionId = '${institutionRecord.institutionId}'`
+                );
 
                 if (result3.flag) {
-                    processingCodeList = result3.data.records.map(record => ({
-                        code: record.institutionPcode || "-",
-                        recordDate: record.recordDate || "-",
-                        status: record.recordStatus || "-"
-                    }));
-                };
-                console.log("processingCodeList", processingCodeList);
-                
+                    let rawList = result3.data.records.map(r => {
+                        const rawCode = (r.institutionPcode || "").trim();
+                        return {
+                            rawCode,
+                            numeric: /^\d+$/.test(rawCode),
+                            paddedCode: /^\d+$/.test(rawCode)
+                                ? rawCode.padStart(2, "0")   // always pad to 2 digits
+                                : rawCode,
+                            recordDate: r.recordDate || "-",
+                            status: r.recordStatus || "-"
+                        };
+                    });
 
-                let result4 = await apiBox.getRecord(getSessionToken(), databaseName, "kswitchroute", `routingKey = '${institutionRecord.institutionRoutingId || institutionRecord.institutionId}'`);
+                    // sort — numeric ascending if all codes are numbers
+                    const allNumeric = rawList.every(x => x.numeric);
+
+                    rawList.sort((a, b) => {
+                        if (allNumeric) {
+                            return parseInt(a.rawCode, 10) - parseInt(b.rawCode, 10);
+                        }
+                        return a.rawCode.localeCompare(b.rawCode);
+                    });
+
+                    // final list the UI will use  
+                    processingCodeList = rawList.map(x => ({
+                        code: x.paddedCode,
+                        recordDate: x.recordDate,
+                        status: x.status
+                    }));
+                } else {
+                    processingCodeList = [];
+                }
+
+                console.log("processingCodeList", processingCodeList);
+
+                let result4 = await apiBox.getRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchroute",
+                    `routingKey = '${institutionRecord.institutionRoutingId || institutionRecord.institutionId}'`
+                );
                 if (result4.flag) {
                     let list4 = result4.data.records;
                     routingList = list4;
                 }
                 else routingList = [];
 
-                // let filename = "$KSHARE_DIR/klib/config/kconnector.cfg";
+                // load connector file
                 let filename = config?.connectorPath || "$KL_CFG_DIR/kconnector.cfg";
-
                 let result5 = await apiBox.readConfigurationFile(getSessionToken(), filename);
                 if (result5.flag) {
                     dataContent = result5?.data?.files?.[0]?.content;
@@ -192,7 +229,6 @@ export function InstitutionDetailPage({ debugMode = true }) {
                 }
                 else dataContent = "";
                 connectorList = extractConnectorObject(dataContent);
-
             }
             else throw (result2);
 
@@ -208,7 +244,6 @@ export function InstitutionDetailPage({ debugMode = true }) {
             window.scrollTo(0, 0);
             setRedraw((v) => v + 1);
         }
-
     };
 
     function getLabel(sl, value, prefix = "") {
@@ -972,21 +1007,21 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                     <div>
                                                         {
                                                             check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                                                <button className="btn btn-unity " role="button" title={sl.t_add_processing_code}>
+                                                                <button className="btn btn-unity " role="button" title={sl.t_add_processing_code} onClick={() => setShowPcodeDrawer(true)}>
                                                                     {sl.b_add_processing_code}
                                                                 </button>
                                                             ) : null
                                                         }
                                                     </div>
                                                     {/* Drawer component */}
-                                                    {/* {showPcodeDrawer && (
+                                                    {showPcodeDrawer && (
                                                         <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
                                                             <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
                                                                 <div className="drawer-title">
-                                                                    {sl.l_institution}
+                                                                    {sl.l_set_processing_code}
                                                                 </div>
                                                                 <div className="drawer-description pb-16">
-                                                                    {sl.l_select_institution}
+                                                                    {sl.l_select_pcode}
                                                                 </div>
                                                                 <div className="">
                                                                     <div className="input-group">
@@ -1006,23 +1041,23 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </div>
                                                                 <hr></hr>
                                                                 <div className="institution-list">
-                                                                    {filteredInstitutions.map((id, idx) => (
+                                                                    {filteredPcodes.map((item, idx) => (
                                                                         <div key={idx} className="form-check">
                                                                             <input
                                                                             type="radio"
-                                                                            id={`inst-${idx}`}
-                                                                            name="institution"
+                                                                            id={`pcode-${idx}`}
+                                                                            name="pcode"
                                                                             className="form-check-input"
-                                                                            checked={selectedInstitution === id}
-                                                                            onChange={() => setSelectedInstitution(id)}
+                                                                            checked={selectedPcode.includes(item.code)}
+                                                                            onChange={() => togglePcode(item.code)}
                                                                             />
-                                                                            <label className="form-check-label" htmlFor={`inst-${idx}`}>
-                                                                            {id}
+                                                                            <label className="form-check-label" htmlFor={`pcode-${idx}`}>
+                                                                                ({item.code}) {item.desc}
                                                                             </label>
                                                                         </div>
                                                                     ))}
 
-                                                                    {filteredInstitutions.length === 0 && (
+                                                                    {filteredPcodes.length === 0 && (
                                                                         <div className="text-muted">
                                                                             {sl.l_no_result_found}
                                                                         </div>
@@ -1030,11 +1065,18 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </div>
 
                                                                 <button className="btn btn-primary  mb-16"
-                                                                    disabled={!selectedInstitution}
+                                                                    disabled={selectedPcode.length === 0}
                                                                     onClick={() => {
-                                                                        inputData.institutionId = selectedInstitution;
+                                                                        const finalList = [...selectedPcode].sort();
+                                                                         processingCodeList = finalList.map(code => ({
+                                                                            code,
+                                                                            recordDate: new Date().toISOString(),
+                                                                            status: "A",
+                                                                        }));
+                                                                        console.log("Selected Processing Codes →", processingCodeList);
                                                                         setShowPcodeDrawer(false);
-                                                                        setRedraw(v => v + 1); }}>
+                                                                        setRedraw(v => v + 1); 
+                                                                        }}>
                                                                         {sl.b_apply}
                                                                 </button>
                                                                 <button className="btn btn-ghost-unity"
@@ -1043,7 +1085,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                    )} */}
+                                                    )}
                                                 </div>
 
                                                 <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
@@ -1557,14 +1599,14 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         }
                                                     </div>
                                                     {/* Drawer component */}
-                                                    {/* {showPcodeDrawer && (
+                                                    {showPcodeDrawer && (
                                                         <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
                                                             <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
                                                                 <div className="drawer-title">
-                                                                    {sl.l_institution}
+                                                                    {sl.l_set_processing_code}
                                                                 </div>
                                                                 <div className="drawer-description pb-16">
-                                                                    {sl.l_select_institution}
+                                                                    {sl.l_select_pcode}
                                                                 </div>
                                                                 <div className="">
                                                                     <div className="input-group">
@@ -1584,23 +1626,23 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </div>
                                                                 <hr></hr>
                                                                 <div className="institution-list">
-                                                                    {filteredInstitutions.map((id, idx) => (
+                                                                    {filteredPcodes.map((item, idx) => (
                                                                         <div key={idx} className="form-check">
                                                                             <input
                                                                             type="radio"
-                                                                            id={`inst-${idx}`}
-                                                                            name="institution"
+                                                                            id={`pcode-${idx}`}
+                                                                            name="pcode"
                                                                             className="form-check-input"
-                                                                            checked={selectedInstitution === id}
-                                                                            onChange={() => setSelectedInstitution(id)}
+                                                                            checked={selectedPcode.includes(item.code)}
+                                                                            onChange={() => togglePcode(item.code)}
                                                                             />
-                                                                            <label className="form-check-label" htmlFor={`inst-${idx}`}>
-                                                                            {id}
+                                                                            <label className="form-check-label" htmlFor={`pcode-${idx}`}>
+                                                                                ({item.code}) {item.desc}
                                                                             </label>
                                                                         </div>
                                                                     ))}
 
-                                                                    {filteredInstitutions.length === 0 && (
+                                                                    {filteredPcodes.length === 0 && (
                                                                         <div className="text-muted">
                                                                             {sl.l_no_result_found}
                                                                         </div>
@@ -1608,11 +1650,18 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </div>
 
                                                                 <button className="btn btn-primary  mb-16"
-                                                                    disabled={!selectedInstitution}
+                                                                    disabled={selectedPcode.length === 0}
                                                                     onClick={() => {
-                                                                        inputData.institutionId = selectedInstitution;
+                                                                        const finalList = [...selectedPcode].sort();
+                                                                        processingCodeList = finalList.map(code => ({
+                                                                            code,
+                                                                            recordDate: new Date().toISOString(),
+                                                                            status: "A",
+                                                                        }));
+                                                                        console.log("Selected Processing Codes →", processingCodeList);
                                                                         setShowPcodeDrawer(false);
-                                                                        setRedraw(v => v + 1); }}>
+                                                                        setRedraw(v => v + 1); 
+                                                                        }}>
                                                                         {sl.b_apply}
                                                                 </button>
                                                                 <button className="btn btn-ghost-unity"
@@ -1621,7 +1670,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                    )} */}
+                                                    )}
                                                 </div>
 
                                                 <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
