@@ -995,17 +995,17 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
                 {renderStepper()}
                 <div className="col-7" style={{ minHeight: "50vh" }}>
-                    {step === 1 && (
+                    {editMode === 1 ? (
                         <>
                             <div className="pb-3">
                                 <div className="edit-title-font">
-                                    {(editMode === 0) ? sl.l_new_institution : sl.l_edit_institution}
+                                    {sl.l_edit_institution}
                                 </div>
                                 <div className="edit-desc-font">
                                     {sl.l_desc}
                                 </div>
                             </div>
-                            <div className="px-4 mt-4">
+                            <div className="px-4 mt-4"> 
                                 <div>
                                     <InputLabel label={sl.l_institution_id} required />
                                     <input name="institutionId"
@@ -1019,7 +1019,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                                 </div>
-
                                 <div>
                                     <InputLabel label={sl.l_institution_type} />
                                     <input name="institutionRecordType"
@@ -1039,30 +1038,12 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
                                     <ErrorLine message={tBox.getFieldErrorMessage2('institutionRecordType', sl, formObject)} />
                                 </div>
-
                                 {/* === Toggle Switch === */}
-                                {/* <div>
-                                    <InputLabel label={sl.l_owner_of_institution} />
-                                    <div className="d-flex align-items-center justify-content-between bg-white px-3 py-2">
-                                        <div className="text-secondary" style={{ fontSize: "14px" }}>
-                                            {sl.l_assign_institution_owner}
-                                        </div>
-                                        <label className="unity-switch">
-                                            <input
-                                                type="checkbox"
-                                                name="isOwner"
-                                                checked={!!inputData?.isOwner}
-                                                onChange={change4Input}
-                                            />
-                                            <span className="unity-slider round"></span>
-                                        </label>
-                                    </div>
-                                </div> */}
                                 <div className="owner-toggle-container">
                                     <InputLabel label={sl.l_owner_of_institution} />
                                     <div className="d-flex align-items-center justify-content-between bg-white px-3 pb-12">
                                         <div className="owner-text">
-                                           {sl.l_assign_institution_owner}
+                                        {sl.l_assign_institution_owner}
                                         </div>
                                         <label className="toggle-switch">
                                             <input
@@ -1079,7 +1060,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         </label>
                                     </div>
                                 </div>
-
                                 {!inputData?.isOwner && (
                                     <div className="fade-in">
                                         <InputLabel label={sl.l_institution_parent} />
@@ -1093,21 +1073,210 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         <ErrorLine message={tBox.getFieldErrorMessage2('institutionParent', sl, formObject)} />
                                     </div>
                                 )}
-                                
-                                <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "250px"}}>
-                                    <button type="button" className="btn btn-outline-dark" onClick={goNext}>
-                                        {sl.b_next_advance}
-                                    </button>
-                                    <button className="btn btn-primary"
-                                    type="button"
-                                    onClick={click4AddRecord}
-                                    disabled={!formObject?.valid || !formObject?.dirty}>
-                                        {sl.b_create_now}
+                                <div>
+                                    <InputLabel label={sl.l_product_code} />
+                                    <input name="institutionCardProduct"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionCardProduct', formObject)}`}
+                                        placeholder="e.g., 1010 for credit card"
+                                        value={inputData?.institutionCardProduct || ""}
+                                        onChange={change4Input}/>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionCardProduct', sl, formObject)} />
+                                </div>
+
+                                <div>
+                                    <InputLabel label={sl.l_network_product_category} />
+                                    <input name="institutionNetworkProductCatagory"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionNetworkProductCatagory', formObject)}`}
+                                        placeholder={sl.p_enter_product_cat}
+                                        value={inputData?.institutionNetworkProductCatagory || ""}
+                                        onChange={change4Input}/>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionNetworkProductCatagory', sl, formObject)} />
+                                </div>
+
+                                <div>
+                                    <InputLabel label={sl.l_card_network} />
+                                    <input name="institutionCardNetwork"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionCardNetwork', formObject)}`}
+                                        placeholder={sl.p_enter_card_network}
+                                        value={inputData?.institutionCardNetwork || ""}
+                                        onChange={change4Input}/>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionCardNetwork', sl, formObject)} />
+                                </div>
+
+                                <div>
+                                    <InputLabel label={sl.l_currency_code} />
+                                    <input name="institutionCurrencyCode"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionCurrencyCode', formObject)}`}
+                                        placeholder={sl.p_enter_currency_code}
+                                        value={inputData?.institutionCurrencyCode || ""}
+                                        onChange={change4Input}/>
+                                        <span className="default-font">
+                                            {sl.l_note_numeric}
+                                        </span>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionCurrencyCode', sl, formObject)} />
+                                </div>
+
+                                <div>
+                                    <InputLabel label={sl.l_country_code} />
+                                    <input name="institutionCountryCode"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionCountryCode', formObject)}`}
+                                        placeholder={sl.p_enter_country_code}
+                                        value={inputData?.institutionCountryCode || ""}
+                                        onChange={change4Input}/>
+                                        <span className="default-font">
+                                            {sl.l_note_numeric}
+                                        </span>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionCountryCode', sl, formObject)} />
+                                </div>
+
+                                <div>
+                                    <InputLabel label={sl.l_operating_region} />
+                                    <input name="institutionOperatingRegion"
+                                        type="text"
+                                        className={`form-control ${tBox.getClass4IsInvalid2('institutionOperatingRegion', formObject)}`}
+                                        placeholder="e.g., Southeast Asia"
+                                        value={inputData?.institutionOperatingRegion || ""}
+                                        onChange={change4Input}/>
+
+                                    <ErrorLine message={tBox.getFieldErrorMessage2('institutionOperatingRegion', sl, formObject)} />
+                                </div>
+
+                                <div className="mt-4">
+                                    <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                        {sl.b_save}
                                     </button>
                                 </div>
                             </div>
+
+                        </>
+                    ) : (
+                        <>
+                            {step === 1 && (
+                                <>
+                                    <div className="pb-3">
+                                        <div className="edit-title-font">
+                                            {(editMode === 0) ? sl.l_new_institution : sl.l_edit_institution}
+                                        </div>
+                                        <div className="edit-desc-font">
+                                            {sl.l_desc}
+                                        </div>
+                                    </div>
+                                    <div className="px-4 mt-4">
+                                        <div>
+                                            <InputLabel label={sl.l_institution_id} required />
+                                            <input name="institutionId"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
+                                                placeholder={sl.p_institution_id}
+                                                value={inputData?.institutionId || ""}
+                                                onChange={change4Input}
+                                                disabled={editMode === 1}
+                                                required />
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
+                                        </div>
+
+                                        <div>
+                                            <InputLabel label={sl.l_institution_type} />
+                                            <input name="institutionRecordType"
+                                                type="text"
+                                                className={`form-control ${tBox.getClass4IsInvalid2('institutionRecordType', formObject)}`}
+                                                placeholder={sl.p_enter_institution}
+                                                value={inputData?.institutionRecordType || ""}
+                                                onChange={change4Input}
+                                                list="datalist4InstitutionRecordType" />
+
+                                            <datalist id="datalist4InstitutionRecordType">
+                                                <option value="FI"></option>
+                                                <option value="Branch"></option>
+                                                <option value="Product"></option>
+                                                <option value="Network"></option>
+                                            </datalist>
+
+                                            <ErrorLine message={tBox.getFieldErrorMessage2('institutionRecordType', sl, formObject)} />
+                                        </div>
+
+                                        {/* === Toggle Switch === */}
+                                        {/* <div>
+                                            <InputLabel label={sl.l_owner_of_institution} />
+                                            <div className="d-flex align-items-center justify-content-between bg-white px-3 py-2">
+                                                <div className="text-secondary" style={{ fontSize: "14px" }}>
+                                                    {sl.l_assign_institution_owner}
+                                                </div>
+                                                <label className="unity-switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="isOwner"
+                                                        checked={!!inputData?.isOwner}
+                                                        onChange={change4Input}
+                                                    />
+                                                    <span className="unity-slider round"></span>
+                                                </label>
+                                            </div>
+                                        </div> */}
+                                        <div className="owner-toggle-container">
+                                            <InputLabel label={sl.l_owner_of_institution} />
+                                            <div className="d-flex align-items-center justify-content-between bg-white px-3 pb-12">
+                                                <div className="owner-text">
+                                                {sl.l_assign_institution_owner}
+                                                </div>
+                                                <label className="toggle-switch">
+                                                    <input
+                                                        type="checkbox"
+                                                        name="isOwner"
+                                                        checked={!!inputData?.isOwner}
+                                                        onChange={change4Input}
+                                                    />
+                                                    <span className="toggle-slider">
+                                                        <span className="toggle-knob">
+                                                        {inputData?.isOwner ? "Yes" : "No"}
+                                                        </span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        {!inputData?.isOwner && (
+                                            <div className="fade-in">
+                                                <InputLabel label={sl.l_institution_parent} />
+                                                <input name="institutionParent"
+                                                    type="text"
+                                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionParent', formObject)}`}
+                                                    placeholder={sl.p_institution_parent}
+                                                    value={inputData?.institutionParent || ""}
+                                                    onChange={change4Input} />
+
+                                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionParent', sl, formObject)} />
+                                            </div>
+                                        )}
+                                        
+                                        <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "250px"}}>
+                                            <button type="button" className="btn btn-outline-dark" onClick={goNext}>
+                                                {sl.b_next_advance}
+                                            </button>
+                                            <button className="btn btn-primary"
+                                            type="button"
+                                            onClick={click4AddRecord}
+                                            disabled={!formObject?.valid || !formObject?.dirty}>
+                                                {sl.b_create_now}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </>
                     )}
+                    
 
                     {step === 2 && (
                         <>

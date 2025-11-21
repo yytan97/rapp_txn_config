@@ -142,6 +142,13 @@ export function InstitutionDetailPage({ debugMode = true }) {
         };
     }, []);
 
+    react.useEffect(() => {
+        if (showPcodeDrawer && processingCodeList.length > 0) {
+            const defaultSelected = processingCodeList.map(item => item.code);
+            setSelectedPcode(defaultSelected);
+        }
+    }, [showPcodeDrawer]);
+
     // event handling function here ...
 
     async function loadDataList() {
@@ -202,6 +209,8 @@ export function InstitutionDetailPage({ debugMode = true }) {
                         recordDate: x.recordDate,
                         status: x.status
                     }));
+
+                    const existingCodes = processingCodeList.map(item => item.code);
                 } else {
                     processingCodeList = [];
                 }
@@ -292,16 +301,17 @@ export function InstitutionDetailPage({ debugMode = true }) {
         return;
     };
 
-    function click4EditRecord(e, record) {
+    function click4EditRecord(e, record, step = 1) {
         if (debugMode) console.log("Click for edit record", e, record);
 
         let sp = new URLSearchParams({
             id: record.institutionId,
-            editMode: 1
+            editMode: 1,
+            step: step
         });
 
         let path = {
-            pathname: "/editInstitution",
+            pathname: "/editInstitutionV2",
             search: sp.toString(),
         };
         navigate(path);
@@ -726,7 +736,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                         <div className={`${getStatusLabelClass(institutionRecord?.institutionStatus)}`}
                                             style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
                                             <span >
-                                            {getLabel(sl, institutionRecord?.institutionStatus, "o_status_")}
+                                                {getLabel(sl, institutionRecord?.institutionStatus, "o_status_")}
                                             </span>
                                         </div>
                                     </div>
@@ -862,7 +872,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                 <div className="pl-24 pr-24 py-1 w-100">
 
                                                     <DisplayLine label={sl.l_institution_id} value={institutionRecord?.institutionId} />
-                                                    <DisplayLine label={sl.l_record_status} value={institutionRecord?.recordStatus} />
+                                                    <DisplayLine label={sl.l_record_status} value={getLabel(sl, institutionRecord?.recordStatus, "o_status_")} />
                                                     <DisplayLine label={sl.l_institution_record_type} value={institutionRecord?.institutionRecordType} />
                                                     <DisplayLine label={sl.l_institution_owner} value={institutionRecord?.institutionOwner} />
                                                     <DisplayLine label={sl.l_parent} value={institutionRecord?.institutionParent} />
@@ -872,19 +882,6 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                     <DisplayLine label={sl.l_currency_code} value={institutionRecord?.institutionCurrencyCode} />
                                                     <DisplayLine label={sl.l_country_code} value={institutionRecord?.institutionCountryCode} />
                                                     <DisplayLine label={sl.l_operating_region} value={institutionRecord?.institutionOperatingRegion} />
-
-                                                    {/* <DisplayLine label={sl.l_processing_flags} value={parseInt(institutionRecord?.institutionProcessingFlags || 0).toString(2)} />
-                                                    <DisplayLine label={sl.l_shutdown_flags} value={institutionRecord?.institutionShutdownFlags} />
-                                                    <DisplayLine label={sl.l_authorization_flags} value={institutionRecord?.institutionAuthFlags} />
-                                                    <DisplayLine label={sl.l_card_product} value={institutionRecord?.institutionCardProduct} />
-                                                    <DisplayLine label={sl.l_routing_id} value={institutionRecord?.institutionRoutingId} />
-                                                    <DisplayLine label={sl.l_record_status} value={institutionRecord?.recordStatus} />
-                                                    <DisplayLine label={sl.l_institution_saf_interleave_policy} value={institutionRecord?.institutionSafInterleavePolicy} />
-                                                    <DisplayLine label={sl.l_institution_saf_max_concurrent} value={institutionRecord?.institutionSafMaxConcurrent} />
-                                                    <DisplayLine label={sl.l_institution_saf_max_timeout} value={institutionRecord?.institutionSafMaxTimeout} />
-                                                    <DisplayLine label={sl.l_institution_saf_retry} value={institutionRecord?.institutionSafRetry} />
-                                                    <DisplayLine label={sl.l_institution_consecutive_timeout_count} value={institutionRecord?.institutionConsecutiveTimeoutCount} /> */}
-
                                                 </div>
                                             </div>
 
@@ -895,7 +892,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         <button className="btn btn-ghost-unity d-flex align-items-center"
                                                             type="button"
                                                             style={{ color: "#494D4F", fontWeight: "500" }}
-                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord, 1)}>
                                                             <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                             {sl.b_edit}
                                                         </button>
@@ -1044,12 +1041,19 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                     {filteredPcodes.map((item, idx) => (
                                                                         <div key={idx} className="form-check">
                                                                             <input
-                                                                            type="radio"
+                                                                            type="checkbox"
                                                                             id={`pcode-${idx}`}
                                                                             name="pcode"
                                                                             className="form-check-input"
                                                                             checked={selectedPcode.includes(item.code)}
-                                                                            onChange={() => togglePcode(item.code)}
+                                                                            onChange={() => {
+                                                                                if (selectedPcode.includes(item.code)) {
+                                                                                    setSelectedPcode(selectedPcode.filter(c => c !== item.code)); //remove
+                                                                                }
+                                                                                else {
+                                                                                    setSelectedPcode([...selectedPcode, item.code]); //add
+                                                                                }
+                                                                            }}
                                                                             />
                                                                             <label className="form-check-label" htmlFor={`pcode-${idx}`}>
                                                                                 ({item.code}) {item.desc}
@@ -1067,13 +1071,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 <button className="btn btn-primary  mb-16"
                                                                     disabled={selectedPcode.length === 0}
                                                                     onClick={() => {
-                                                                        const finalList = [...selectedPcode].sort();
-                                                                         processingCodeList = finalList.map(code => ({
-                                                                            code,
-                                                                            recordDate: new Date().toISOString(),
-                                                                            status: "A",
-                                                                        }));
-                                                                        console.log("Selected Processing Codes →", processingCodeList);
+                                                                        inputData.processingCodes = [...selectedPcode]; // save multiple values
                                                                         setShowPcodeDrawer(false);
                                                                         setRedraw(v => v + 1); 
                                                                         }}>
@@ -1139,9 +1137,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                                 <button
                                                                                                     className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                     type="button">
-                                                                                                    <span
-                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
-                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                    <span>{sl.b_change_status}</span>
                                                                                                 </button>
                                                                                             </li>
                                                                                             {
@@ -1150,10 +1146,8 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                                         <button
                                                                                                             className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                             type="button"
-                                                                                                            onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                                            <span
-                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
-                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                            onClick={(e) => click4RemoveProcessingCode(e, record, index)}>
+                                                                                                            <span>{sl.b_delete_pcode}</span>
                                                                                                         </button>
                                                                                                     </li>
                                                                                                 ) : null
