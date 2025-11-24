@@ -726,6 +726,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             showInfoDialogBox(message);
         }
         setRedraw((v) => v + 1);
+        
         return;
     };
 
@@ -995,7 +996,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
                 {renderStepper()}
                 <div className="col-7" style={{ minHeight: "50vh" }}>
-                    {editMode === 1 ? (
+                    {editMode === 1 && step === 1 ? (
                         <>
                             <div className="pb-3">
                                 <div className="edit-title-font">
@@ -1277,7 +1278,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                         </>
                     )}
                     
-
                     {step === 2 && (
                         <>
                             <div className="pb-3">
@@ -1481,14 +1481,22 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         }
                                     </div>
                                 </div>
-                                <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "20px"}}>
-                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                        {sl.b_back}
-                                    </button>
-                                    <button type="button" className="btn btn-primary" onClick={goNext}>
-                                        {sl.b_next}
-                                    </button>
-                                </div>
+                                {editMode === 0 ? (
+                                    <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "20px"}}>
+                                        <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                            {sl.b_back}
+                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={goNext}>
+                                            {sl.b_next}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="mt-32">
+                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </>
                     )}
@@ -1590,14 +1598,22 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 <ErrorLine message={tBox.getFieldErrorMessage2('institutionConsecutiveTimeoutCount', sl, formObject)} />
                             </div>
 
-                            <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
-                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                    {sl.b_back}
-                                </button>
-                                <button type="button" className="btn btn-primary" onClick={goNext}>
-                                    {sl.b_next}
-                                </button>
-                            </div>
+                            {editMode === 0 ? (
+                                 <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "0px"}}>
+                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                        {sl.b_back}
+                                    </button>
+                                    <button type="button" className="btn btn-primary" onClick={goNext}>
+                                        {sl.b_next}
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="mt-32">
+                                    <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                        {sl.b_save}
+                                    </button>
+                                </div>
+                            )}
                         </>
                     )}
 

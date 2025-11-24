@@ -929,7 +929,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         <button className="btn btn-ghost-unity d-flex align-items-center"
                                                             type="button"
                                                             style={{ color: "#494D4F", fontWeight: "500" }}
-                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord, 3)}>
                                                             <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                             {sl.b_edit}
                                                         </button>
@@ -967,7 +967,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         <button className="btn btn-ghost-unity d-flex align-items-center"
                                                             type="button"
                                                             style={{ color: "#494D4F", fontWeight: "500" }}
-                                                            onClick={(e) => click4EditRecord(e, institutionRecord)}>
+                                                            onClick={(e) => click4EditRecord(e, institutionRecord, 4)}>
                                                             <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                             {sl.b_edit}
                                                         </button>
