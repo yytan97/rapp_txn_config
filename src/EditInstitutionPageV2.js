@@ -465,17 +465,17 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         // }
         // else inputData[name] = value;
             // Handle checkbox / toggle cases
-    if (
-        name.startsWith('processingFlag') ||
-        name.startsWith('shutdownFlag') ||
-        name.startsWith('authorizationFlag') ||
-        name === 'isOwner' // ✅ added this for your toggle switch
-    ) {
-        inputData[name] = checked;
-    } 
-    else {
-        inputData[name] = value;
-    }
+        if (
+            name.startsWith('processingFlag') ||
+            name.startsWith('shutdownFlag') ||
+            name.startsWith('authorizationFlag') ||
+            name === 'isOwner' // ✅ added this for your toggle switch
+        ) {
+            inputData[name] = checked;
+        } 
+        else {
+            inputData[name] = value;
+        }
 
         if (debugMode) console.log("Input data", inputData);
 
@@ -620,7 +620,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                     let result5 = await apiBox.writeConfigurationFile(getSessionToken(), filename, dataContent);
                     console.log("Result 5", result5);
                 }
-
             }
 
             return result1;

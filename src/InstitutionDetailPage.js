@@ -182,12 +182,12 @@ export function InstitutionDetailPage({ debugMode = true }) {
                 if (result3.flag) {
                     let rawList = result3.data.records.map(r => {
                         const rawCode = (r.institutionPcode || "").trim();
+                        const numeric = /^\d+$/.test(rawCode);
                         return {
+                            rowId: r.rowId,
                             rawCode,
                             numeric: /^\d+$/.test(rawCode),
-                            paddedCode: /^\d+$/.test(rawCode)
-                                ? rawCode.padStart(2, "0")   // always pad to 2 digits
-                                : rawCode,
+                            paddedCode: numeric ? rawCode.padStart(2, "0") : rawCode,
                             recordDate: r.recordDate || "-",
                             status: r.recordStatus || "-"
                         };
@@ -207,10 +207,9 @@ export function InstitutionDetailPage({ debugMode = true }) {
                     processingCodeList = rawList.map(x => ({
                         code: x.paddedCode,
                         recordDate: x.recordDate,
-                        status: x.status
+                        status: x.status,
+                        rowId: x.rowId
                     }));
-
-                    const existingCodes = processingCodeList.map(item => item.code);
                 } else {
                     processingCodeList = [];
                 }
@@ -343,40 +342,92 @@ export function InstitutionDetailPage({ debugMode = true }) {
     async function click4AddProcessingCode(e, s) {
         if (debugMode) console.log("Click for add processing code ", e, s);
 
-        let code = s.substr(0, 2);
-        let list = processingCodeList;
-        if (list.find(element => element.code === code)) {
-            let message = sl.m_record_already_exist;
-            showInfoDialogBox(message);
-            return;
-        }
+        // let code = s.substr(0, 2);
+        // let list = processingCodeList;
+        // if (list.find(element => element.code === code)) {
+        //     let message = sl.m_record_already_exist;
+        //     showInfoDialogBox(message);
+        //     return;
+        // }
+
+        // showStateDialogBox();
+        // try {
+        //     let record1 = {
+        //         institutionId: institutionRecord.institutionId,
+        //         institutionPcode: code,
+        //         recordStatus: "A"
+        //     };
+
+        //     let result1 = await apiBox.addRecord(getSessionToken(), databaseName, "kswitchinstitution_txn", record1);
+        //     if (result1 && result1.flag) {
+        //         inputData.processingCode = "";
+        //         await loadDataList();
+        //     }
+        //     else throw result1;
+        // }
+        // catch (e) {
+        //     console.warn("Error", e);
+        //     let message = tBox.getErrorMessage(e, sl);
+        //     showInfoDialogBox(message);
+        //     if (tBox.isBlockErrorCode(e)) updateUser(undefined);
+        // }
+        // finally {
+        //     closeStateDialogBox();
+        // }
+
+        // return;
+
+        const oldList = processingCodeList.map(x => x.code);
+        const newList = selectedPcode;
+
+        const toAdd = newList.filter(x => !oldList.includes(x));
+        const toRemove = oldList.filter(x => !newList.includes(x));
 
         showStateDialogBox();
-        try {
-            let record1 = {
-                institutionId: institutionRecord.institutionId,
-                institutionPcode: code,
-                recordStatus: "A"
-            };
 
-            let result1 = await apiBox.addRecord(getSessionToken(), databaseName, "kswitchinstitution_txn", record1);
-            if (result1 && result1.flag) {
-                inputData.processingCode = "";
-                await loadDataList();
+        try {
+            // ADD new records
+            for (let code of toAdd) {
+                let record = {
+                    institutionId: institutionRecord.institutionId,
+                    institutionPcode: code,
+                    recordStatus: "A"
+                };
+
+                let addResult = await apiBox.addRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution_txn",
+                    record
+                );
+
+                if (!addResult?.flag) throw addResult;
             }
-            else throw result1;
-        }
-        catch (e) {
-            console.warn("Error", e);
+
+            // REMOVE unselected records
+            for (let code of toRemove) {
+                const rec = processingCodeList.find(r => r.code === code);
+
+                if (rec?.rowId) {
+                    let delResult = await apiBox.deleteRecord(
+                        getSessionToken(),
+                        databaseName,
+                        "kswitchinstitution_txn",
+                        `rowId = '${rec.rowId}'`
+                    );
+                    if (!delResult?.flag) throw delResult;
+                }
+            }
+
+            await loadDataList(); // refresh table
+
+        } catch (e) {
             let message = tBox.getErrorMessage(e, sl);
             showInfoDialogBox(message);
             if (tBox.isBlockErrorCode(e)) updateUser(undefined);
-        }
-        finally {
+        } finally {
             closeStateDialogBox();
         }
-
-        return;
     };
 
     function click4RemoveProcessingCode(e, record, index) {
@@ -1070,11 +1121,15 @@ export function InstitutionDetailPage({ debugMode = true }) {
 
                                                                 <button className="btn btn-primary  mb-16"
                                                                     disabled={selectedPcode.length === 0}
-                                                                    onClick={() => {
-                                                                        inputData.processingCodes = [...selectedPcode]; // save multiple values
+                                                                    // onClick={() => {
+                                                                    //     inputData.processingCodes = [...selectedPcode]; // save multiple values
+                                                                    //     setShowPcodeDrawer(false);
+                                                                    //     setRedraw(v => v + 1); 
+                                                                    // }}>
+                                                                    onClick={async () => {
+                                                                        await click4AddProcessingCode();
                                                                         setShowPcodeDrawer(false);
-                                                                        setRedraw(v => v + 1); 
-                                                                        }}>
+                                                                    }}>
                                                                         {sl.b_apply}
                                                                 </button>
                                                                 <button className="btn btn-ghost-unity"
@@ -1593,7 +1648,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         }
                                                     </div>
                                                     {/* Drawer component */}
-                                                    {showPcodeDrawer && (
+                                                    {/* {showPcodeDrawer && (
                                                         <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
                                                             <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
                                                                 <div className="drawer-title">
@@ -1646,13 +1701,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 <button className="btn btn-primary  mb-16"
                                                                     disabled={selectedPcode.length === 0}
                                                                     onClick={() => {
-                                                                        const finalList = [...selectedPcode].sort();
-                                                                        processingCodeList = finalList.map(code => ({
-                                                                            code,
-                                                                            recordDate: new Date().toISOString(),
-                                                                            status: "A",
-                                                                        }));
-                                                                        console.log("Selected Processing Codes →", processingCodeList);
+                                                                        
                                                                         setShowPcodeDrawer(false);
                                                                         setRedraw(v => v + 1); 
                                                                         }}>
@@ -1664,7 +1713,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                 </button>
                                                             </div>
                                                         </div>
-                                                    )}
+                                                    )} */}
                                                 </div>
 
                                                 <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
