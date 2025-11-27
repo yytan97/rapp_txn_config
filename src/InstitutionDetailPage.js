@@ -1188,7 +1188,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                     <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                                         style={{ borderRadius: "8px" }} >
                                                                                         <ul className="list-unstyled p-2 mb-0">
-                                                                                            <li >
+                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                                 <button
                                                                                                     className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                     type="button">
@@ -1197,7 +1197,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                             </li>
                                                                                             {
                                                                                                 check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                                    <li>
+                                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                                         <button
                                                                                                             className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                             type="button"

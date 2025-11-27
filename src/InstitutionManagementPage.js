@@ -20,7 +20,7 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./InstitutionDetailPage.js";
-
+import { ToastMessage } from "./ToastMessage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -90,15 +90,10 @@ export function InstitutionManagementPage({ debugMode = true }) {
     const [totalRecord, setTotalRecord] = react.useState(0);
     const [activeRecord, setActiveRecord] = react.useState(0);
 
+    const [toastShow, setToastShow] = react.useState(false);
+    const [toastMessage, setToastMessage] = react.useState("");
+
     const navigate = reactRouter.useNavigate();
-
-    /*
-    react.useEffect(() => {
-        if (debugMode) console.log(`Run ${componentName} on effect for app redraw`);
-        setRefresh(true);
-
-    }, [appRedraw]);
-    */
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -371,6 +366,30 @@ export function InstitutionManagementPage({ debugMode = true }) {
         return;
     };
 
+    function triggerToast(msg) {
+        setToastMessage(msg);
+        setToastShow(true);
+
+        setTimeout(() => {
+            setToastShow(false);
+        }, 2500);
+    }
+
+    function click4CopyID(e, record, index) {
+        e.stopPropagation();
+
+        const value = record.recordData.institutionId;
+
+        navigator.clipboard.writeText(value)
+            .then(() => {
+                triggerToast(`${value} ID copied to clipboard`);
+                e.target.closest(".dropdown-menu").classList.remove("show");
+            })
+            .catch(() => {
+                triggerToast("Failed to copy ID");
+            });
+    }
+
     return (
         <div className="container-fluid px-0 bg-unity-1">
             <TitlePanel />
@@ -502,31 +521,34 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                                 <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                     style={{ borderRadius: "8px" }} >
                                                                     <ul className="list-unstyled p-2 mb-0">
-                                                                        <li >
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span
-                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
                                                                                 <span>{sl.l_view_detail}</span>
                                                                             </button>
                                                                         </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li>
+                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                     <button
                                                                                         className="dropdown-item border-bottom d-flex align-items-center"
                                                                                         type="button"
                                                                                         onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        <span
-                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
                                                                                         <span>{sl.l_delete}</span>
                                                                                     </button>
                                                                                 </li>
                                                                             ) : null
                                                                         }
-
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4CopyID(e, record, index)}>
+                                                                                <span>{sl.l_copy_id}</span>
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
@@ -565,6 +587,12 @@ export function InstitutionManagementPage({ debugMode = true }) {
             </div> {/* end of top part */}
 
             <FooterPanel />
+
+            <ToastMessage
+                show={toastShow}
+                message={toastMessage}
+                onClose={() => setToastShow(false)}
+            />
         </div>
     );
 }
