@@ -86,6 +86,8 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+    const [totalCrypto, setTotalCrypto] = react.useState(0);
+    const [activeCrypto, setActiveCrypto] = react.useState(0);
 
     const navigate = reactRouter.useNavigate();
 
@@ -137,6 +139,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
+                    setTotalCrypto(result2.data?.cursor?.totalRecords || 0);
                 }
                 else throw (result2);
             }
@@ -154,7 +157,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 */
 
                 dataList = [...list1];
-                console.log("Data list", dataList);
+                setTotalCrypto(pageObject.totalRecord);
+                const activeCrypto = list1.filter(item => item.recordData.recordStatus === 'A').length;
+                setActiveCrypto(activeCrypto);
             }
             else throw (result4);
 
@@ -249,7 +254,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editCryptogramV2",
             search: sp.toString(),
         };
         navigate(path);
@@ -358,8 +363,8 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
                         <div className="col-12 d-flex">
                             <Card label={sl.l_crypto_created} tip={sl.t_insti_last} numCount="150"/>
-                            <Card label={sl.l_active_cryto} tip={sl.t_insti_last} numCount="15"/>
-                            <Card label={sl.l_total_crypto} tip={sl.t_insti_last} numCount="10"/>
+                            <Card label={sl.l_active_cryto} tip={sl.t_insti_last} numCount={activeCrypto}/>
+                            <Card label={sl.l_total_crypto} tip={sl.t_insti_last} numCount={totalCrypto}/>
                         </div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
@@ -373,7 +378,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                             <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
                                         </button>
                                         <input type="text" className="form-control border-0"
-                                            placeholder={sl.p_search}
+                                            placeholder={sl.p_search_query}
                                             value={searchObject.searchText || ""}
                                             onChange={change4SearchText}
                                             onKeyDown={keyPress4SearchText}
@@ -466,25 +471,21 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                                 <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                     style={{ borderRadius: "8px" }} >
                                                                     <ul className="list-unstyled p-2 mb-0">
-                                                                        <li >
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span
-                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
                                                                                 <span>{sl.l_view_detail}</span>
                                                                             </button>
                                                                         </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li>
+                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                     <button
                                                                                         className="dropdown-item border-bottom d-flex align-items-center"
                                                                                         type="button"
                                                                                         onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        <span
-                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
                                                                                         <span>{sl.l_delete}</span>
                                                                                     </button>
                                                                                 </li>

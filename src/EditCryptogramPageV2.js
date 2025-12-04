@@ -424,7 +424,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                             </div>
                             <div className="mt-4">
                                 <div className="my-3">
-                                    <div>
+                                    {/* <div>
                                         <InputLabel label={sl.l_cryptogram_id} required />
                                         <input name="ownerId"
                                             type="text"
@@ -436,7 +436,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                             required />
 
                                         <ErrorLine message={tBox.getFieldErrorMessage2('ownerId', sl, formObject)} />
-                                    </div>
+                                    </div> */}
 
                                     <div className="">
                                         <div >

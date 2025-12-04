@@ -1559,25 +1559,21 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                     <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                                         style={{ borderRadius: "8px" }} >
                                                                                         <ul className="list-unstyled p-2 mb-0">
-                                                                                            <li >
+                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                                 <button
                                                                                                     className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                     type="button">
-                                                                                                    <span
-                                                                                                        className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
-                                                                                                    <span>{sl.l_view_detail}</span>
+                                                                                                    <span>{sl.b_view_detail}</span>
                                                                                                 </button>
                                                                                             </li>
                                                                                             {
                                                                                                 check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                                    <li>
+                                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                                         <button
                                                                                                             className="dropdown-item border-bottom d-flex align-items-center"
                                                                                                             type="button"
                                                                                                             onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                                            <span
-                                                                                                                className="material-icons-outlined fs-24-unity me-2">delete</span>
-                                                                                                            <span>{sl.l_delete}</span>
+                                                                                                            <span>{sl.b_delete}</span>
                                                                                                         </button>
                                                                                                     </li>
                                                                                                 ) : null
@@ -1597,7 +1593,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                 </div>
                                             </div>
 
-                                            {
+                                            {/* {
                                                 check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
                                                     <div className="d-flex justify-content-end align-items-center px-4 border-top"
                                                         style={{ minHeight: "56px" }}>
@@ -1610,7 +1606,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                         </button>
                                                     </div>
                                                 ) : null
-                                            }
+                                            } */}
 
                                         </>
                                     ) : null

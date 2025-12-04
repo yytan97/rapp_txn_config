@@ -176,6 +176,7 @@ export function CryptogramDetailPage({ debugMode = true }) {
 
         closePanel[name] = !flag;
         setRedraw((v) => v + 1);
+
         return;
     };
 
@@ -188,10 +189,11 @@ export function CryptogramDetailPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogram",
+            pathname: "/editCryptogramV2",
             search: sp.toString(),
         };
         navigate(path);
+        
         return;
     };
 
@@ -299,7 +301,7 @@ export function CryptogramDetailPage({ debugMode = true }) {
                                                         <DisplayLine label={sl.l_cryptogram} value={dataRecord?.cryptogram} />
                                                         <DisplayLine label={sl.l_kcv} value={dataRecord?.kcv} />
                                                         <DisplayLine label={sl.l_key_index} value={dataRecord?.keyIndex} />
-                                                        <DisplayLine label={sl.l_last_updated_time} value={dataRecord?.recordDate} />
+                                                        <DisplayLine label={sl.l_last_updated_time} value={tBox.formatDate(dataRecord?.recordDate) || "-"} />
                                                         <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
 
                                                     </div>

@@ -269,7 +269,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editInstitution",
+            pathname: "/editInstitutionV2",
             search: sp.toString(),
         };
 
@@ -373,7 +373,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
         setTimeout(() => {
             setToastShow(false);
         }, 2500);
-    }
+    };
 
     function click4CopyID(e, record, index) {
         e.stopPropagation();
@@ -388,7 +388,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
             .catch(() => {
                 triggerToast("Failed to copy ID");
             });
-    }
+    };
 
     return (
         <div className="container-fluid px-0 bg-unity-1">
@@ -552,15 +552,11 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                                     </ul>
                                                                 </div>
                                                             </div>
-
                                                         </td>
-
                                                     </tr>
-
                                                 );
                                             })
                                         }
-
                                     </tbody>
                                 </table>
                             </div>
@@ -570,9 +566,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                     callback4ChangePage={callback4ChangePage}
                                     callback4ChangePageSize={callback4ChangePageSize} />
                             </div>
-
                         </div>
-
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[

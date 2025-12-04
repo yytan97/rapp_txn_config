@@ -20,7 +20,7 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./TimerDetailPage.js";
-
+import { ToastMessage } from "./ToastMessage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -85,6 +85,9 @@ export function TimerManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+
+    const [toastShow, setToastShow] = react.useState(false);
+    const [toastMessage, setToastMessage] = react.useState("");
 
     const navigate = reactRouter.useNavigate();
 
@@ -156,7 +159,6 @@ export function TimerManagementPage({ debugMode = true }) {
                 console.log("Data list", dataList);
             }
             else throw (result4);
-
         }
         catch (e) {
             console.warn("Error", e);
@@ -171,7 +173,6 @@ export function TimerManagementPage({ debugMode = true }) {
 
             window.scrollTo(0, 0);
         }
-
     };
 
     function fixPage() {
@@ -185,6 +186,7 @@ export function TimerManagementPage({ debugMode = true }) {
 
         if (pageObject.page > totalPage)
             pageObject.page = totalPage;
+
         return;
     };
 
@@ -239,6 +241,7 @@ export function TimerManagementPage({ debugMode = true }) {
 
         cleanUp4Detail();
         navigate(path);
+
         return;
     };
 
@@ -250,10 +253,11 @@ export function TimerManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editTimer",
+            pathname: "/editTimerV2",
             search: sp.toString(),
         };
         navigate(path);
+
         return;
     };
 
@@ -263,6 +267,7 @@ export function TimerManagementPage({ debugMode = true }) {
 
         setReset(true);
         setRefresh(true);
+
         return;
     };
 
@@ -273,22 +278,27 @@ export function TimerManagementPage({ debugMode = true }) {
             setReset(true);
             setRefresh(true);
         }
+
         return;
     };
 
     function change4SearchText(e) {
         if (debugMode) console.log("Change for search text ", e);
+
         searchObject.searchText = e.target.value;
         setRedraw((v) => v + 1);
+
         return;
     };
 
     function callback4ChangePageSize(n) {
         if (debugMode) console.log("Callback for change page size ", n);
+
         console.log("Page object", pageObject);
         pageObject.page = 1;
         setReset(true);
         setRefresh(true);
+
         return;
     };
 
@@ -297,6 +307,7 @@ export function TimerManagementPage({ debugMode = true }) {
         console.log("Page object", pageObject);
 
         setRefresh(true);
+
         return;
     };
 
@@ -333,7 +344,32 @@ export function TimerManagementPage({ debugMode = true }) {
                 closeStateDialogBox();
             }
         });
+
         return;
+    };
+
+    function triggerToast(msg) {
+        setToastMessage(msg);
+        setToastShow(true);
+
+        setTimeout(() => {
+            setToastShow(false);
+        }, 2500);
+    };
+
+    function click4CopyID(e, record, index) {
+        e.stopPropagation();
+
+        const value = record.recordData.institutionId;
+
+        navigator.clipboard.writeText(value)
+            .then(() => {
+                triggerToast(`${value} ID copied to clipboard`);
+                e.target.closest(".dropdown-menu").classList.remove("show");
+            })
+            .catch(() => {
+                triggerToast("Failed to copy ID");
+            });
     };
 
     return (
@@ -391,31 +427,29 @@ export function TimerManagementPage({ debugMode = true }) {
                                             </button>
                                         ) : null
                                     }
-
                                 </div>
-
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
                                 <table className="table table-hover mb-0">
                                     <thead>
                                         <tr className="text-nowrap tableRow-title">
-                                            <th className="">
+                                            {/* <th className="">
                                                 {sl.h_row_id}
-                                            </th>
+                                            </th> */}
                                             <th className="">
-                                                {sl.h_institution_id}
+                                                {sl.h_timer_id}
                                             </th>
-                                            <th className="text-end" >
+                                            <th className="text-end">
                                                 {sl.h_chrono_unit}
                                             </th>
-                                            <th className="" >
-                                                {sl.h_record_date}
+                                            <th className="">
+                                                {sl.h_last_updated}
                                             </th>
                                             <th className="">
-                                                {sl.h_record_status}
+                                                {sl.h_status}
                                             </th>
-                                            <th className="" style={{ width: "24px" }} >
+                                            <th className="" style={{ width: "24px" }}>
                                             </th>
                                         </tr>
                                     </thead>
@@ -426,10 +460,10 @@ export function TimerManagementPage({ debugMode = true }) {
                                                 console.log("Build row", record, index);
                                                 return (
                                                     <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                        <td className=" "
+                                                        {/* <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.rowId}
-                                                        </td>
+                                                        </td> */}
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.institutionId}
@@ -440,7 +474,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.recordDate || "-"}
+                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
                                                         </td>
                                                       
                                                         <td className=" "
@@ -450,7 +484,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                                                 {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
                                                             </div>
                                                         </td>
-                                                        <td className="" >
+                                                        <td className="">
                                                             <div className="dropdown dropstart ">
                                                                 <span className="d-inline-flex align-items-center " role="button"
                                                                     data-bs-toggle="dropdown">
@@ -462,43 +496,58 @@ export function TimerManagementPage({ debugMode = true }) {
                                                                 <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                     style={{ borderRadius: "8px" }} >
                                                                     <ul className="list-unstyled p-2 mb-0">
-                                                                        <li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                {/* <span
-                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span> */}
                                                                                 <span>{sl.l_view_detail}</span>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                <span>{sl.l_change_status}</span>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                <span>{sl.l_duplicate}</span>
                                                                             </button>
                                                                         </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li>
+                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                     <button
                                                                                         className="dropdown-item border-bottom d-flex align-items-center"
                                                                                         type="button"
                                                                                         onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        {/* <span
-                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span> */}
-                                                                                        <span>{sl.l_delete}</span>
+                                                                                        <span>{sl.l_delete_timer}</span>
                                                                                     </button>
                                                                                 </li>
                                                                             ) : null
                                                                         }
-
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4CopyID(e, record, index)}>
+                                                                                <span>{sl.l_copy_id}</span>
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
-
                                                         </td>
-
                                                     </tr>
-
                                                 );
                                             })
                                         }
-
                                     </tbody>
                                 </table>
                             </div>
@@ -508,9 +557,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                     callback4ChangePage={callback4ChangePage}
                                     callback4ChangePageSize={callback4ChangePageSize} />
                             </div>
-
                         </div>
-
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -521,10 +568,14 @@ export function TimerManagementPage({ debugMode = true }) {
                     ]} debugMode={debugMode} />
 
                 </div> {/* end of right panel */}
-
             </div> {/* end of top part */}
-
             <FooterPanel />
+
+            <ToastMessage
+                show={toastShow}
+                message={toastMessage}
+                onClose={() => setToastShow(false)}
+            />
         </div>
     );
 }

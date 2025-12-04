@@ -186,7 +186,7 @@ export function TimerDetailPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editTimer",
+            pathname: "/editTimerV2",
             search: sp.toString(),
         };
         navigate(path);

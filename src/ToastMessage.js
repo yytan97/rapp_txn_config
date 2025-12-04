@@ -21,16 +21,13 @@ export function ToastMessage({ show, message, onClose }) {
                 <span className="material-icons-outlined me-2" style={{ color: "#2e7d32" }}>
                     check_circle
                 </span>
-
                 <div className="flex-fill" style={{ color: "#494D4F", fontSize: "14px" }}>
                     {message}
                 </div>
-
                 <span
                     className="material-icons-outlined ms-3"
                     role="button"
-                    onClick={onClose}
-                >
+                    onClick={onClose}>
                     close
                 </span>
             </div>
