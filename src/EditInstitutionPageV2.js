@@ -148,8 +148,8 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
     // keep step in sync with query param when component mounts
     react.useEffect(() => {
-    setStep(initialStep);
-    }, [initialStep]);
+        setStep(initialStep);
+        }, [initialStep]);
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);

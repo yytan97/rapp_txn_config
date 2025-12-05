@@ -85,6 +85,8 @@ export function TimerManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+    const [totalRecord, setTotalRecord] = react.useState(0);
+    const [activeRecord, setActiveRecord] = react.useState(0);
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
@@ -139,6 +141,7 @@ export function TimerManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
+                    setTotalRecord(result2.data?.cursor?.totalRecords || 0);
                 }
                 else throw (result2);
             }
@@ -157,6 +160,9 @@ export function TimerManagementPage({ debugMode = true }) {
 
                 dataList = [...list1];
                 console.log("Data list", dataList);
+                setTotalRecord(pageObject.totalRecord);
+                const activeCount = list1.filter(item => item.recordData.recordStatus === "A").length;
+                setActiveRecord(activeCount);
             }
             else throw (result4);
         }
@@ -395,8 +401,8 @@ export function TimerManagementPage({ debugMode = true }) {
 
                         <div className="col-12 d-flex">
                             <Card label={sl.l_timer_last_updated} tip={sl.t_insti_last} numCount="150"/>
-                            <Card label={sl.l_active_timer} tip={sl.t_insti_last} numCount="15"/>
-                            <Card label={sl.l_total_timer} tip={sl.t_insti_last} numCount="10"/>
+                            <Card label={sl.l_active_timer} tip={sl.t_insti_last} numCount={activeRecord}/>
+                            <Card label={sl.l_total_timer} tip={sl.t_insti_last} numCount={totalRecord}/>
                         </div>
 
                         <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>

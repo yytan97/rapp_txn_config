@@ -83,11 +83,18 @@ export function EditTimerPageV2({ debugMode = true }) {
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
-    // start 
-    const [step, setStep] = react.useState(1);
+    const sp = new URLSearchParams(location.search);
+            
+    editMode = parseInt(sp.get("editMode"));
+    const initialStep = Number(sp.get("step")) || 1;
 
+    const [step, setStep] = react.useState(initialStep);
+    const fromTab = initialStep;
 
-    // end
+    // keep step in sync with query param when component mounts
+    react.useEffect(() => {
+        setStep(initialStep);
+        }, [initialStep]);
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -404,33 +411,6 @@ export function EditTimerPageV2({ debugMode = true }) {
                 <div className="close-btn" onClick={() => navigate(-1)}>
                     <span class="material-symbols-outlined">close</span>
                 </div>
-
-                {/* <div>
-                    {
-                        (editMode === 0 && check4Right(accessObjectName, `${accessActionPrefix}.add`)) ? (
-                            <button className="ms-1 btn btn-ghost-unity "
-                                type="button"
-                                onClick={click4AddRecord}
-                                title={sl.t_add}
-                                disabled={!formObject?.valid || !formObject?.dirty} >
-                                <span className="material-icons-outlined fs-24-unity">add</span>
-                            </button>
-
-                        ) : null
-                    }
-
-                    {
-                        (editMode === 1 && check4Right(accessObjectName, `${accessActionPrefix}.edit`)) ? (
-                            <button className="ms-1 btn btn-ghost-unity "
-                                type="button"
-                                onClick={click4UpdateRecord}
-                                title={sl.t_update}
-                                disabled={!formObject?.valid || !formObject?.dirty} >
-                                <span className="material-icons-outlined fs-24-unity">upload_file</span>
-                            </button>
-                        ) : null
-                    }
-                </div> */}
             </div>
 
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
@@ -483,21 +463,26 @@ export function EditTimerPageV2({ debugMode = true }) {
                                         <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                                     </div>
 
-                                    {/* <div >
-                                        <InputLabel label={sl.l_record_status} required />
-                                        <select name="recordStatus"
-                                            className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
-                                            value={inputData?.recordStatus || ""}
-                                            onChange={change4Input}
-                                            required >
-                                            <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
-                                            <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
-                                            <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
-                                            <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
-                                        </select>
+                                    {
+                                        (editMode === 1) ? (
+                                            <div>
+                                                <InputLabel label={sl.l_record_status} required />
+                                                <select name="recordStatus"
+                                                    className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
+                                                    value={inputData?.recordStatus || ""}
+                                                    onChange={change4Input}
+                                                    required >
+                                                    <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
+                                                    <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
+                                                    <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
+                                                    <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
+                                                </select>
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
-                                    </div> */}
+                                                <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
+                                            </div>
+                                        ) : null
+                                    }
+                                    
 
                                     <div >
                                         <InputLabel label={sl.l_chrono_unit} required />

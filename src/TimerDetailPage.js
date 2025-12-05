@@ -177,12 +177,13 @@ export function TimerDetailPage({ debugMode = true }) {
         return;
     };
 
-    function click4EditRecord(e, record) {
+    function click4EditRecord(e, record, step = 1) {
         if (debugMode) console.log("Click for edit record", e, record);
 
         let sp = new URLSearchParams({
             rowId: record.rowId,
-            editMode: 1
+            editMode: 1,
+            step: step
         });
 
         let path = {
@@ -337,7 +338,7 @@ export function TimerDetailPage({ debugMode = true }) {
                                                                 style={{ minHeight: "56px" }}>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord)}>
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 1)}>
                                                                     <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                                     {sl.b_edit}
                                                                 </button>
@@ -384,7 +385,7 @@ export function TimerDetailPage({ debugMode = true }) {
                                                                 style={{ minHeight: "56px" }}>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord)}>
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 2)}>
                                                                     <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                                     {sl.b_edit}
                                                                 </button>
