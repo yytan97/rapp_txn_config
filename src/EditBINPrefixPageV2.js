@@ -59,6 +59,24 @@ export function cleanUp() {
     return;
 };
 
+export async function updateBINPrefixStatus(api, sessionToken, rowId, newStatus) {
+    const payload = {
+        recordStatus: newStatus
+    };
+
+    let result = await apiBox.updateRecordWithId(
+        sessionToken,
+        "kdb",                 // database
+        "kswitchbinprefix",    // table
+        rowId,
+        payload
+    );
+
+    return result;
+
+}
+
+
 export function EditBINPrefixPageV2({ debugMode = true }) {
     const componentName = "EditBINPrefixPage";
     if (debugMode) console.log(`${componentName} component start ...`);
@@ -403,6 +421,7 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
         return;
     };
 
+    
     // 👉 Render Stepper (only in Add mode)
     const renderStepper = () => {
         if (editMode !== 0) return null; // hide in Edit mode
@@ -653,15 +672,15 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
                                                 {filteredInstitutions.map((id, idx) => (
                                                     <div key={idx} className="form-check">
                                                         <input
-                                                        type="radio"
-                                                        id={`inst-${idx}`}
-                                                        name="institution"
-                                                        className="form-check-input"
-                                                        checked={selectedInstitution === id}
-                                                        onChange={() => setSelectedInstitution(id)}
+                                                            type="radio" 
+                                                            id={`inst-${idx}`}
+                                                            name="institution"
+                                                            className="form-check-input"
+                                                            checked={selectedInstitution === id}
+                                                            onChange={() => setSelectedInstitution(id)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`inst-${idx}`}>
-                                                        {id}
+                                                            {id}
                                                         </label>
                                                     </div>
                                                 ))}

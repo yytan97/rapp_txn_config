@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -20,7 +19,9 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
-
+import { ToastMessage } from "./ToastMessage.js";
+import ChangeStatusModal from "./ChangeStatusModal.js";
+// import { updateBINPrefixStatus } from "./EditBINPrefixPageV2.js"
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -86,6 +87,14 @@ export function BINPrefixManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+    const [totalRecord, setTotalRecord] = react.useState(0);
+    const [activeRecord, setActiveRecord] = react.useState(0);
+
+    const [toastShow, setToastShow] = react.useState(false);
+    const [toastMessage, setToastMessage] = react.useState("");
+
+    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
+    const [selectedRecordForStatus, setSelectedRecordForStatus] = react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
 
@@ -137,6 +146,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
+                    setTotalRecord(result2.data?.cursor?.totalRecords || 0)
                 }
                 else throw (result2);
             }
@@ -155,9 +165,11 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
                 dataList = [...list1];
                 console.log("Data list", dataList);
+                setTotalRecord(pageObject.totalRecord);
+                const activeCount = list1.filter(item => item.recordData.recordStatus === 'A').length;
+                setActiveRecord(activeCount);
             }
             else throw (result4);
-
         }
         catch (e) {
             console.warn("Error", e);
@@ -172,12 +184,12 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
             window.scrollTo(0, 0);
         }
-
     };
 
     function fixPage() {
         if (pageObject.totalRecord === 0) {
             pageObject.page = 1;
+
             return;
         }
 
@@ -186,6 +198,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
         if (pageObject.page > totalPage)
             pageObject.page = totalPage;
+
         return;
     };
 
@@ -238,6 +251,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
         cleanUp4Detail();
         navigate(path);
+
         return;
     };
 
@@ -249,7 +263,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editBINPrefix",
+            pathname: "/editBINPrefixV2",
             search: sp.toString(),
         };
 
@@ -269,6 +283,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
         setReset(true);
         setRefresh(true);
+
         return;
     };
 
@@ -279,6 +294,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
             setReset(true);
             setRefresh(true);
         }
+
         return;
     };
 
@@ -286,6 +302,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
         if (debugMode) console.log("Change for search text ", e);
         searchObject.searchText = e.target.value;
         setRedraw((v) => v + 1);
+
         return;
     };
 
@@ -295,6 +312,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
         pageObject.page = 1;
         setReset(true);
         setRefresh(true);
+
         return;
     };
 
@@ -303,6 +321,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
         console.log("Page object", pageObject);
 
         setRefresh(true);
+
         return;
     };
 
@@ -339,8 +358,39 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                 closeStateDialogBox();
             }
         });
+
         return;
     };
+
+    function triggerToast(msg) {
+        setToastMessage(msg);
+        setToastShow(true);
+
+        setTimeout(() => {
+            setToastShow(false);
+        }, 2500);
+    };
+
+    function click4CopyID(e, record, index) {
+        e.stopPropagation();
+
+        const value = record.recordData.institutionId;
+
+        navigator.clipboard.writeText(value)
+            .then(() => {
+                triggerToast(`${value} copied to clipboard`);
+                e.target.closest(".dropdown-menu").classList.remove("show");
+            })
+            .catch(() => {
+                triggerToast("Failed to copy ID");
+            });
+    };
+
+    function click4ChangeStatus(e, record, index) {
+        e.stopPropagation();
+        setSelectedRecordForStatus(record);  
+        setShowChangeStatusModal(true);
+    }
 
     return (
         <div className="container-fluid px-0 bg-unity-1">
@@ -365,8 +415,8 @@ export function BINPrefixManagementPage({ debugMode = true }) {
 
                         <div className="col-12 d-flex">
                             <Card label={sl.l_bin_last_updated} tip={sl.t_insti_last} numCount="150"/>
-                            <Card label={sl.l_active_bin_prefix} tip={sl.t_insti_last} numCount="15"/>
-                            <Card label={sl.l_total_bin_prefix} tip={sl.t_insti_last} numCount="10"/>
+                            <Card label={sl.l_active_bin_prefix} tip={sl.t_insti_last} numCount={activeRecord}/>
+                            <Card label={sl.l_total_bin_prefix} tip={sl.t_insti_last} numCount={totalRecord}/>
                         </div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
@@ -404,23 +454,23 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                 <table className="table table-hover mb-0">
                                     <thead>
                                         <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
-                                            <th className="">
+                                            {/* <th className="">
                                                 {sl.h_row_id}
+                                            </th> */}
+                                            <th className="">
+                                                {sl.h_prefix}
                                             </th>
                                             <th className="">
                                                 {sl.h_institution_id}
                                             </th>
-                                            <th className="">
-                                                {sl.h_prefix}
-                                            </th>
-                                            <th className="" >
-                                                {sl.h_description}
-                                            </th>
                                             <th className="text-end" >
                                                 {sl.h_priority}
                                             </th>
+                                            <th className="" >
+                                                {sl.h_last_updated}
+                                            </th>
                                             <th className="">
-                                                {sl.h_record_status}
+                                                {sl.h_status}
                                             </th>
                                             <th className="" style={{ width: "24px" }} >
                                             </th>
@@ -435,23 +485,27 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                                     <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.rowId}
+                                                            {record.recordData.prefix || "-"}
                                                         </td>
+                                                        {/* <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.rowId}
+                                                        </td> */}
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.institutionId}
                                                         </td>
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.prefix || "-"}
-                                                        </td>
-                                                        <td className=" "
+                                                        {/* <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.description || "-"}
-                                                        </td>
+                                                        </td> */}
                                                         <td className=" text-end"
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.priority || "-"}
+                                                        </td>
+                                                        <td className=" text-end"
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
@@ -460,8 +514,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                                                 {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
                                                             </div>
                                                         </td>
-                                                        <td className=" " >
-
+                                                        <td className=" ">
                                                             <div className="dropdown dropstart ">
                                                                 <span className="d-inline-flex align-items-center " role="button"
                                                                     data-bs-toggle="dropdown">
@@ -473,43 +526,63 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                                                 <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
                                                                     style={{ borderRadius: "8px" }} >
                                                                     <ul className="list-unstyled p-2 mb-0">
-                                                                        <li >
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span
-                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
                                                                                 <span>{sl.l_view_detail}</span>
+                                                                            </button>
+                                                                        </li> 
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    e.target.closest(".dropdown-menu")?.classList.remove("show");
+                                                                                    setSelectedRecordForStatus(record);
+                                                                                    setShowChangeStatusModal(true);
+                                                                                }}>
+                                                                                <span>{sl.l_change_status}</span>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                <span>{sl.l_duplicate}</span>
                                                                             </button>
                                                                         </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li>
+                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                                     <button
                                                                                         className="dropdown-item border-bottom d-flex align-items-center"
                                                                                         type="button"
                                                                                         onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        <span
-                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
-                                                                                        <span>{sl.l_delete}</span>
+                                                                                        <span>{sl.l_delete_bin_prefix}</span>
                                                                                     </button>
                                                                                 </li>
                                                                             ) : null
                                                                         }
-
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4CopyID(e, record, index)}>
+                                                                                <span>{sl.l_copy_id}</span>
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
-
                                                         </td>
-
                                                     </tr>
-
                                                 );
                                             })
                                         }
-
                                     </tbody>
                                 </table>
                             </div>
@@ -519,9 +592,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                     callback4ChangePage={callback4ChangePage}
                                     callback4ChangePageSize={callback4ChangePageSize} />
                             </div>
-
                         </div>
-
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -532,10 +603,21 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                     ]} debugMode={debugMode} />
 
                 </div> {/* end of right panel */}
-
             </div> {/* end of top part */}
-
             <FooterPanel />
+
+            <ToastMessage
+                show={toastShow}
+                message={toastMessage}
+                onClose={() => setToastShow(false)}
+            />
+
+            <ChangeStatusModal
+                show={showChangeStatusModal}
+                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
+                record={selectedRecordForStatus}
+                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+            />
         </div>
     );
 }

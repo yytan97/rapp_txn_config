@@ -518,14 +518,14 @@ export function TimerManagementPage({ debugMode = true }) {
                                                                                 <span>{sl.l_change_status}</span>
                                                                             </button>
                                                                         </li>
-                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                        {/* <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
                                                                                 <span>{sl.l_duplicate}</span>
                                                                             </button>
-                                                                        </li>
+                                                                        </li> */}
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
                                                                                 <li style={{borderLeft: "none", marginLeft: "0rem"}}>
