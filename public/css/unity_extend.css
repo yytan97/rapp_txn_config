@@ -744,7 +744,7 @@ body {
 /* change status modal */
 
 .change-status-modal-box {
-	max-width: 520px;
+	width: 520px;
 	margin: 6vh auto;
 	border-radius: 8px;
 	padding: 24px 32px;

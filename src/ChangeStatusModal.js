@@ -8,13 +8,18 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 
-// constants same as other files
-const tableName = "kswitchbinprefix";
-const databaseName = "kdb";
-const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "bin_prefix_management";
+export function ChangeStatusModal({ 
+    show = false, 
+    onClose = () => { }, 
+    record = undefined, 
+    onUpdated = () => { }, 
+    debugMode = true,
 
-export function ChangeStatusModal({ show = false, onClose = () => { }, record = undefined, onUpdated = () => { }, debugMode = true }) {
+    tableName,
+    databaseName,
+    accessObjectName,
+    accessActionPrefix
+}) {
     const componentName = "ChangeStatusModal";
     if (debugMode) console.log(`${componentName} start ...`);
 
@@ -41,53 +46,96 @@ export function ChangeStatusModal({ show = false, onClose = () => { }, record = 
     }, [record?.recordData?.recordStatus]);
 
     if (!show) return null;
+    if (!tableName || !databaseName) {
+        console.error("ChangeStatusModal missing tableName/databaseName props.");
+        return null;
+    }
 
     async function handleSave() {
         if (debugMode) console.log("ChangeStatusModal save", selectedStatus, record);
 
         // permission check
         if (!check4Right(accessObjectName, `${accessActionPrefix}.edit`)) {
-            showInfoDialogBox(sl?.m_no_permission || "You do not have permission.");
+            showInfoDialogBox(sl?.m_no_permission);
+
             return;
         }
 
         // confirm if status actually changed
         if (selectedStatus === record?.recordData?.recordStatus) {
             onClose();
+            
             return;
         }
 
-        let message = sl?.m_confirm_update_status || `Change status for ${record?.recordData?.rowId} to ${selectedStatus}?`;
-        showConfirmDialogBox(message, async () => {
-            showStateDialogBox();
-            setSaving(true);
-            try {
-                // build payload - keep existing recordData but change status
-                const payload = {
-                    ...record.recordData,
-                    recordStatus: selectedStatus
-                };
+        showStateDialogBox();
+        setSaving(true);
 
-                let result = await apiBox.updateRecordWithId(getSessionToken(), databaseName, tableName, record.recordData.rowId, payload);
-                if (result && result.flag) {
-                    let successMsg = sl?.m_record_updated || "Record updated";
-                    showInfoDialogBox(successMsg, () => {
-                        onClose();
-                        onUpdated(); // let parent refresh
-                    });
-                } else {
-                    throw result;
-                }
-            } catch (e) {
-                console.warn("Error updating status", e);
-                let message = tBox.getErrorMessage(e, sl);
-                showInfoDialogBox(message);
-                if (tBox.isBlockErrorCode(e)) updateUser(undefined);
-            } finally {
-                setSaving(false);
-                closeStateDialogBox();
+        try {
+            // build payload - keep existing recordData but change status
+            const payload = {
+                ...record.recordData,
+                recordStatus: selectedStatus
+            };
+
+            let result = await apiBox.updateRecordWithId(
+                getSessionToken(), 
+                databaseName, 
+                tableName, 
+                record.recordData.rowId, 
+                payload
+            );
+
+            if (result && result.flag) {
+                let successMsg = sl?.m_record_updated;
+                showInfoDialogBox(successMsg, () => {
+                    onClose();
+                    onUpdated(); // let parent refresh
+                });
+            } else {
+                throw result;
             }
-        });
+        } catch (e) {
+            console.warn("Error updating status", e);
+            let message = tBox.getErrorMessage(e, sl);
+            showInfoDialogBox(message);
+            if (tBox.isBlockErrorCode(e)) updateUser(undefined);
+        } finally {
+            setSaving(false);
+            closeStateDialogBox();
+        }
+
+        // let message = sl?.m_confirm_update_status || `Change status for ${record?.recordData?.rowId} to ${selectedStatus}?`;
+        // showConfirmDialogBox(message, async () => {
+        //     showStateDialogBox();
+        //     setSaving(true);
+        //     try {
+        //         // build payload - keep existing recordData but change status
+        //         const payload = {
+        //             ...record.recordData,
+        //             recordStatus: selectedStatus
+        //         };
+
+        //         let result = await apiBox.updateRecordWithId(getSessionToken(), databaseName, tableName, record.recordData.rowId, payload);
+        //         if (result && result.flag) {
+        //             let successMsg = sl?.m_record_updated || "Record updated";
+        //             showInfoDialogBox(successMsg, () => {
+        //                 onClose();
+        //                 onUpdated(); // let parent refresh
+        //             });
+        //         } else {
+        //             throw result;
+        //         }
+        //     } catch (e) {
+        //         console.warn("Error updating status", e);
+        //         let message = tBox.getErrorMessage(e, sl);
+        //         showInfoDialogBox(message);
+        //         if (tBox.isBlockErrorCode(e)) updateUser(undefined);
+        //     } finally {
+        //         setSaving(false);
+        //         closeStateDialogBox();
+        //     }
+        // });
     }
 
     return (

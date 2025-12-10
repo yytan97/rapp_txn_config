@@ -21,7 +21,6 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
 import ChangeStatusModal from "./ChangeStatusModal.js";
-// import { updateBINPrefixStatus } from "./EditBINPrefixPageV2.js"
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -386,12 +385,6 @@ export function BINPrefixManagementPage({ debugMode = true }) {
             });
     };
 
-    function click4ChangeStatus(e, record, index) {
-        e.stopPropagation();
-        setSelectedRecordForStatus(record);  
-        setShowChangeStatusModal(true);
-    }
-
     return (
         <div className="container-fluid px-0 bg-unity-1">
             <TitlePanel />
@@ -617,6 +610,11 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                 onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
                 record={selectedRecordForStatus}
                 onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+
+                tableName="kswitchbinprefix"
+                databaseName="kdb"
+                accessObjectName="webapp_configuration_access"
+                accessActionPrefix="bin_prefix_management"
             />
         </div>
     );

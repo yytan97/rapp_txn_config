@@ -21,6 +21,7 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./TimerDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
+import ChangeStatusModal from "./ChangeStatusModal.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -90,6 +91,9 @@ export function TimerManagementPage({ debugMode = true }) {
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
+
+    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
+    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
 
@@ -514,7 +518,12 @@ export function TimerManagementPage({ debugMode = true }) {
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
-                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    e.target.closest(".dropdown-menu")?.classList.remove("show");
+                                                                                    setSelectedRecordForStatus(record);
+                                                                                    setShowChangeStatusModal(true);
+                                                                                }}>
                                                                                 <span>{sl.l_change_status}</span>
                                                                             </button>
                                                                         </li>
@@ -581,6 +590,18 @@ export function TimerManagementPage({ debugMode = true }) {
                 show={toastShow}
                 message={toastMessage}
                 onClose={() => setToastShow(false)}
+            />
+
+            <ChangeStatusModal
+                show={showChangeStatusModal}
+                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
+                record={selectedRecordForStatus}
+                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+
+                tableName = "kswitchinstitution_timers"
+                databaseName = "kdb"
+                accessObjectName = "webapp_configuration_access"
+                accessActionPrefix = "timer_management"
             />
         </div>
     );

@@ -76,7 +76,6 @@ export async function updateBINPrefixStatus(api, sessionToken, rowId, newStatus)
 
 }
 
-
 export function EditBINPrefixPageV2({ debugMode = true }) {
     const componentName = "EditBINPrefixPage";
     if (debugMode) console.log(`${componentName} component start ...`);

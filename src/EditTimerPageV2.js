@@ -59,6 +59,22 @@ export function cleanUp() {
     return;
 };
 
+export async function updateBINPrefixStatus(api, sessionToken, rowId, newStatus) {
+    const payload = {
+        recordStatus: newStatus
+    };
+
+    let result = await apiBox.updateRecordWithId(
+        sessionToken,
+        "kdb",
+        "kswitchinstitution_timers",
+        rowId,
+        payload
+    );
+
+    return result;
+}
+
 export function EditTimerPageV2({ debugMode = true }) {
     const componentName = "EditTimerPage";
     if (debugMode) console.log(`${componentName} component start ...`);
