@@ -62,6 +62,9 @@ import { TransactionHistoryDetailPage } from "./TransactionHistoryDetailPage.js"
 import { SystemConfigurationDashboard } from "./SystemConfigurationDashboard.js";
 import { InstitutionSettingsDashboard } from "./InstitutionSettingsDashboard.js";
 
+import { RouteManagementPage } from "./RouteManagementPage.js";
+import { RouteDetailPage } from "./RouteDetailPage.js";
+
 export let appRouterDefination = [
     {
         path: "/",
@@ -216,6 +219,14 @@ export let appRouterDefination = [
             {
                 path: "institutionSettingsDashboard",
                 Component: InstitutionSettingsDashboard,
+            },
+            {
+                path: "routeManagement",
+                Component: RouteManagementPage,
+            },
+            {
+                path: "routeDetail",
+                Component: RouteDetailPage,
             },
             {
                 path: "testDashboard",

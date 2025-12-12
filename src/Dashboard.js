@@ -15,6 +15,7 @@ import { FooterPanel } from "./FooterPanel.js";
 import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
 import { cleanUp as cleanUp4TimerManagement } from "./TimerManagementPage.js";
 import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
+import { cleanUp as cleanUp4RouteManagement } from "./RouteManagementPage.js";
 
 
 // Map loaded lib here ...

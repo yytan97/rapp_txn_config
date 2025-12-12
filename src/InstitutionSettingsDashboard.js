@@ -15,7 +15,7 @@ import { FooterPanel } from "./FooterPanel.js";
 import { cleanUp as cleanUp4CryptogramManagement } from "./CryptogramManagementPage.js";
 import { cleanUp as cleanUp4TimerManagement } from "./TimerManagementPage.js";
 import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
-
+import { cleanUp as cleanUp4RouteManagement } from "./RouteManagementPage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -123,8 +123,8 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
     function callback4RouteManagement(e) {
         if (debugMode) console.log("Callback for route management", e);
 
-        // cleanUp4RouteManagement();
-        // navigate("/binPrefixManagement");
+        cleanUp4RouteManagement();
+        navigate("/routeManagement");
         return;
     }
 
