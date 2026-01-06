@@ -400,6 +400,44 @@ export function RouteDetailPage({ debugMode = true }) {
                                                 </ClosablePanel>
                                             ) : null
                                         }
+
+                                        {
+                                            tabIndex === 3 ? (
+                                                <ClosablePanel name="connection"
+                                                    title={sl.l_connection}
+                                                    closeFlag={closePanel?.connection}
+                                                    callback4Toggle={callback4TogglePanel}>
+                                                    <div className="d-flex flex-column align-items-center justify-content-center border-top"
+                                                        style={{ minHeight: "168px" }} >
+                                                        <div className="px-5 py-1 w-100">
+
+                                                            <DisplayLine label={sl.l_type} value={dataRecord?.timer0} />
+                                                            <DisplayLine label={sl.l_address} value={dataRecord?.timerA} />
+                                                            <DisplayLine label={sl.l_port} value={dataRecord?.timerK} />
+                                                            <DisplayLine label={sl.l_header} value={dataRecord?.timer1} />
+                                                            <DisplayLine label={sl.l_header_length} value={dataRecord?.timer1220} />
+                                                            <DisplayLine label={sl.l_lock} value={dataRecord?.timer2} />
+                                                            
+                                                        </div>
+                                                    </div>
+
+                                                    {
+                                                        check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                            <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                                style={{ minHeight: "56px" }}>
+                                                                <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                                    style={{ color: "#494D4F", fontWeight: "500" }}
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 2)}>
+                                                                    <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                                    {sl.b_edit}
+                                                                </button>
+                                                            </div>
+                                                        ) : null
+                                                    }
+
+                                                </ClosablePanel>
+                                            ) : null
+                                        }
                                     </div>
                                 </div>
                             </div>

@@ -741,7 +741,7 @@ body {
   }
 }
 
-/* change status modal */
+/* START change status modal */
 
 .change-status-modal-box {
 	width: 520px;
@@ -758,3 +758,9 @@ body {
 	color: #1D1F20;
 }
 
+/* END change status modal */
+
+.btn-skip:hover {
+	background-color: #e7e7e7;
+	box-shadow: 0px 2px 4px 0px rgba(36, 38, 39, 0.16);
+}

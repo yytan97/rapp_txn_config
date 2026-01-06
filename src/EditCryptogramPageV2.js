@@ -78,6 +78,16 @@ export function EditCryptogramPageV2({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     const [showAttachModal, setShowAttachModal] = react.useState(false);
 
+    const [showInstitutionDrawer, setShowInstitutionDrawer] = react.useState(false);
+    const [institutionList, setInstitutionList] = react.useState([]);
+    const [searchInstitution, setSearchInstitution] = react.useState("");
+    const [selectedInstitutionId, setSelectedInstitutionId] = react.useState("");
+    const [selectedInstitutionName, setSelectedInstitutionName] = react.useState("");
+
+    const filteredInstitutions = institutionList.filter(item =>
+        item.institutionName?.toLowerCase().includes(searchInstitution.toLowerCase())
+    );
+
     const ref4Form = react.useRef();
 
     const navigate = reactRouter.useNavigate();
@@ -85,6 +95,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
 
     // start 
     const [step, setStep] = react.useState(1);
+    
 
     // end
 
@@ -408,8 +419,8 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             </div>
 
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
-                ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
-                {renderStepper()}
+                ${step === 3 ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
+                {step !== 3 && renderStepper()}
                 <div className="col-7" style={{ minHeight: "80vh" }}>
                     {editMode === 1 ? (
                         <>
@@ -815,11 +826,11 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                         {showAttachModal && (
                                             <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
                                                 <div className="modal-dialog modal-dialog-centered" role="document">
-                                                <div className="modal-content border-0 shadow p-4 rounded-3">
-                                                    <div className="modal-body">
+                                                <div className="modal-content border-0 shadow rounded-3" style={{padding: "24px 32px"}}>
+                                                    <div className="modal-body p-0">
                                                     <div className="d-flex align-items-center mb-3">
-                                                        <span className="material-icons text-primary me-2" style={{ fontSize: "32px" }}>info</span>
-                                                        <h5 className="fw-bold mb-0">{sl.l_attach_institution}</h5>
+                                                        <span className="material-icons text-primary me-2" style={{ width: "24px", height: "24px" }}>info</span>
+                                                        <div className="fw-bold mb-0 fs-unity-18">{sl.l_attach_institution}</div>
                                                     </div>
                                                     <p>
                                                         {sl.l_your} <strong>{inputData?.ownerId}</strong> {sl.l_has_been_saved} 🎉
@@ -827,10 +838,10 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                                         {sl.l_would_you_like}
                                                     </p>
                                                     </div>
-                                                    <div className="modal-footer border-0 d-flex justify-content-end">
+                                                    <div className="modal-footer p-0 border-0 d-flex justify-content-end">
                                                     <button
                                                         type="button"
-                                                        className="btn btn-outline-secondary"
+                                                        className="btn btn-skip"
                                                         onClick={() => {
                                                         setShowAttachModal(false);
                                                         navigate(-1); // Skip for now
@@ -843,7 +854,8 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                                         className="btn btn-primary"
                                                         onClick={() => {
                                                         setShowAttachModal(false);
-                                                        // setStep(2); // ✅ Move to Step 2
+                                                        setStep(3); 
+                                                        setShowInstitutionDrawer(true);
                                                         }}
                                                     >
                                                         {sl.b_attach_now}
@@ -854,6 +866,131 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                             </div>
                                         )}
                                     </div>
+                                </>
+                            )}
+
+                            {step === 3 && (
+                                <>
+                                    <div className="pb-3">
+                                        <div className="edit-title-font">
+                                            {sl.l_attach_institution}
+                                        </div>
+                                        <div className="edit-desc-font">
+                                            {sl.l_choose_financial}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <InputLabel label={sl.l_select_institution} />
+                                        <input
+                                            type="text"
+                                            readOnly
+                                            className="form-control"
+                                            placeholder={sl.p_choose_institution}
+                                            value={selectedInstitutionName || ""}
+                                            onClick={() => setShowInstitutionDrawer(true)}
+                                        />
+                                    </div>
+
+                                    <div className="mt-4 d-flex" style={{ paddingTop: "300px" }}>
+                                        {/* <button
+                                            type="button"
+                                            className="btn btn-outline-dark"
+                                            onClick={() => setStep(2)}
+                                        >
+                                            {sl.b_back}
+                                        </button> */}
+
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary"
+                                            disabled={!selectedInstitutionId}
+                                            // onClick={}
+                                        >
+                                            {sl.b_attach}
+                                        </button>
+                                    </div>
+
+                                    {/* Drawer */}
+                                    {showInstitutionDrawer && (
+                                        <div className="drawer-overlay" onClick={() => setShowInstitutionDrawer(false)}>
+                                            <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+
+                                                <div className="drawer-title">
+                                                    {sl.l_select_institution}
+                                                </div>
+
+                                                <div className="drawer-description pb-16">
+                                                    {sl.l_select_institution_desc}
+                                                </div>
+
+                                                {/* Search */}
+                                                <div className="">
+                                                    <div className="input-group">
+                                                        <span className="input-group-text bg-light border-0">
+                                                            <span className="material-icons" style={{ color: "#494D4F" }}>
+                                                                search
+                                                            </span>
+                                                        </span>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control border-0"
+                                                            placeholder={sl.p_search_query}
+                                                            value={searchInstitution}
+                                                            onChange={(e) => setSearchInstitution(e.target.value)}
+                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <hr />
+
+                                                {/* Institution list */}
+                                                <div className="institution-list">
+                                                    {filteredInstitutions.map((item, idx) => (
+                                                        <div key={idx} className="form-check">
+                                                            <input
+                                                                type="radio"
+                                                                id={`inst-${idx}`}
+                                                                name="institution"
+                                                                className="form-check-input"
+                                                                checked={selectedInstitutionId === item.rowId}
+                                                                onChange={() => {
+                                                                    setSelectedInstitutionId(item.rowId);
+                                                                    setSelectedInstitutionName(item.institutionName);
+                                                                }}
+                                                            />
+                                                            <label className="form-check-label" htmlFor={`inst-${idx}`}>
+                                                                {item.institutionName}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+
+                                                    {filteredInstitutions.length === 0 && (
+                                                        <div className="text-muted">
+                                                            {sl.l_no_result_found}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                <button
+                                                    className="btn btn-primary mb-16"
+                                                    disabled={!selectedInstitutionId}
+                                                    onClick={() => setShowInstitutionDrawer(false)}
+                                                >
+                                                    {sl.b_apply}
+                                                </button>
+
+                                                <button
+                                                    className="btn btn-ghost-unity"
+                                                    onClick={() => setShowInstitutionDrawer(false)}
+                                                >
+                                                    {sl.b_cancel}
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    )}
                                 </>
                             )}
                         </>
