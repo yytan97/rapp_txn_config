@@ -77,27 +77,17 @@ export function EditCryptogramPageV2({ debugMode = true }) {
 
     let [redraw, setRedraw] = react.useState(0);
     const [showAttachModal, setShowAttachModal] = react.useState(false);
-
     const [showInstitutionDrawer, setShowInstitutionDrawer] = react.useState(false);
     const [institutionList, setInstitutionList] = react.useState([]);
     const [searchInstitution, setSearchInstitution] = react.useState("");
     const [selectedInstitutionId, setSelectedInstitutionId] = react.useState("");
     const [selectedInstitutionName, setSelectedInstitutionName] = react.useState("");
-
-    const filteredInstitutions = institutionList.filter(item =>
-        item.institutionName?.toLowerCase().includes(searchInstitution.toLowerCase())
-    );
+    const [step, setStep] = react.useState(1); // for stepper
 
     const ref4Form = react.useRef();
 
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
-
-    // start 
-    const [step, setStep] = react.useState(1);
-    
-
-    // end
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -105,9 +95,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
         const sp = new URLSearchParams(location.search);
         rowId = sp.get('rowId');
         editMode = parseInt(sp.get('editMode'));
-
-        console.log("Row ID", rowId);
-        console.log("Edit mode", editMode);
 
         let timer = setTimeout(async () => {
             // load data list will base on edit mode to provide the input record value
@@ -140,7 +127,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
     }, [redraw]);
 
     let blocker = reactRouter.useBlocker(shouldBlock);
-    console.log("Blocker", blocker);
 
     if (blocker.state === "blocked") {
         if (debugMode) console.log("Show discard confirm dialog box");
@@ -151,6 +137,40 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                 callback4BlockerReset);
         }, 100);
     }
+
+    react.useEffect(() => {
+        if (step !== 3) return;
+
+        const fetchInstitutions = async () => {
+            try {
+                let result = await apiBox.getRecord(
+                    getSessionToken(),
+                    "kdb",
+                    "kswitchinstitution",
+                    "recordStatus = 'A'"
+                );
+
+                if (result?.flag) {
+                    const list = result.data.records
+                        .map(item => item.recordData || item)
+                        .filter(Boolean);
+
+                    setInstitutionList(list);
+                }
+            } catch (err) {
+                console.error("Error fetching institutions:", err);
+            }
+        };
+        fetchInstitutions();
+    }, [step]);
+
+    const filteredInstitutions = institutionList
+        .filter(item =>
+            item.institutionId?.toLowerCase().includes(searchInstitution.toLowerCase())
+        )
+        .sort((a, b) =>
+            (a.institutionId || "").localeCompare(b.institutionId || "", undefined, { sensitivity: "base" })
+    );
 
     // 👉 Navigation Handlers
     const goNext = () => {
@@ -202,7 +222,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                     inputData = dataRecord;
                 }
                 else throw (result4);
-
             } else {
                 // provide default value for add mode
                 dataRecord = {
@@ -210,10 +229,10 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                 };
                 inputData = dataRecord;
             }
-
         }
         catch (e) {
             console.warn("Error", e);
+            
             let message = tBox.getErrorMessage(e, sl);
             showInfoDialogBox(message);
             if (tBox.isBlockErrorCode(e)) updateUser(undefined);
@@ -223,7 +242,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             window.scrollTo(0, 0);
             setRedraw((v) => v + 1);
         }
-
     };
 
     function getLabel(sl, value, prefix = "") {
@@ -296,27 +314,28 @@ export function EditCryptogramPageV2({ debugMode = true }) {
     function callback4BlockerProceed() {
         if (debugMode) console.log("Callback for blocker proceed", blocker);
         blocker?.proceed();
+
         return;
     };
 
     function callback4BlockerReset() {
         if (debugMode) console.log("Callback for blocker reset", blocker);
         blocker?.reset();
+
         return;
     };
 
     function click4AddRecord(e) {
         if (debugMode) console.log("Click for add record", e);
+
         let message = sl.m_confirm_create_record;
         message = message.replace("__parameter_1", inputData.ownerId + " (" + inputData.keyFunction + ")");
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
-
                 let result1 = await apiBox.addRecord(getSessionToken(), databaseName, tableName, inputData);
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
-
                     // let message = sl.m_record_created;
                     // showInfoDialogBox(message, () => navigate(-1));
                     setShowAttachModal(true);
@@ -325,6 +344,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             }
             catch (e) {
                 console.warn("Error", e);
+
                 let message = tBox.getErrorMessage(e, sl);
                 showInfoDialogBox(message);
                 if (tBox.isBlockErrorCode(e)) updateUser(undefined);
@@ -332,7 +352,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             finally {
                 closeStateDialogBox();
             }
-
         });
 
         return;
@@ -340,12 +359,12 @@ export function EditCryptogramPageV2({ debugMode = true }) {
 
     function click4UpdateRecord(e) {
         if (debugMode) console.log("Click for update record", e);
+
         let message = sl.m_confirm_update_record;
         message = message.replace("__parameter_1", inputData.rowId);
         showConfirmDialogBox(message, async function () {
             showStateDialogBox();
             try {
-
                 let result1 = await apiBox.updateRecordWithId(getSessionToken(), databaseName, tableName, inputData.rowId, inputData);
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
@@ -364,20 +383,15 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             finally {
                 closeStateDialogBox();
             }
-
         });
 
         return;
     };
 
-    // function click4Echo(e, record, index) {
-    //     if (debugMode) console.log("Click for echo ", e, record, index);
-    //     return;
-    // };
-
     // 👉 Render Stepper (only in Add mode)
     const renderStepper = () => {
         if (editMode !== 0) return null; // hide in Edit mode
+
         return (
             <div className="col-3 mr-24">
                 <div className="stepper-background">
@@ -421,6 +435,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
                 ${step === 3 ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
                 {step !== 3 && renderStepper()}
+
                 <div className="col-7" style={{ minHeight: "80vh" }}>
                     {editMode === 1 ? (
                         <>
@@ -428,7 +443,6 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                 <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
                                     {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
                                 </div>
-
                                 <div style={{ color: "#76797B", fontSize: "12px" }}>
                                     {sl.l_desc}
                                 </div>
@@ -450,7 +464,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                     </div> */}
 
                                     <div className="">
-                                        <div >
+                                        <div>
                                             <InputLabel label={sl.l_key_function} required />
                                             <input name="keyFunction"
                                                 type="text"
@@ -600,11 +614,10 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                             {step === 1 && (
                                 <>
                                     <div className="pb-3">
-                                        <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
+                                        <div className="edit-title-font">
                                             {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
                                         </div>
-
-                                        <div style={{ color: "#76797B", fontSize: "12px" }}>
+                                        <div className="edit-desc-font">
                                             {sl.l_desc}
                                         </div>
                                     </div>
@@ -661,11 +674,10 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                             {step === 2 && (
                                 <>
                                     <div className="pb-3">
-                                        <div style={{ color: "#242627", "fontSize": "16px", fontWeight: "bold" }} >
+                                        <div className="edit-title-font">
                                             {(editMode === 0) ? sl.l_new_cryptogram : sl.l_edit_crypto_settings}
                                         </div>
-
-                                        <div style={{ color: "#76797B", fontSize: "12px" }}>
+                                        <div className="edit-desc-font">
                                             {sl.l_desc}
                                         </div>
                                     </div>
@@ -826,42 +838,40 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                         {showAttachModal && (
                                             <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
                                                 <div className="modal-dialog modal-dialog-centered" role="document">
-                                                <div className="modal-content border-0 shadow rounded-3" style={{padding: "24px 32px"}}>
-                                                    <div className="modal-body p-0">
-                                                    <div className="d-flex align-items-center mb-3">
-                                                        <span className="material-icons text-primary me-2" style={{ width: "24px", height: "24px" }}>info</span>
-                                                        <div className="fw-bold mb-0 fs-unity-18">{sl.l_attach_institution}</div>
+                                                    <div className="modal-content border-0 shadow rounded-3" style={{padding: "24px 32px"}}>
+                                                        <div className="modal-body p-0">
+                                                            <div className="d-flex align-items-center mb-3">
+                                                                <span className="material-icons text-primary me-2" style={{ width: "24px", height: "24px" }}>info</span>
+                                                                <div className="fw-bold mb-0 fs-unity-18">{sl.l_attach_institution}</div>
+                                                            </div>
+                                                            <p>
+                                                                {sl.l_your} <strong>{inputData?.ownerId}</strong> {sl.l_has_been_saved} 🎉
+                                                                <br />
+                                                                {sl.l_would_you_like}
+                                                            </p>
+                                                        </div>
+                                                        <div className="modal-footer p-0 border-0 d-flex justify-content-end">
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-skip"
+                                                                onClick={() => {
+                                                                setShowAttachModal(false);
+                                                                navigate(-1); // Skip for now
+                                                                }}>
+                                                                {sl.b_skip_for_now}
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-primary"
+                                                                onClick={() => {
+                                                                setShowAttachModal(false);
+                                                                setStep(3); 
+                                                                setShowInstitutionDrawer(false);
+                                                                }}>
+                                                                {sl.b_attach_now}
+                                                            </button>
+                                                        </div>
                                                     </div>
-                                                    <p>
-                                                        {sl.l_your} <strong>{inputData?.ownerId}</strong> {sl.l_has_been_saved} 🎉
-                                                        <br />
-                                                        {sl.l_would_you_like}
-                                                    </p>
-                                                    </div>
-                                                    <div className="modal-footer p-0 border-0 d-flex justify-content-end">
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-skip"
-                                                        onClick={() => {
-                                                        setShowAttachModal(false);
-                                                        navigate(-1); // Skip for now
-                                                        }}
-                                                    >
-                                                        {sl.b_skip_for_now}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className="btn btn-primary"
-                                                        onClick={() => {
-                                                        setShowAttachModal(false);
-                                                        setStep(3); 
-                                                        setShowInstitutionDrawer(true);
-                                                        }}
-                                                    >
-                                                        {sl.b_attach_now}
-                                                    </button>
-                                                    </div>
-                                                </div>
                                                 </div>
                                             </div>
                                         )}
@@ -888,23 +898,15 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                             className="form-control"
                                             placeholder={sl.p_choose_institution}
                                             value={selectedInstitutionName || ""}
-                                            onClick={() => setShowInstitutionDrawer(true)}
-                                        />
+                                            onClick={() => setShowInstitutionDrawer(true)} />
                                     </div>
 
                                     <div className="mt-4 d-flex" style={{ paddingTop: "300px" }}>
-                                        {/* <button
-                                            type="button"
-                                            className="btn btn-outline-dark"
-                                            onClick={() => setStep(2)}
-                                        >
-                                            {sl.b_back}
-                                        </button> */}
-
                                         <button
                                             type="button"
                                             className="btn btn-primary"
                                             disabled={!selectedInstitutionId}
+                                            style={{width: "100%"}}
                                             // onClick={}
                                         >
                                             {sl.b_attach}
@@ -915,15 +917,12 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                     {showInstitutionDrawer && (
                                         <div className="drawer-overlay" onClick={() => setShowInstitutionDrawer(false)}>
                                             <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
-
                                                 <div className="drawer-title">
-                                                    {sl.l_select_institution}
+                                                    {sl.l_institution}
                                                 </div>
-
                                                 <div className="drawer-description pb-16">
-                                                    {sl.l_select_institution_desc}
+                                                    {sl.l_select_inst}
                                                 </div>
-
                                                 {/* Search */}
                                                 <div className="">
                                                     <div className="input-group">
@@ -938,11 +937,9 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                                             placeholder={sl.p_search_query}
                                                             value={searchInstitution}
                                                             onChange={(e) => setSearchInstitution(e.target.value)}
-                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }}
-                                                        />
+                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                                     </div>
                                                 </div>
-
                                                 <hr />
 
                                                 {/* Institution list */}
@@ -957,11 +954,11 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                                                 checked={selectedInstitutionId === item.rowId}
                                                                 onChange={() => {
                                                                     setSelectedInstitutionId(item.rowId);
-                                                                    setSelectedInstitutionName(item.institutionName);
+                                                                    setSelectedInstitutionName(item.institutionId);
                                                                 }}
                                                             />
                                                             <label className="form-check-label" htmlFor={`inst-${idx}`}>
-                                                                {item.institutionName}
+                                                                {item.institutionId}
                                                             </label>
                                                         </div>
                                                     ))}
@@ -976,18 +973,14 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                                 <button
                                                     className="btn btn-primary mb-16"
                                                     disabled={!selectedInstitutionId}
-                                                    onClick={() => setShowInstitutionDrawer(false)}
-                                                >
-                                                    {sl.b_apply}
+                                                    onClick={() => setShowInstitutionDrawer(false)} >
+                                                        {sl.b_apply}
                                                 </button>
-
                                                 <button
                                                     className="btn btn-ghost-unity"
-                                                    onClick={() => setShowInstitutionDrawer(false)}
-                                                >
-                                                    {sl.b_cancel}
+                                                    onClick={() => setShowInstitutionDrawer(false)}>
+                                                        {sl.b_cancel}
                                                 </button>
-
                                             </div>
                                         </div>
                                     )}

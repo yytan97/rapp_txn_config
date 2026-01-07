@@ -113,10 +113,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     const [selectedRoutingId, setSelectedRoutingId] = react.useState("");
     const ref4Form = react.useRef();
 
-    const filteredTimerIds = timerIdList.filter(id =>
-        id.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
 
