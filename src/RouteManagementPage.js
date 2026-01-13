@@ -263,7 +263,7 @@ export function RouteManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editTimerV2",
+            pathname: "/editRouteV2",
             search: sp.toString(),
         };
         navigate(path);

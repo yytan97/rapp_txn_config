@@ -64,6 +64,7 @@ import { InstitutionSettingsDashboard } from "./InstitutionSettingsDashboard.js"
 
 import { RouteManagementPage } from "./RouteManagementPage.js";
 import { RouteDetailPage } from "./RouteDetailPage.js";
+import { EditRoutePageV2 } from "./EditRoutePageV2.js";
 
 export let appRouterDefination = [
     {
@@ -227,6 +228,10 @@ export let appRouterDefination = [
             {
                 path: "routeDetail",
                 Component: RouteDetailPage,
+            },
+            {
+                path: "editRouteV2",
+                Component: EditRoutePageV2,
             },
             {
                 path: "testDashboard",

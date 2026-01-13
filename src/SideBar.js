@@ -300,7 +300,7 @@ export function SideBar({ debugMode = false }) {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}> 
-                                <div className={`my-link ${(class4Active('/systemConfigurationDashboard') || class4Active('/institutionSettingsDashboard') || class4Active('/institutionManagement') || class4Active('/institutionDetail') || class4Active('/tableListManagement') || class4Active('/tableManagement') || class4Active('/configurationFileManagement') || class4Active('/cryptogramManagement') || class4Active('/cryptogramDetail') || class4Active('/timerManagement') || class4Active('/binPrefixManagement') || class4Active('/binPrefixDetail')) ? 'active' : ''} 
+                                <div className={`my-link ${(class4Active('/systemConfigurationDashboard') || class4Active('/institutionSettingsDashboard') || class4Active('/institutionManagement') || class4Active('/institutionDetail') || class4Active('/tableListManagement') || class4Active('/tableManagement') || class4Active('/configurationFileManagement') || class4Active('/cryptogramManagement') || class4Active('/cryptogramDetail') || class4Active('/timerManagement') || class4Active('/binPrefixManagement') || class4Active('/binPrefixDetail') || class4Active('/routeManagement') || class4Active('/routeDetail'))  ? 'active' : ''} 
                                 ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
                                     toggleSubmenu();
                                     click4SystemConfigurationDashboard(e); 
@@ -321,22 +321,30 @@ export function SideBar({ debugMode = false }) {
                                             <ul>
                                                 <li>
                                                     <div>
-                                                        <span class="my-label">{sl.l_institution_setting}</span>
+                                                        <span class="my-label" onClick={click4InstitutionManagement}>
+                                                            {sl.l_institution_setting}
+                                                        </span>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div>
-                                                        <span class="my-label">{sl.l_table_management}</span>
+                                                        <span class="my-label" onClick={click4Table}>
+                                                            {sl.l_table_management}
+                                                        </span>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div>
-                                                        <span class="my-label">{sl.l_configuration_file}</span>
+                                                        <span class="my-label" onClick={click4Configuration}>
+                                                            {sl.l_configuration_file}
+                                                        </span>
                                                     </div>
                                                 </li>
                                                 <li>
                                                     <div>
-                                                        <span class="my-label">{sl.l_hot_card}</span>
+                                                        <span class="my-label">
+                                                            {sl.l_hot_card}
+                                                        </span>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -362,7 +370,7 @@ export function SideBar({ debugMode = false }) {
                                     )}
                                 </div>
                                 {menuMode === 0 && (
-                                    <span className={`short-mode-label ${class4Active('/')}`}>{sl.l_system_monitoring}</span>
+                                    <span className={`short-mode-label ${class4Active('')}`}>{sl.l_system_monitoring}</span>
                                 )}
                             </>
                         ) : null
@@ -379,7 +387,7 @@ export function SideBar({ debugMode = false }) {
                                     )}
                                 </div>
                                 {menuMode === 0 && (
-                                    <span className={`short-mode-label ${class4Active('/')}`}>{sl.l_ui_ws}</span>
+                                    <span className={`short-mode-label ${class4Active('')}`}>{sl.l_ui_ws}</span>
                                 )}
                             </>
                         ) : null

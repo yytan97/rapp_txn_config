@@ -93,6 +93,10 @@ body {
 	height: 32px;
 }
 
+.btn-width-100 {
+	width: 100%;
+}
+
 .fs-8-unity {
 	font-size: 8px;
 }
@@ -233,6 +237,10 @@ body {
 }
 
 /* margin-right */
+.mr-8 {
+	margin-right: 8px;
+}
+
 .mr-24 {
 	margin-right: 24px;
 }
@@ -763,4 +771,60 @@ body {
 .btn-skip:hover {
 	background-color: #e7e7e7;
 	box-shadow: 0px 2px 4px 0px rgba(36, 38, 39, 0.16);
+}
+
+/* link type box */
+
+.link_type_box {
+  border: 2px solid #4a4f52;
+  border-radius: 20px;
+  width: 48%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.link_type_box:hover {
+  border-color: #619FCB;
+}
+
+.link_type_box.active {
+  border-color: #619FCB;
+  box-shadow: 0 0 0 1px #619FCB;
+}
+
+.radio-circle {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #4a4f52;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radio-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #619FCB;
+  border-radius: 50%;
+}
+
+.tick-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #4a4f52;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tick {
+  color: #619FCB;
+  font-size: 16px;
+  line-height: 1;
+  transition: all 0.2s ease;
 }

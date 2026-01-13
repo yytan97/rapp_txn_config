@@ -234,7 +234,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="dropdown dropstart">
+                                        {/* <div className="dropdown dropstart">
                                             <span className="d-inline-flex align-items-center " role="button" data-bs-toggle="dropdown">
                                                 <div className="btn-more p-2">
                                                     <span className="material-icons fs-18-unity">more_vert</span>
@@ -242,24 +242,24 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                                             </span>
                                             <div className="dropdown-menu fs-14-unity border-0 shadow p-0" style={{ borderRadius: "8px" }}>
                                                 <ul className="list-unstyled p-2 mb-0">
-                                                    <li>
+                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
                                                         <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
                                                             <span>{sl.b_delete_bin_prefix}</span>
                                                         </button>
                                                     </li>
-                                                    <li>
+                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
                                                         <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
                                                             <span>{sl.b_change_status}</span>
                                                         </button>
                                                     </li>
-                                                    <li>
+                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
                                                         <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
                                                             <span>{sl.b_copy_id}</span>
                                                         </button>
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     
                                     <div className="detail-title">
