@@ -13,6 +13,7 @@ import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
 import { FooterPanel } from "./FooterPanel.js";
 import { ClosablePanel } from "./ClosablePanel.js";
+import { ClosablePanel2 } from "./ClosablePanel2.js";
 
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
@@ -42,6 +43,35 @@ export function cleanUp() {
 
 const componentName = "RouteDetailPage";
 
+function getSelectedFlagTitles(routingFlags, refList, sl) {
+    const bits = String(routingFlags || "").padEnd(32, "0");
+    if (!Array.isArray(refList) || refList.length === 0) return [];
+
+    const norm = refList
+        .map((r) => {
+        const rd = r?.recordData || r;
+        const flagValue = rd?.flagValue;
+        return { rd, flagValue };
+        })
+        .filter(x => x.flagValue !== undefined && x.flagValue !== null);
+
+    norm.sort((a, b) => parseInt(a.flagValue, 10) - parseInt(b.flagValue, 10));
+
+    return norm
+        .filter(({ flagValue }) => bits.charAt(parseInt(flagValue, 10)) === "1")
+        .map(({ rd, flagValue }) => {
+        // 🔥 ADD THIS PART HERE
+        return (
+            tBox.getLabel(sl, flagValue, "o_routing_flag_title_") ||
+            rd?.flagTitle ||
+            rd?.flagName ||
+            rd?.flagDescription ||
+            `Flag ${flagValue}`
+        );
+        })
+        .filter(Boolean);
+}
+
 export function RouteDetailPage({ debugMode = true }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
@@ -61,6 +91,8 @@ export function RouteDetailPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
+    let [routingFlagReferenceList, setRoutingFlagReferenceList] = react.useState([]);
+    let [routingFlagRefList, setRoutingFlagRefList] = react.useState([]);
 
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
@@ -113,6 +145,13 @@ export function RouteDetailPage({ debugMode = true }) {
                 console.log("Record", dataRecord);
             }
             else throw (result4);
+
+            let resultFlags = await apiBox.getRecord(getSessionToken(), databaseName, "kswitchroute_flag_strings");
+            if (resultFlags?.flag) {
+                setRoutingFlagReferenceList(resultFlags?.data?.records || []);
+            } else {
+                setRoutingFlagReferenceList([]);
+            }
         }
         catch (e) {
             console.warn("Error", e);
@@ -127,6 +166,13 @@ export function RouteDetailPage({ debugMode = true }) {
 
         }
     };
+
+    // wherever you render tabIndex === 2 (Flags Type)
+    const selectedFlagTitles = getSelectedFlagTitles(
+        dataRecord?.routingFlags,
+        routingFlagReferenceList,
+        sl
+    );
 
     function click4Tab(n) {
         if (debugMode) console.log("Click for tab ", n);
@@ -338,7 +384,7 @@ export function RouteDetailPage({ debugMode = true }) {
                                                             
                                                             <DisplayLine label={sl.l_link_name} value={dataRecord?.routingName} />
                                                             <DisplayLine label={sl.l_link_order} value={dataRecord?.routingOrder} />
-                                                            <DisplayLine label={sl.l_link_type} value={dataRecord?.routingType} />
+                                                            <DisplayLine label={sl.l_link_type} value={dataRecord?.linkType} />
                                                             <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
                                                             
                                                         </div>
@@ -363,25 +409,15 @@ export function RouteDetailPage({ debugMode = true }) {
 
                                         {
                                             tabIndex === 2 ? (
-                                                <ClosablePanel name="flags_type"
+                                                <ClosablePanel2 
                                                     title={sl.l_flags_type}
-                                                    closeFlag={closePanel?.flags_type}
-                                                    callback4Toggle={callback4TogglePanel}>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center border-top"
-                                                        style={{ minHeight: "168px" }} >
-                                                        <div className="px-5 py-1 w-100">
-
-                                                            <DisplayLine label={sl.l_timer_0} value={dataRecord?.timer0} />
-                                                            <DisplayLine label={sl.l_timer_A} value={dataRecord?.timerA} />
-                                                            <DisplayLine label={sl.l_timer_K} value={dataRecord?.timerK} />
-                                                            <DisplayLine label={sl.l_timer_1} value={dataRecord?.timer1} />
-                                                            <DisplayLine label={sl.l_timer_1220} value={dataRecord?.timer1220} />
-                                                            <DisplayLine label={sl.l_timer_2} value={dataRecord?.timer2} />
-                                                            <DisplayLine label={sl.l_timer_3} value={dataRecord?.timer3} />
-                                                            <DisplayLine label={sl.l_timer_4} value={dataRecord?.timer4} />
-
-                                                        </div>
-                                                    </div>
+                                                    name="flags"
+                                                    closeFlag={closePanel?.flags}
+                                                    callback4Toggle={callback4TogglePanel}
+                                                    variant="valueOnly"
+                                                    columns={2}
+                                                    values={getSelectedFlagTitles(dataRecord?.routingFlags, routingFlagReferenceList, sl)}>
+                                                    
 
                                                     {
                                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
@@ -397,11 +433,11 @@ export function RouteDetailPage({ debugMode = true }) {
                                                         ) : null
                                                     }
 
-                                                </ClosablePanel>
+                                                </ClosablePanel2>
                                             ) : null
                                         }
 
-                                        {
+                                        {/* {
                                             tabIndex === 3 ? (
                                                 <ClosablePanel name="connection"
                                                     title={sl.l_connection}
@@ -437,7 +473,7 @@ export function RouteDetailPage({ debugMode = true }) {
 
                                                 </ClosablePanel>
                                             ) : null
-                                        }
+                                        } */}
                                     </div>
                                 </div>
                             </div>

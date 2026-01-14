@@ -828,3 +828,12 @@ body {
   line-height: 1;
   transition: all 0.2s ease;
 }
+
+/* link type box */
+
+.closable2-panel-value-font {
+	font-size: 14px;
+	font-weight: 600;
+	color: #494D4F;
+	padding: 8px 16px;
+}
