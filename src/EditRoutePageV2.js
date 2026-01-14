@@ -949,56 +949,90 @@ export function EditRoutePageV2({ debugMode = true }) {
                             </div>
                             <div className="mt-4">
                                 <div className="my-3">
-                                    {/* {
+                                    {
                                         (editMode === 1) ? (
+                                            <>
+                                                <div>
+                                                    <InputLabel label={sl.l_routing_id} />
+                                                    <input name="routingId"
+                                                        type="text"
+                                                        className={`form-control ${tBox.getClass4IsInvalid2('routingId', formObject)}`}
+                                                        placeholder={sl.p_routing_id}
+                                                        value={inputData?.routingId || ""}
+                                                        onChange={change4Input}
+                                                        disabled={true} />
+
+                                                    <ErrorLine message={tBox.getFieldErrorMessage2('routingId', sl, formObject)} />
+                                                </div>
+                                                <div>
+                                                    <InputLabel label={sl.l_link_name} required />
+                                                    <input name="routingName"
+                                                        type="text"
+                                                        className={`form-control ${tBox.getClass4IsInvalid2('routingName', formObject)}`}
+                                                        placeholder={sl.p_enter_unique_link_name}
+                                                        value={inputData?.routingName || ""}
+                                                        onChange={change4Input}
+                                                        disabled={editMode === 1}
+                                                        required />
+
+                                                    <ErrorLine message={tBox.getFieldErrorMessage2('routingName', sl, formObject)} />
+                                                </div>
+                                                <div>
+                                                    <InputLabel label={sl.l_status} required />
+                                                    <select name="recordStatus"
+                                                        className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
+                                                        value={inputData?.recordStatus || ""}
+                                                        onChange={change4Input}
+                                                        required >
+                                                        <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
+                                                        <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
+                                                        <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
+                                                        <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
+                                                    </select>
+
+                                                    <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
+                                                </div>
+                                                <div>
+                                                    <InputLabel label={sl.l_link_order} required />
+                                                    <input name="routingOrder"
+                                                        type="text"
+                                                        className={`form-control ${tBox.getClass4IsInvalid2('routingOrder', formObject)}`}
+                                                        placeholder={sl.p_enter_link_order_number}
+                                                        value={inputData?.routingOrder || ""}
+                                                        onChange={change4Input}
+                                                        required />
+
+                                                    <ErrorLine message={tBox.getFieldErrorMessage2('routingOrder', sl, formObject)} />
+                                                </div>
+                                                <div>
+                                                    <InputLabel label={sl.l_link_type} required />
+                                                    <input name="linkType"
+                                                        type="text"
+                                                        className={`form-control ${tBox.getClass4IsInvalid2('linkType', formObject)}`}
+                                                        placeholder={sl.p_enter_link_type}
+                                                        value={inputData?.linkType || ""}
+                                                        onChange={change4Input}
+                                                        required />
+
+                                                    <ErrorLine message={tBox.getFieldErrorMessage2('linkType', sl, formObject)} />
+                                                </div>
+                                            </>
+                                        ) : (
                                             <div>
-                                                <InputLabel label={sl.l_row_id} />
-                                                <input name="rowId"
+                                                <InputLabel label={sl.l_new_routing_id} required />
+                                                <input name="institutionId"
                                                     type="text"
-                                                    className={`form-control ${tBox.getClass4IsInvalid2('rowId', formObject)}`}
-                                                    placeholder={sl.p_row_id}
-                                                    value={inputData?.rowId || ""}
+                                                    className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
+                                                    placeholder={sl.p_routing_visa}
+                                                    value={inputData?.institutionId || ""}
                                                     onChange={change4Input}
-                                                    disabled={true} />
+                                                    disabled={editMode === 1}
+                                                    required />
 
-                                                <ErrorLine message={tBox.getFieldErrorMessage2('rowId', sl, formObject)} />
+                                                <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
                                             </div>
-                                        ) : null
-                                    } */}
-
-                                    <div>
-                                        <InputLabel label={sl.l_new_routing_id} required />
-                                        <input name="institutionId"
-                                            type="text"
-                                            className={`form-control ${tBox.getClass4IsInvalid2('institutionId', formObject)}`}
-                                            placeholder={sl.p_routing_visa}
-                                            value={inputData?.institutionId || ""}
-                                            onChange={change4Input}
-                                            disabled={editMode === 1}
-                                            required />
-
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('institutionId', sl, formObject)} />
-                                    </div>
-
-                                    {/* {
-                                        (editMode === 1) ? (
-                                            <div>
-                                                <InputLabel label={sl.l_record_status} required />
-                                                <select name="recordStatus"
-                                                    className={`form-select ${tBox.getClass4IsInvalid2('recordStatus', formObject)}`}
-                                                    value={inputData?.recordStatus || ""}
-                                                    onChange={change4Input}
-                                                    required >
-                                                    <option value="A">{getLabel(sl, "A", "o_record_status_")}</option>
-                                                    <option value="D">{getLabel(sl, "D", "o_record_status_")}</option>
-                                                    <option value="P">{getLabel(sl, "P", "o_record_status_")}</option>
-                                                    <option value="I">{getLabel(sl, "I", "o_record_status_")}</option>
-                                                </select>
-
-                                                <ErrorLine message={tBox.getFieldErrorMessage2('recordStatus', sl, formObject)} />
-                                            </div>
-                                        ) : null
-                                    } */}
+                                        )
+                                    }
 
                                     <div className="mt-4">
                                         {editMode === 0 ? (
@@ -1266,14 +1300,24 @@ export function EditRoutePageV2({ debugMode = true }) {
                                     })
                                 }
                             </div>
-                            <div className="mt-4 d-flex justify-content-between">
-                                <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                    {sl.b_back}
-                                </button>
-                                <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
-                                    {sl.b_create_route}
-                                </button>
-                            </div>
+
+                            {editMode === 0 ? (
+                                <>
+                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                        {sl.b_back}
+                                    </button>
+                                    <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
+                                        {sl.b_create_route}
+                                    </button>
+                                </>
+                                ) : (
+                                    <div className="mt-4">
+                                        <button type="button" className="col-7 btn btn-primary" onClick={click4UpdateRecord} style={{width: "100%"}}>
+                                            {sl.b_save}
+                                        </button>
+                                    </div>
+                                )
+                            }
 
                             {/* {showAttachModal && (
                                 <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>

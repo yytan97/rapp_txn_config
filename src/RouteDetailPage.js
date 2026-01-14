@@ -230,7 +230,7 @@ export function RouteDetailPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editTimerV2",
+            pathname: "/editRouteV2",
             search: sp.toString(),
         };
         navigate(path);
@@ -425,7 +425,7 @@ export function RouteDetailPage({ debugMode = true }) {
                                                                 style={{ minHeight: "56px" }}>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 2)}>
+                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 3)}>
                                                                     <span className="material-icons-outlined fs-24-unity me-2">edit</span>
                                                                     {sl.b_edit}
                                                                 </button>
