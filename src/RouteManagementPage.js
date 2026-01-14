@@ -450,10 +450,10 @@ export function RouteManagementPage({ debugMode = true }) {
                                             <th className="">
                                                 {sl.h_link_name}
                                             </th>
-                                            <th className="">
+                                            <th className="text-center">
                                                 {sl.h_link_order}
                                             </th>
-                                            <th className="text-end">
+                                            <th className="">
                                                 {sl.h_link_type}
                                             </th>
                                             <th className="">
@@ -481,11 +481,11 @@ export function RouteManagementPage({ debugMode = true }) {
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.routingName || "-"}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=" text-center"
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.routingOrder || "-"}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.linkType || "-"}
                                                         </td>

@@ -21,7 +21,6 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
 
-
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
@@ -403,11 +402,11 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                 <table className="table table-hover mb-0">
                                     <thead>
                                         <tr className="text-nowrap tableRow-title">
-                                            <th className="">
+                                            {/* <th className="">
                                                 {sl.h_row_id}
-                                            </th>
+                                            </th> */}
                                             <th className="">
-                                                {sl.h_owner_id}
+                                                {sl.h_cryptogram_id}
                                             </th>
                                             <th className="">
                                                 {sl.h_key_function}
@@ -417,6 +416,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                             </th>
                                             <th className="text-end" >
                                                 {sl.h_bit_size}
+                                            </th>
+                                            <th className="">
+                                                {sl.h_last_updated}
                                             </th>
                                             <th className="">
                                                 {sl.h_record_status}
@@ -432,10 +434,10 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                 console.log("Build row", record, index);
                                                 return (
                                                     <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                        <td className=" "
+                                                        {/* <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.rowId}
-                                                        </td>
+                                                        </td> */}
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.ownerId}
@@ -451,6 +453,10 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                         <td className=" text-end"
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.bitSize || "-"}
+                                                        </td>
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>

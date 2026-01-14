@@ -450,7 +450,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                             <th className="">
                                                 {sl.h_timer_id}
                                             </th>
-                                            <th className="text-end">
+                                            <th className="text-center">
                                                 {sl.h_chrono_unit}
                                             </th>
                                             <th className="">
@@ -478,7 +478,7 @@ export function TimerManagementPage({ debugMode = true }) {
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.institutionId}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=" text-center"
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.chronoUnit || "-"}
                                                         </td>

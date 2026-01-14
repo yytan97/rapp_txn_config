@@ -232,10 +232,7 @@ export function TimerDetailPage({ debugMode = true }) {
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="dropdown dropstart">
-                                            {/* <button className="btn-more p-2">
-                                                <span class="material-symbols-outlined">more_vert</span>
-                                            </button> */}
+                                        {/* <div className="dropdown dropstart">
                                             <span className="d-inline-flex align-items-center " role="button" data-bs-toggle="dropdown">
                                                 <div className="btn-more p-2">
                                                     <span className="material-icons fs-18-unity">more_vert</span>
@@ -260,7 +257,7 @@ export function TimerDetailPage({ debugMode = true }) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="detail-title">
                                         {dataRecord?.institutionId}
@@ -325,8 +322,8 @@ export function TimerDetailPage({ debugMode = true }) {
                                                         style={{ minHeight: "168px" }} >
                                                         <div className="px-5 py-1 w-100">
 
-                                                            <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} />
-                                                            <DisplayLine label={sl.l_institution_id} value={dataRecord?.institutionId} />
+                                                            {/* <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} /> */}
+                                                            <DisplayLine label={sl.l_timer_id} value={dataRecord?.institutionId} />
                                                             <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
                                                             <DisplayLine label={sl.l_chrono_unit} value={dataRecord?.chronoUnit} />
                                                         </div>

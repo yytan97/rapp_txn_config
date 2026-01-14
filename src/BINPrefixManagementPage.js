@@ -496,7 +496,7 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.priority || "-"}
                                                         </td>
-                                                        <td className=" text-end"
+                                                        <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {tBox.formatDate(record.recordData.recordDate || "-")}
                                                         </td>

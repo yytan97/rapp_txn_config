@@ -466,7 +466,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                 {sl.h_institution_routing_id}
                                             </th>
                                             <th className="">
-                                                {sl.l_last_updated}
+                                                {sl.h_last_updated}
                                             </th>
                                             <th className="">
                                                 {sl.h_status}
@@ -497,9 +497,9 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
                                                             {record.recordData.institutionRoutingId || "-"}
                                                         </td>
-                                                        <td className=""
+                                                        <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.recordDate || "-"}
+                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
                                                         </td>
                                                         <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>

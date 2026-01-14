@@ -17,6 +17,7 @@ import { ClosablePanel2 } from "./ClosablePanel2.js";
 
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
+import ChangeStatusModal from "./ChangeStatusModal.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -60,7 +61,7 @@ function getSelectedFlagTitles(routingFlags, refList, sl) {
     return norm
         .filter(({ flagValue }) => bits.charAt(parseInt(flagValue, 10)) === "1")
         .map(({ rd, flagValue }) => {
-        // 🔥 ADD THIS PART HERE
+
         return (
             tBox.getLabel(sl, flagValue, "o_routing_flag_title_") ||
             rd?.flagTitle ||
@@ -93,6 +94,9 @@ export function RouteDetailPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
     let [routingFlagReferenceList, setRoutingFlagReferenceList] = react.useState([]);
     let [routingFlagRefList, setRoutingFlagRefList] = react.useState([]);
+
+    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
+    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
     const location = reactRouter.useLocation();
@@ -266,19 +270,16 @@ export function RouteDetailPage({ debugMode = true }) {
                                     <div className="d-flex justify-content-between align-items-center">
                                         <div className="d-flex align-items-center pt-16">
                                             <div className="fs-14-unity pr-8">
-                                                {sl.l_timer}
+                                                {dataRecord?.routingKey || "-"}
                                             </div>
                                             <div className={`${getStatusLabelClass(dataRecord?.recordStatus)}`}
                                                 style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
                                                 <span >
-                                                {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
+                                                    {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div className="dropdown dropstart">
-                                            {/* <button className="btn-more p-2">
-                                                <span class="material-symbols-outlined">more_vert</span>
-                                            </button> */}
+                                        {/* <div className="dropdown dropstart">
                                             <span className="d-inline-flex align-items-center " role="button" data-bs-toggle="dropdown">
                                                 <div className="btn-more p-2">
                                                     <span className="material-icons fs-18-unity">more_vert</span>
@@ -303,10 +304,10 @@ export function RouteDetailPage({ debugMode = true }) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> */}
                                     </div>
                                     <div className="detail-title">
-                                        ABC
+                                        {dataRecord?.routingName || "-"}
                                     </div>
                                     <div className="d-flex justify-content-center align-items-center bg-white upper-card-box mb-24">
                                         <div style={{ width: "100%" }}>
@@ -340,7 +341,7 @@ export function RouteDetailPage({ debugMode = true }) {
                                                         {sl.l_link_type}
                                                     </div>
                                                     <div className="fw-semibold">
-                                                        {dataRecord?.routingType || "-"}
+                                                        {dataRecord?.linkType || "-"}
                                                     </div>
                                                 </div>
                                             </div>
@@ -394,6 +395,14 @@ export function RouteDetailPage({ debugMode = true }) {
                                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
                                                             <div className="d-flex justify-content-end align-items-center px-4 border-top"
                                                                 style={{ minHeight: "56px" }}>
+                                                                <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                                    style={{ color: "#494D4F", fontWeight: "500" }}
+                                                                    onClick={(e) => {
+                                                                        setSelectedRecordForStatus(dataRecord);
+                                                                        setShowChangeStatusModal(true);
+                                                                    }}>
+                                                                    {sl.b_change_status}
+                                                                </button>
                                                                 <button className="btn btn-ghost-unity d-flex align-items-center"
                                                                     style={{ color: "#494D4F", fontWeight: "500" }}
                                                                     onClick={(e) => click4EditRecord(e, dataRecord, 1)}>
@@ -491,6 +500,18 @@ export function RouteDetailPage({ debugMode = true }) {
             </div> {/* end of top part */}
 
             <FooterPanel />
+
+            <ChangeStatusModal
+                show={showChangeStatusModal}
+                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
+                record={selectedRecordForStatus}
+                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+
+                tableName = "kswitchroute"
+                databaseName = "kdb"
+                accessObjectName = "webapp_configuration_access"
+                accessActionPrefix = "route_management"
+            />
         </div>
     );
 };
