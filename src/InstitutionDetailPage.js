@@ -1168,7 +1168,7 @@ export function InstitutionDetailPage({ debugMode = true }) {
                                                                                 {record.code || "-"}
                                                                             </td>
                                                                             <td className="">
-                                                                                {record.recordDate || "-"}
+                                                                                {tBox.formatDate(record.recordDate || "-")}
                                                                             </td>
                                                                             <td className="">
                                                                                 <div className={`${getStatusLabelClass(record.status)}`}
