@@ -66,6 +66,9 @@ import { RouteManagementPage } from "./RouteManagementPage.js";
 import { RouteDetailPage } from "./RouteDetailPage.js";
 import { EditRoutePageV2 } from "./EditRoutePageV2.js";
 
+import { TestGraphPage } from "./TestGraphPage.js";
+import { TestGraphPage2 } from "./TestGraphPage2.js";
+
 export let appRouterDefination = [
     {
         path: "/",
@@ -236,6 +239,14 @@ export let appRouterDefination = [
             {
                 path: "testDashboard",
                 Component: TestDashboard,
+            },
+            {
+                path: "testGraph",
+                Component: TestGraphPage,
+            },
+            {
+                path: "testGraph2",
+                Component: TestGraphPage2,
             },
             {
                 path: "testForm",
