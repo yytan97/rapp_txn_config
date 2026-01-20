@@ -21,6 +21,7 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
+import { ChangeStatusModal } from "./ChangeStatusModal.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -91,6 +92,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
+
+    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
+    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
 
@@ -514,6 +518,19 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                                                 <span>{sl.l_view_detail}</span>
                                                                             </button>
                                                                         </li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    e.target.closest(".dropdown-menu")?.classList.remove("show");
+                                                                                    setSelectedRecordForStatus(record);
+                                                                                    setShowChangeStatusModal(true);
+                                                                                }}>
+                                                                                <span>{sl.l_change_status}</span>
+                                                                            </button>
+                                                                        </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
                                                                                 <li style={{borderLeft: "none", marginLeft: "0rem"}}>
@@ -571,6 +588,18 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 show={toastShow}
                 message={toastMessage}
                 onClose={() => setToastShow(false)}
+            />
+
+            <ChangeStatusModal
+                show={showChangeStatusModal}
+                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
+                record={selectedRecordForStatus}
+                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+
+                tableName = "kswitchcryptograms"
+                databaseName = "kdb"
+                accessObjectName = "webapp_configuration_access"
+                accessActionPrefix = "cryptogram_management"
             />
         </div>
     );
