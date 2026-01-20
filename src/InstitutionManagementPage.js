@@ -382,11 +382,11 @@ export function InstitutionManagementPage({ debugMode = true }) {
 
         navigator.clipboard.writeText(value)
             .then(() => {
-                triggerToast(`${value} ID copied to clipboard`);
+                triggerToast(`"${value}" institution ID copied to clipboard`);
                 e.target.closest(".dropdown-menu").classList.remove("show");
             })
             .catch(() => {
-                triggerToast("Failed to copy ID");
+                triggerToast("Failed to copy institution ID");
             });
     };
 

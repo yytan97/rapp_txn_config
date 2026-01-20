@@ -20,6 +20,7 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
+import { ToastMessage } from "./ToastMessage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -87,6 +88,9 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
     const [totalCrypto, setTotalCrypto] = react.useState(0);
     const [activeCrypto, setActiveCrypto] = react.useState(0);
+
+    const [toastShow, setToastShow] = react.useState(false);
+    const [toastMessage, setToastMessage] = react.useState("");
 
     const navigate = reactRouter.useNavigate();
 
@@ -336,7 +340,32 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 closeStateDialogBox();
             }
         });
+
         return;
+    };
+
+    function triggerToast(msg) {
+        setToastMessage(msg);
+        setToastShow(true);
+
+        setTimeout(() => {
+            setToastShow(false);
+        }, 2500);
+    };
+
+    function click4CopyID(e, record, index) {
+        e.stopPropagation();
+
+        const value = record.recordData.ownerId;
+
+        navigator.clipboard.writeText(value)
+            .then(() => {
+                triggerToast(`"${value}" cryptogram ID copied to clipboard`);
+                e.target.closest(".dropdown-menu").classList.remove("show");
+            })
+            .catch(() => {
+                triggerToast("Failed to copy cryptogram ID");
+            });
     };
 
     return (
@@ -497,19 +526,22 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                                                 </li>
                                                                             ) : null
                                                                         }
-
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4CopyID(e, record, index)}>
+                                                                                <span>{sl.b_copy_id}</span>
+                                                                            </button>
+                                                                        </li>
                                                                     </ul>
                                                                 </div>
                                                             </div>
-
                                                         </td>
-
                                                     </tr>
-
                                                 );
                                             })
                                         }
-
                                     </tbody>
                                 </table>
                             </div>
@@ -521,7 +553,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
                             </div>
 
                         </div>
-
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -532,10 +563,15 @@ export function CryptogramManagementPage({ debugMode = true }) {
                     ]} debugMode={debugMode} />
 
                 </div> {/* end of right panel */}
-
             </div> {/* end of top part */}
 
             <FooterPanel />
+
+            <ToastMessage
+                show={toastShow}
+                message={toastMessage}
+                onClose={() => setToastShow(false)}
+            />
         </div>
     );
 }

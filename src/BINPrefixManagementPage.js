@@ -373,15 +373,15 @@ export function BINPrefixManagementPage({ debugMode = true }) {
     function click4CopyID(e, record, index) {
         e.stopPropagation();
 
-        const value = record.recordData.institutionId;
+        const value = record.recordData.prefix;
 
         navigator.clipboard.writeText(value)
             .then(() => {
-                triggerToast(`${value} copied to clipboard`);
+                triggerToast(`"${value}" prefix ID copied to clipboard`);
                 e.target.closest(".dropdown-menu").classList.remove("show");
             })
             .catch(() => {
-                triggerToast("Failed to copy ID");
+                triggerToast("Failed to copy prefix ID");
             });
     };
 
@@ -540,14 +540,14 @@ export function BINPrefixManagementPage({ debugMode = true }) {
                                                                                 <span>{sl.l_change_status}</span>
                                                                             </button>
                                                                         </li>
-                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                        {/* <li style={{borderLeft: "none", marginLeft: "0rem"}}>
                                                                             <button
                                                                                 className="dropdown-item border-bottom d-flex align-items-center"
                                                                                 type="button"
                                                                                 onClick={(e) => click4RecordDetail(e, record, index)}>
                                                                                 <span>{sl.l_duplicate}</span>
                                                                             </button>
-                                                                        </li>
+                                                                        </li> */}
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
                                                                                 <li style={{borderLeft: "none", marginLeft: "0rem"}}>
