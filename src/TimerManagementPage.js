@@ -21,7 +21,7 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./TimerDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
-import ChangeStatusModal from "./ChangeStatusModal.js";
+import { ChangeStatusModal } from "./ChangeStatusModal.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;

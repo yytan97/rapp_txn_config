@@ -18,7 +18,9 @@ export function ChangeStatusModal({
     tableName,
     databaseName,
     accessObjectName,
-    accessActionPrefix
+    accessActionPrefix,
+    statusOptions,
+    statusField = "recordStatus", // default for other pages
 }) {
     const componentName = "ChangeStatusModal";
     if (debugMode) console.log(`${componentName} start ...`);
@@ -37,13 +39,13 @@ export function ChangeStatusModal({
     let sl = tBox.getStringLabel(gsl, componentName);
     const institutionId = record?.recordData?.institutionId;
 
-    const [selectedStatus, setSelectedStatus] = react.useState(record?.recordData?.recordStatus || "A");
+    const [selectedStatus, setSelectedStatus] = react.useState(record?.recordData?.[statusField] ?? "");
     const [saving, setSaving] = react.useState(false);
 
     // sync when record changes
     react.useEffect(() => {
-        setSelectedStatus(record?.recordData?.recordStatus || "A");
-    }, [record?.recordData?.recordStatus]);
+        setSelectedStatus(record?.recordData?.[statusField] ?? "");
+    }, [record, statusField]);
 
     if (!show) return null;
     if (!tableName || !databaseName) {
@@ -62,7 +64,7 @@ export function ChangeStatusModal({
         }
 
         // confirm if status actually changed
-        if (selectedStatus === record?.recordData?.recordStatus) {
+        if (selectedStatus === (record?.recordData?.[statusField] ?? "")) {
             onClose();
             
             return;
@@ -75,7 +77,7 @@ export function ChangeStatusModal({
             // build payload - keep existing recordData but change status
             const payload = {
                 ...record.recordData,
-                recordStatus: selectedStatus
+                [statusField]: selectedStatus
             };
 
             let result = await apiBox.updateRecordWithId(
@@ -161,13 +163,26 @@ export function ChangeStatusModal({
                     <select
                         className="form-select"
                         value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        onChange={(e) => {
+                            const v = e.target.value;
+                            const shouldBeNumber = statusOptions?.some((o) => typeof o.value === "number");
+                            setSelectedStatus(shouldBeNumber ? Number(v) : v);
+                        }}
                     >
                         <option value="" disabled>{sl?.p_select_status}</option>
-                        <option value="A">{sl?.o_record_status_A}</option>
-                        <option value="P">{sl?.o_record_status_P}</option>
-                        <option value="D">{sl?.o_record_status_D}</option>
-                        <option value="I">{sl?.o_record_status_I}</option>
+                        {(statusOptions?.length
+                            ? statusOptions
+                            : [
+                                { value: "A", label: sl?.o_record_status_A },
+                                { value: "P", label: sl?.o_record_status_P },
+                                { value: "D", label: sl?.o_record_status_D },
+                                { value: "I", label: sl?.o_record_status_I },
+                                ]
+                            ).map((opt) => (
+                            <option key={String(opt.value)} value={opt.value}>
+                                {opt.label}
+                            </option>
+                        ))}
                     </select>
                 </div>
 

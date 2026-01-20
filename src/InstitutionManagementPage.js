@@ -21,6 +21,7 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./InstitutionDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
+import { ChangeStatusModal } from "./ChangeStatusModal.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -33,7 +34,7 @@ let tableName = "kswitchinstitution";
 let databaseName = "kdb";
 
 export const accessObjectName = "webapp_configuration_access";
-export const accessActionPrefix = "cryptogram_management";
+export const accessActionPrefix = "institution_management";
 
 let cursorId = undefined;
 export let pageObject = {
@@ -92,6 +93,9 @@ export function InstitutionManagementPage({ debugMode = true }) {
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
+
+    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
+    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
 
@@ -240,7 +244,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
         let s = "rounded-3 text-center fw-light text-capitalize text-white ";
 
         if (v == "1") return s + "bg-success";
-        if (v == "3") return s + "bg-warning";
+        if (v == "0") return s + "bg-warning";
         return s + "bg-danger";
     };
 
@@ -529,6 +533,19 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                                                 <span>{sl.l_view_detail}</span>
                                                                             </button>
                                                                         </li>
+                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => {
+                                                                                    e.stopPropagation();
+                                                                                    e.target.closest(".dropdown-menu")?.classList.remove("show");
+                                                                                    setSelectedRecordForStatus(record);
+                                                                                    setShowChangeStatusModal(true);
+                                                                                }}>
+                                                                                <span>{sl.l_change_status}</span>
+                                                                            </button>
+                                                                        </li>
                                                                         {
                                                                             check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
                                                                                 <li style={{borderLeft: "none", marginLeft: "0rem"}}>
@@ -586,6 +603,28 @@ export function InstitutionManagementPage({ debugMode = true }) {
                 show={toastShow}
                 message={toastMessage}
                 onClose={() => setToastShow(false)}
+            />
+
+            <ChangeStatusModal
+                show={showChangeStatusModal}
+                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
+                record={selectedRecordForStatus}
+                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
+
+                tableName="kswitchinstitution"
+                databaseName="kdb"
+                accessObjectName="webapp_configuration_access"
+                accessActionPrefix="institution_management"
+
+                statusField="institutionStatus"
+                statusOptions={[
+                    { value: 0, label: sl?.o_status_0 },
+                    { value: 1, label: sl?.o_status_1 },
+                    { value: 2, label: sl?.o_status_2 },
+                    { value: 3, label: sl?.o_status_3 },
+                    { value: 4, label: sl?.o_status_4 },
+                    { value: 5, label: sl?.o_status_5 },
+                ]}
             />
         </div>
     );
