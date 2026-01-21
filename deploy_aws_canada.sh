@@ -1,6 +1,6 @@
 
-targetDir="/home/admin/html/rapp_configuration"
-pemFile="../../aws/CanadaAWSKeyPairForCranium.pem"
+targetDir="/home/admin/html/v2026/rapp_configurationV2"
+pemFile="../../../aws/CanadaAWSKeyPairForCranium.pem"
 
 
 echo cp build/conf/app.conf.canada build/conf/app.conf
