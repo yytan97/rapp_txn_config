@@ -112,6 +112,16 @@ export function InstitutionManagementPage({ debugMode = true }) {
         };
     }, [refresh]);
 
+    react.useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll(
+            '[data-bs-toggle="tooltip"]'
+        );
+
+        tooltipTriggerList.forEach((el) => {
+            new window.bootstrap.Tooltip(el);
+        });
+    }, []);
+
     // event handling function here ...
 
     async function loadDataList() {

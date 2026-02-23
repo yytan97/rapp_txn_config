@@ -16,13 +16,13 @@ import { cleanUp as cleanUp4TableManagement } from "./TableManagementPage.js";
 import { cleanUp as cleanUp4ConfigurationFileManagement } from "./ConfigurationFileManagementPage.js";
 import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
 
-
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
 export async function dashboardLoader() {
     console.log("Dashboard loader start ...");
+
     return {
         date: moment().format("YYYY-MM-DD HH:mm:ss"),
         uuid: uuidv4(),
@@ -34,10 +34,10 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "institution_settings", callback: callback4InstitutionSettings, icon: "/images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "table_management", callback: callback4TableListManagement, icon: "/images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
-        { name: "configuration_file", callback: callback4ConfigurationFileManagement, icon: "/images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "hot_card", icon: "/images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "institution_settings", callback: callback4InstitutionSettings, icon: "images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "table_management", callback: callback4TableListManagement, icon: "images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "configuration_file", callback: callback4ConfigurationFileManagement, icon: "images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
+        { name: "hot_card", icon: "images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -62,17 +62,20 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
     function click4Back(e) {
         if (debugMode) console.log("Click for back ", e);
         navigate(-1);
+
         return;
     };
 
     function click4Echo(e) {
         if (debugMode) console.log("Click for echo ", e);
+
         return;
     };
 
     function click4TransactionHistory(e) {
         if (debugMode) console.log("Click for transaction history", e);
         navigate("/transactionHistory");
+
         return;
     };
 
@@ -81,6 +84,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         if (record.callback !== undefined) {
             record.callback(e);
         }
+
         return;
     };
 
@@ -92,6 +96,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         });
 
         navigate("/institutionSettingsDashboard");
+
         return;
     };
 
@@ -100,6 +105,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
 
         cleanUp4TableManagement();
         navigate("/tableListManagement");
+
         return;
     };
 
@@ -108,6 +114,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
 
         cleanUp4ConfigurationFileManagement();
         navigate("/configurationFileManagement");
+
         return;
     };
 
@@ -123,9 +130,9 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         <div className="container-fluid px-0">
             <style>
                 {`
-                .synap-btn-option:hover {
-                    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-                }
+                    .synap-btn-option:hover {
+                        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                    }
                 `}
             </style>
 
@@ -136,14 +143,12 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-
                     <div className="container-fluid pl-24 pr-24" style={{ minHeight: "100vh", }}>
                         <div className="row">
                             <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                                 <i className="fas fa-chevron-left fa-fw"></i>
                                 {sl.l_home}
                             </div>
-                            
                             <div className="col-12 pt-12 pb-16">
                                 <div className="title-font fw-bold">
                                     {sl.l_title}
@@ -186,12 +191,8 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
                         { name: "config", data: config },
                         { name: "sl", data: sl },
                     ]} debugMode={debugMode} />
-
                 </div>
-
             </div>
-
-
             <FooterPanel />
         </div>
     );

@@ -10,13 +10,12 @@ export function Card({ label, tip, numCount, days, debugMode = false }) {
                 <div className="label">
                     {label}
                 </div>
-                <span className="ms-1 material-icons text-dark"
+                <span
+                    className="ms-1 material-icons text-dark"
                     role="button"
                     style={{ fontSize: "16px" }}
-                    data-bs-toggle="popover"
-                    data-bs-trigger="hover focus"
-                    data-bs-content={tip}
-                    tabIndex="-1">
+                    data-bs-toggle="tooltip"
+                    title={tip}>
                     info
                 </span>
             </div>

@@ -17,13 +17,13 @@ import { cleanUp as cleanUp4TimerManagement } from "./TimerManagementPage.js";
 import { cleanUp as cleanUp4BINPrefixManagement } from "./BINPrefixManagementPage.js";
 import { cleanUp as cleanUp4RouteManagement } from "./RouteManagementPage.js";
 
-
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
 export async function dashboardLoader() {
     console.log("Dashboard loader start ...");
+
     return {
         date: moment().format("YYYY-MM-DD HH:mm:ss"),
         uuid: uuidv4(),
@@ -35,12 +35,12 @@ export function Dashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "merchant", content: "merchant_content", icon: "/images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "authenticate", content: "auth_content", icon: "/images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
-        { name: "trans_history", content: "trans_content", icon: "/images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
-        { name: "sys_config", content: "config_content", callback: callback4SystemConfigurationDashboard, icon: "/images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
-        { name: "sys_monitoring", content: "monitoring_content", icon: "/images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
-        { name: "ui_workspace", content: "ui_content", icon: "/images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "merchant", content: "merchant_content", icon: "images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "authenticate", content: "auth_content", icon: "images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
+        { name: "trans_history", content: "trans_content", icon: "images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
+        { name: "sys_config", content: "config_content", callback: callback4SystemConfigurationDashboard, icon: "images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "sys_monitoring", content: "monitoring_content", icon: "images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
+        { name: "ui_workspace", content: "ui_content", icon: "images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" }
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -65,17 +65,20 @@ export function Dashboard({ debugMode = false }) {
     function click4Back(e) {
         if (debugMode) console.log("Click for back ", e);
         navigate(-1);
+
         return;
     };
 
     function click4Echo(e) {
         if (debugMode) console.log("Click for echo ", e);
+
         return;
     };
 
     function click4TransactionHistory(e) {
         if (debugMode) console.log("Click for transaction history", e);
         navigate("/transactionHistory");
+
         return;
     };
 
@@ -84,6 +87,7 @@ export function Dashboard({ debugMode = false }) {
         if (record.callback !== undefined) {
             record.callback(e);
         }
+
         return;
     };
 
@@ -124,8 +128,8 @@ export function Dashboard({ debugMode = false }) {
 
     function callback4SystemConfigurationDashboard(e) {
         if (debugMode) console.log("Callback for System Configuration Dashboard", e);
-
         navigate("/systemConfigurationDashboard");
+
         return;
     };
 
@@ -133,9 +137,9 @@ export function Dashboard({ debugMode = false }) {
         <div className="container-fluid px-0">
             <style>
                 {`
-                .synap-btn-option:hover {
-                    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-                }
+                    .synap-btn-option:hover {
+                        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                    }
                 `}
             </style>
 
@@ -146,10 +150,8 @@ export function Dashboard({ debugMode = false }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-
                     <div className="container-fluid pl-24 pr-24 pt-52" style={{ minHeight: "100vh", }}>
                         <div className="row">
-
                             <div className="position-relative">
                                 <div className="welcome-container-box">
                                     <div className="title">
@@ -205,7 +207,6 @@ export function Dashboard({ debugMode = false }) {
                                     else return null;
                                 })
                             }
-
                         </div>
                     </div>
 
@@ -216,10 +217,7 @@ export function Dashboard({ debugMode = false }) {
                     ]} debugMode={debugMode} />
 
                 </div>
-
             </div>
-
-
             <FooterPanel />
         </div>
     );

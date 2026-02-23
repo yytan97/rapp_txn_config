@@ -34,11 +34,11 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "institution_management", callback: callback4InstitutionManagement, icon: "/images/institution_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.access" },
-        { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "/images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
-        { name: "timer_management", callback: callback4TimerManagement, icon: "/images/timer_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "/images/bin_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
-        { name: "route_management", callback: callback4RouteManagement, icon: "/images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "route_management.access" },
+        { name: "institution_management", callback: callback4InstitutionManagement, icon: "images/institution_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.access" },
+        { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
+        { name: "timer_management", callback: callback4TimerManagement, icon: "images/timer_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
+        { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "images/bin_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "route_management", callback: callback4RouteManagement, icon: "images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "route_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -63,17 +63,20 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
     function click4Back(e) {
         if (debugMode) console.log("Click for back ", e);
         navigate(-1);
+
         return;
     };
 
     function click4Echo(e) {
         if (debugMode) console.log("Click for echo ", e);
+
         return;
     };
 
     function click4TransactionHistory(e) {
         if (debugMode) console.log("Click for transaction history", e);
         navigate("/transactionHistory");
+
         return;
     };
 
@@ -82,6 +85,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         if (record.callback !== undefined) {
             record.callback(e);
         }
+
         return;
     };
 
@@ -93,6 +97,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         });
 
         navigate("/institutionManagement");
+
         return;
     };
 
@@ -101,6 +106,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
 
         cleanUp4CryptogramManagement();
         navigate("/cryptogramManagement");
+
         return;
     };
 
@@ -109,6 +115,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
 
         cleanUp4TimerManagement();
         navigate("/timerManagement");
+
         return;
     };
 
@@ -117,6 +124,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
 
         cleanUp4BINPrefixManagement();
         navigate("/binPrefixManagement");
+
         return;
     };
 
@@ -125,6 +133,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
 
         cleanUp4RouteManagement();
         navigate("/routeManagement");
+
         return;
     }
 
@@ -132,9 +141,9 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         <div className="container-fluid px-0">
             <style>
                 {`
-                .synap-btn-option:hover {
-                    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-                }
+                    .synap-btn-option:hover {
+                        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+                    }
                 `}
             </style>
 
@@ -145,14 +154,12 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-
                     <div className="container-fluid pl-24 pr-24" style={{ minHeight: "100vh", }}>
                         <div className="row">
                             <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                                 <i className="fas fa-chevron-left fa-fw"></i>
                                 {sl.l_system_config}
                             </div>
-                            
                             <div className="col-12 pt-12 pb-16">
                                 <div className="title-font fw-bold">
                                     {sl.l_title}
@@ -186,7 +193,6 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
                                     else return null;
                                 })
                             }
-
                         </div>
                     </div>
 
@@ -195,12 +201,8 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
                         { name: "config", data: config },
                         { name: "sl", data: sl },
                     ]} debugMode={debugMode} />
-
                 </div>
-
             </div>
-
-
             <FooterPanel />
         </div>
     );
