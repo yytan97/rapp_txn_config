@@ -401,7 +401,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
             })
             .catch(() => {
                 triggerToast("Failed to copy institution ID");
-            });
+            }); 
     };
 
     return (
