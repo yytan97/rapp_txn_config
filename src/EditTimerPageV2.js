@@ -20,6 +20,8 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 
+import { AttachInstitutionSelector } from "./AttachInstitutionSelector.js";
+
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
@@ -97,8 +99,13 @@ export function EditTimerPageV2({ debugMode = true }) {
     const [showInstitutionDrawer, setShowInstitutionDrawer] = react.useState(false);
     const [institutionList, setInstitutionList] = react.useState([]);
     const [searchInstitution, setSearchInstitution] = react.useState("");
-    const [selectedInstitutionId, setSelectedInstitutionId] = react.useState("");
-    const [selectedInstitutionName, setSelectedInstitutionName] = react.useState("");
+    // const [selectedInstitutionId, setSelectedInstitutionId] = react.useState("");
+    // const [selectedInstitutionName, setSelectedInstitutionName] = react.useState("");
+
+    const [institutions, setInstitutions] = react.useState([
+        { id: "", name: "" }
+    ]);
+    const [activeInstitutionIndex, setActiveInstitutionIndex] = react.useState(null);
 
     const ref4Form = react.useRef();
 
@@ -469,7 +476,7 @@ export function EditTimerPageV2({ debugMode = true }) {
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
                 ${step === 3 ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
                 {step !== 3 && renderStepper()}
-                <div className="col-7" style={{ minHeight: "80vh" }}>
+                <div className="col-5" style={{ minHeight: "80vh" }}>
                     {step === 1 && (
                         <>
                             <div className="pb-3">
@@ -833,21 +840,22 @@ export function EditTimerPageV2({ debugMode = true }) {
                             </div>
 
                             <div>
-                                <InputLabel label={sl.l_select_institution} />
-                                <input
-                                    type="text"
-                                    readOnly
-                                    className="form-control"
-                                    placeholder={sl.p_choose_institution}
-                                    value={selectedInstitutionName || ""}
-                                    onClick={() => setShowInstitutionDrawer(true)} />
+                                {/* <InputLabel label={sl.l_select_institution} /> */}
+                                <AttachInstitutionSelector
+                                    institutions={institutions}
+                                    setInstitutions={setInstitutions}
+                                    openDrawer={(index) => {
+                                        setActiveInstitutionIndex(index);
+                                        setShowInstitutionDrawer(true);
+                                    }}
+                                />
                             </div>
 
                             <div className="mt-4 d-flex" style={{ paddingTop: "300px" }}>
                                 <button
                                     type="button"
                                     className="btn btn-primary"
-                                    disabled={!selectedInstitutionId}
+                                    disabled={!institutions.some(i => i.id)}
                                     style={{width: "100%"}}
                                     // onClick={}
                                 >
@@ -886,24 +894,40 @@ export function EditTimerPageV2({ debugMode = true }) {
 
                                         {/* Institution list */}
                                         <div className="institution-list">
-                                            {filteredInstitutions.map((item, idx) => (
-                                                <div key={idx} className="form-check">
-                                                    <input
-                                                        type="radio"
-                                                        id={`inst-${idx}`}
-                                                        name="institution"
-                                                        className="form-check-input"
-                                                        checked={selectedInstitutionId === item.rowId}
-                                                        onChange={() => {
-                                                            setSelectedInstitutionId(item.rowId);
-                                                            setSelectedInstitutionName(item.institutionId);
-                                                        }}
-                                                    />
-                                                    <label className="form-check-label" htmlFor={`inst-${idx}`}>
-                                                        {item.institutionId}
-                                                    </label>
-                                                </div>
-                                            ))}
+                                            {filteredInstitutions.map((item, idx) => {
+                                                const isAlreadySelected = institutions.some(
+                                                    (inst, i) => inst.id === item.rowId && i !== activeInstitutionIndex
+                                                );
+                                                
+                                                return (
+                                                    <div key={idx} className="form-check">
+                                                        <input
+                                                            type="radio"
+                                                            id={`inst-${idx}`}
+                                                            name="institution"
+                                                            className="form-check-input"
+                                                            checked={institutions[activeInstitutionIndex]?.id === item.rowId}
+                                                            disabled={isAlreadySelected}
+                                                            onChange={() => {
+                                                                let list = [...institutions];
+                                                                list[activeInstitutionIndex] = {
+                                                                    id: item.rowId,
+                                                                    name: item.institutionId
+                                                                };
+                                                                setInstitutions(list);
+                                                            }}
+                                                        />
+                                                        <label 
+                                                            className={`form-check-label ${isAlreadySelected ? 'text-muted' : ''}`} 
+                                                            htmlFor={`inst-${idx}`}
+                                                            style={{ opacity: isAlreadySelected ? 0.5 : 1 }}
+                                                        >
+                                                            {item.institutionId}
+                                                            {isAlreadySelected}
+                                                        </label>
+                                                    </div>
+                                                );
+                                            })}
 
                                             {filteredInstitutions.length === 0 && (
                                                 <div className="text-muted">
@@ -914,7 +938,7 @@ export function EditTimerPageV2({ debugMode = true }) {
 
                                         <button
                                             className="btn btn-primary mb-16"
-                                            disabled={!selectedInstitutionId}
+                                            disabled={!institutions[activeInstitutionIndex]?.id}
                                             onClick={() => setShowInstitutionDrawer(false)} >
                                                 {sl.b_apply}
                                         </button>
