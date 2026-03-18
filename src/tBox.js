@@ -566,24 +566,20 @@ export function responseCode2Description(code) {
     else s = "Declined";
     return s;
 };
-
+ 
 export function buildSearchString(fieldList, v, dbType) {
-    if (debugMode) console.log("Build search string", v, dbType);
-
-    if (v === undefined || v === "") return undefined;
+   if (v === undefined || v === "") return undefined;
 
     let list = fieldList;
     let s = "";
+
     for (let n = 0; n < list.length; n++) {
         let name = list[n].name;
 
         if (s !== "") s += " or ";
-
-        if (dbType === "POSTGRESQL") s += `CAST(${name} as TEXT) ILIKE '%${v}%'`;
-        else s += `${name} LIKE '%${v}%'`;
-
+        s += `CAST(${name} as TEXT) ILIKE '%${v}%'`;
     }
-    if (debugMode) console.log("Search string", s);
+
     return s;
 };
 

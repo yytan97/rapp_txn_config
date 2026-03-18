@@ -16,7 +16,7 @@ import { ClosablePanel } from "./ClosablePanel.js";
 
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
-import { institutionRecord } from "./InstitutionDetailPage.js";
+import { searchObject } from "./CryptogramManagementPage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -202,6 +202,32 @@ export function CryptogramDetailPage({ debugMode = true }) {
         return;
     };
 
+    function click4Search(e) {
+        if (debugMode) console.log("Click for search or refresh", e);
+        // pageObject.page = 1;
+
+        setReset(true);
+        setRefresh(true);
+        return;
+    };
+
+    function keyPress4SearchText(e) {
+        if (debugMode) console.log("Key presss for search", e);
+
+        if (e.key == "Enter") {
+            setReset(true);
+            setRefresh(true);
+        }
+        return;
+    };
+
+    function change4SearchText(e) {
+        if (debugMode) console.log("Change for search text", e);
+        searchObject.searchText = e.target.value;
+        setRedraw((v) => v + 1);
+        return;
+    };
+
     return (
         <div className="container-fluid px-0 bg-synap-3">
             <TitlePanel />
@@ -324,7 +350,119 @@ export function CryptogramDetailPage({ debugMode = true }) {
                                             </ClosablePanel>
                                         ) : null
                                     }
-                                    
+
+                                    {/* {
+                                        tabIndex === 2 ? (
+                                            <>
+                                                 <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                    <div className="d-flex justify-content-end align-items-center">
+                                                        <div className="col-4 pe-3">
+                                                            <div className="input-group">
+                                                                <button className="btn border-0"
+                                                                    style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                                                    type="button"
+                                                                    onClick={click4Search}>
+                                                                    <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
+                                                                </button>
+                                                                <input type="text" className="form-control border-0"
+                                                                    placeholder={sl.p_search_query}
+                                                                    value={searchObject.searchText || ""}
+                                                                    onChange={change4SearchText}
+                                                                    onKeyDown={keyPress4SearchText}
+                                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            {
+                                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                                    <button className="btn btn-unity " role="button" title={sl.t_add_processing_code}>
+                                                                        {sl.b_attach_institution}
+                                                                    </button>
+                                                                ) : null
+                                                            }
+                                                        </div>
+                                                        <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                            <table className="table table-hover mb-0">
+                                                                <thead>
+                                                                    <tr className="text-nowrap tableRow-title">
+                                                                        <th className="">
+                                                                            {sl.h_institution_id}
+                                                                        </th>
+                                                                        <th className="">
+                                                                            {sl.h_status}
+                                                                        </th>
+                                                                        <th className="" >
+                                                                            {sl.h_action}
+                                                                        </th>
+                                                                        <th className="" style={{ width: "24px" }} >
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+                                                                    {
+                                                                        dataRecord.map((record, index) => {
+                                                                            return (
+                                                                                <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                                    <td className="">
+                                                                                        {record.code || "-"}
+                                                                                    </td>
+                                                                                    <td className="">
+                                                                                        {tBox.formatDate(record.recordDate || "-")}
+                                                                                    </td>
+                                                                                    <td className="">
+                                                                                        <div className={`${getStatusLabelClass(record.status)}`}
+                                                                                            style={{ width: "110px", height: "24px" }} >
+                                                                                            {getLabel(sl, record.status, "o_status_")}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div className="dropdown dropstart ">
+                                                                                            <span className="d-inline-flex align-items-center " role="button"
+                                                                                                data-bs-toggle="dropdown">
+                                                                                                <div className="d-flex align-items-center ">
+                                                                                                    <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                                </div>
+                                                                                            </span>
+
+                                                                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                                style={{ borderRadius: "8px" }} >
+                                                                                                <ul className="list-unstyled p-2 mb-0">
+                                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                                        <button
+                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                            type="button">
+                                                                                                            <span>{sl.b_change_status}</span>
+                                                                                                        </button>
+                                                                                                    </li>
+                                                                                                    {
+                                                                                                        check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                                                <button
+                                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                                    type="button"
+                                                                                                                >
+                                                                                                                    <span>{sl.b_delete_pcode}</span>
+                                                                                                                </button>
+                                                                                                            </li>
+                                                                                                        ) : null
+                                                                                                    }
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            );
+                                                                        })
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                 </div>
+                                            </>
+                                        ) : null
+                                    } */}
                                     </div>
                                 </div>
                             </div>

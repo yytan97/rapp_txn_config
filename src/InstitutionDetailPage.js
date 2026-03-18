@@ -26,15 +26,15 @@ const moment = window.moment;
 let tableName = "kswitchinstitution";
 let databaseName = "kdb";
 
-const accessObjectName = "webapp_configuration_access";
-const accessActionPrefix = "institution_management";
+export const accessObjectName = "webapp_configuration_access";
+export const accessActionPrefix = "institution_management";
 
 export let institutionRecord = undefined;
 let rowId = undefined;
 let closePanel = {};
 let tabIndex = 1;
 
-let processingCodeList = [];
+export let processingCodeList = [];
 let routingList = [];
 
 let dataContent = "";

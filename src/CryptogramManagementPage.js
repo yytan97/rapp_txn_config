@@ -37,13 +37,13 @@ const accessObjectName = "webapp_configuration_access";
 const accessActionPrefix = "cryptogram_management";
 
 let cursorId = undefined;
-let pageObject = {
+export let pageObject = {
     totalRecord: 0,
     pageSize: 10,
     page: 1
 };
 
-let searchObject = {
+export let searchObject = {
     searchText: ""
 };
 
