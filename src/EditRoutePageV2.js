@@ -1303,12 +1303,15 @@ export function EditRoutePageV2({ debugMode = true }) {
 
                             {editMode === 0 ? (
                                 <>
-                                    <button type="button" className="btn btn-outline-dark" onClick={goBack}>
-                                        {sl.b_back}
-                                    </button>
-                                    <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
-                                        {sl.b_create_route}
-                                    </button>
+                                    <div className="d-flex justify-content-between">
+                                        <button type="button" className="btn btn-outline-dark" onClick={goBack}>
+                                            {sl.b_back}
+                                        </button>
+                                        <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
+                                            {sl.b_create_route}
+                                        </button>
+                                    </div>
+                                    
                                 </>
                                 ) : (
                                     <div className="mt-4">
