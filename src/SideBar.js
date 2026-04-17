@@ -235,7 +235,7 @@ export function SideBar({ debugMode = false }) {
                     )}
                 </div>
 
-                <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Home}>
+                {/* <div className={`my-link ${class4Active('/')}`} role="button" onClick={click4Home}>
                     <span className="material-icons-outlined fs-24-unity">home</span>
                     {menuMode === 1 && (
                         <span className="ms-2 long-mode-label">{sl.l_home}</span>
@@ -243,9 +243,9 @@ export function SideBar({ debugMode = false }) {
                 </div>
                 {menuMode === 0 && (
                     <span className={`short-mode-label ${class4Active('/')}`}>{sl.l_home}</span>
-                )}
+                )} */}
                 
-                {
+                {/* {
                     check4Right('webapp_configuration_access', 'institution_management.access') ?
                         (
                             <>
@@ -260,9 +260,9 @@ export function SideBar({ debugMode = false }) {
                                 )}
                             </>
                         ) : null
-                }
+                } */}
 
-                {
+                {/* {
                     check4Right('webapp_configuration_access', 'crypto_management.access') ?
                         (
                             <>
@@ -277,9 +277,9 @@ export function SideBar({ debugMode = false }) {
                                 )}
                             </>
                         ) : null
-                }
+                } */}
 
-                {
+                {/* {
                     check4Right('webapp_configuration_access', 'table.access') ?
                         (
                             <>
@@ -294,7 +294,7 @@ export function SideBar({ debugMode = false }) {
                                 )}
                             </>
                         ) : null
-                }
+                } */}
 
                 {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
@@ -359,7 +359,7 @@ export function SideBar({ debugMode = false }) {
                         ) : null
                 }
 
-                {
+                {/* {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <>
@@ -374,9 +374,9 @@ export function SideBar({ debugMode = false }) {
                                 )}
                             </>
                         ) : null
-                }
+                } */}
 
-                {
+                {/* {
                     check4Right('webapp_configuration_access', 'configuration.access') ?
                         (
                             <>
@@ -391,7 +391,7 @@ export function SideBar({ debugMode = false }) {
                                 )}
                             </>
                         ) : null
-                }
+                } */}
 
                     <>
                         <div className={`my-link ${class4Active('/setting')}`} role="button" onClick={click4Setting}>
