@@ -66,6 +66,9 @@ import { RouteManagementPage } from "./RouteManagementPage.js";
 import { RouteDetailPage } from "./RouteDetailPage.js";
 import { EditRoutePageV2 } from "./EditRoutePageV2.js";
 
+import { HotCardManagementPage } from "./HotCardManagementPage.js";
+import { EditHotCardPage } from "./EditHotCardPage.js";
+
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
 
@@ -235,6 +238,14 @@ export let appRouterDefination = [
             {
                 path: "editRouteV2",
                 Component: EditRoutePageV2,
+            },
+            {
+                path: "hotCardManagement",
+                Component: HotCardManagementPage,
+            },
+            {
+                path: "editHotCard",
+                Component: EditHotCardPage,
             },
             {
                 path: "testDashboard",
