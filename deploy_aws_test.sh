@@ -3,8 +3,8 @@ targetDir="/home/admin/synap/rapp_configuration"
 pemFile="../synap-ec2-key-pair.pem"
 
 
-echo cp build/conf/app.conf.canada build/conf/app.conf
-cp build/conf/app.conf.canada build/conf/app.conf
+###echo cp build/conf/app.conf.canada build/conf/app.conf
+###cp build/conf/app.conf.canada build/conf/app.conf
 
 
 echo $targetDir
