@@ -381,7 +381,7 @@ export function HotCardManagementPage({ debugMode = true }) {
                             </div>
                         </div>
 
-                        <div className="col-12 d-flex">
+                        <div className="col-12 d-flex gap-3 flex-wrap">
                             <Card label={sl.l_hot_card_management_last_updated} tip={sl.t_insti_last} numCount="150"/>
                             <Card label={sl.l_active_hot_card} tip={sl.t_insti_last} numCount={activeRecord}/>
                         </div>
