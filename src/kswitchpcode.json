@@ -1,0 +1,190 @@
+{
+  "0": {
+    "code": "TxnPurchase",
+    "value": "Purchase"
+  },
+  "1": {
+    "code": "TxnWithdrawal",
+    "value": "Withdrawal"
+  },
+  "2": {
+    "code": "TxnDebitAdjustment",
+    "value": "Debit Adjustment"
+  },
+  "9": {
+    "code": "TxnCashBack",
+    "value": "Cash Back"
+  },
+  "10": {
+    "code": "TxnAccountFunding",
+    "value": "Account Funding"
+  },
+  "11": {
+    "code": "TxnQuasiCashDebit",
+    "value": "Quasi Cash Debit"
+  },
+  "13": {
+    "code": "TxnAVSWithRecurringPayment",
+    "value": "AVS With Recurring Payment"
+  },
+  "14": {
+    "code": "TxnRecurringPayment",
+    "value": "Recurring Payment"
+  },
+  "15": {
+    "code": "TxnInstallmentPayment",
+    "value": "Installement Payment"
+  },
+  "16": {
+    "code": "TxnSubscription",
+    "value": "Subscription"
+  },
+  "17": {
+    "code": "TxnCashDisbursement",
+    "value": "Cash Disbursement"
+  },
+  "18": {
+    "code": "TxnCardVerficiation",
+    "value": "Card Verification"
+  },
+  "20": {
+    "code": "TxnRefund",
+    "value": "Refund"
+  },
+  "21": {
+    "code": "TxnDeposit",
+    "value": "Deposit"
+  },
+  "22": {
+    "code": "TxnCreditAdjustment",
+    "value": "Credit Adjustment"
+  },
+  "26": {
+    "code": "TxnOriginalCreditTransaction",
+    "value": "Original Credit Transaction"
+  },
+  "27": {
+    "code": "TxnLoyaltyRedemption",
+    "value": "Loyalty Redemption"
+  },
+  "28": {
+    "code": "TxnNetworkPayment",
+    "value": "Network Payment"
+  },
+  "29": {
+    "code": "TxnPrePaidLoad",
+    "value": "Load Transaction"
+  },
+  "30": {
+    "code": "TxnBalanceInquiry",
+    "value": "Balance Inquiry"
+  },
+  "31": {
+    "code": "TxnPrePaidBalanceInquiry",
+    "value": "Prepaid Balance Inquiry"
+  },
+  "32": {
+    "code": "TxnCardAvailableFundsInquiry",
+    "value": "Card Available Funds Inquiry"
+  },
+  "33": {
+    "code": "TxnLoyaltyInquiry",
+    "value": "Loyalty Inquiry"
+  },
+  "34": {
+    "code": "TxnMiniStatement",
+    "value": "Mini Statement"
+  },
+  "39": {
+    "code": "TxnEligibilityInquiry",
+    "value": "Eligibility Inquiry"
+  },
+  "40": {
+    "code": "TxnTransfer",
+    "value": "Transfer"
+  },
+  "41": {
+    "code": "TxnBillPayment",
+    "value": "Bill Payment"
+  },
+  "47": {
+    "code": "TxnCardToCardTransferDebit",
+    "value": "Card To Card Transfer Debit"
+  },
+  "48": {
+    "code": "TxnCardToCardTransferCredit",
+    "value": "Card To Card Transfer Credit"
+  },
+  "50": {
+    "code": "TxnTokenProvisioning",
+    "value": "Token Provisioning"
+  },
+  "51": {
+    "code": "TxnTokenVerification",
+    "value": "Token Verification"
+  },
+  "60": {
+    "code": "TxnBeneficiaryAccountValidation",
+    "value": "Beneficiary Account Validation"
+  },
+  "61": {
+    "code": "TxnServiceCreation",
+    "value": "Service Creation"
+  },
+  "62": {
+    "code": "TxnMobileNumberChange",
+    "value": "Mobile Number Change"
+  },
+  "63": {
+    "code": "TxnChequeBookRequest",
+    "value": "Cheque Book Request"
+  },
+  "64": {
+    "code": "TxnStatementRequest",
+    "value": "Statement Request"
+  },
+  "65": {
+    "code": "TxnStandingInstructionEdit",
+    "value": "Standing Instruction Edit"
+  },
+  "66": {
+    "code": "TxnBiometricVerification",
+    "value": "Biometric Verification"
+  },
+  "67": {
+    "code": "TxnChequeBookUpdate",
+    "value": "Cheque Book Update"
+  },
+  "70": {
+    "code": "TxnChipCardPinUnblock",
+    "value": "Chip Card Pin Unblock"
+  },
+  "71": {
+    "code": "TxnChipCardPinChange",
+    "value": "Chip Card Pin Change"
+  },
+  "72": {
+    "code": "TxnPinChange",
+    "value": "Pin Change"
+  },
+  "80": {
+    "code": "TxnARQCValidation",
+    "value": "ARQC Validation"
+  },
+  "81": {
+    "code": "TxnARPCGeneration",
+    "value": "ARPC Generation"
+  },
+  "82": {
+    "code": "TxnICDAccountValidation",
+    "value": "ICD Account Validation"
+  },
+  "83": {
+    "code": "TxnICDDeposit",
+    "value": "ICD Deposit"
+  },
+  "95": {
+    "code": "TxnCUP",
+    "value": "Notification"
+  }
+}

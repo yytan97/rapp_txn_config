@@ -854,3 +854,34 @@ body {
 	color: #494D4F;
 }
 
+/* institution attach txn type - pcode list box */
+
+.txn_type_box {
+    border: 1px solid #DBDBDC;
+    border-radius: 24px;
+    min-height: 200px;
+    padding: 16px;
+}
+
+.txn_type_empty_box {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* .txn_type_selected_box {
+    border: 1px solid #DBDBDC;
+    border-radius: 24px;
+    padding: 20px 24px;
+    background: #fff;
+} */
+
+.dark-grey-font-700 {
+	color: #494D4F;
+	font-size: 14px;
+	font-weight: 700;
+}
+
+

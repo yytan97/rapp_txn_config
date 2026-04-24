@@ -20,6 +20,9 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 
+import { AttachPcodeSelector } from "./AttachPcodeSelector.js";
+import pcodeMap from "./kswitchpcode.json";
+
 import { showInputTimerIdDialogBox, InputTimerIdDialogBox } from "./InputTimerIdDialogBox.js";
 import { showInputCryptoIdDialogBox, InputCryptoIdDialogBox } from "./InputCryptoIdDialogBox.js";
 import { showInputRoutingIdDialogBox, InputRoutingIdDialogBox } from "./InputRoutingIdDialogBox.js";
@@ -100,12 +103,16 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     let sl = tBox.getStringLabel(gsl, componentName);
 
     let [redraw, setRedraw] = react.useState(0);
+    const [showAttachModal, setShowAttachModal] = react.useState(false);
     const [showTimerIdDrawer, setShowTimerIdDrawer] = react.useState(false);
     const [showCryptoIdDrawer, setShowCryptoIdDrawer] = react.useState(false);
     const [showRoutingIdDrawer, setShowRoutingIdDrawer] = react.useState(false);
     const [timerIdList, setTimerIdList] = react.useState([]);
     const [crytoIdList, setCrytoIdList] = react.useState([]);
     const [routingIdList, setRoutingIdList] = react.useState([]);
+    const [showPcodeDrawer, setShowPcodeDrawer] = react.useState(false);
+    const [searchPcode, setSearchPcode] = react.useState("");
+    const [selectedPcodeList, setSelectedPcodeList] = react.useState([]);
     
     const [searchTerm, setSearchTerm] = react.useState("");
     const [selectedTimerId, setSelectedTimerId] = react.useState("");
@@ -264,6 +271,16 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         fetchIds();   
       }, [step]);
 
+    react.useEffect(() => {
+        if (step !== 8) return;
+
+        const list = (inputData?.processingCodeList || []).map(code =>
+            String(code).padStart(2, "0")
+        );
+
+        setSelectedPcodeList(list);
+    }, [step, redraw]);
+
     const goNext = () => {
         formObject.valid = ref4Form.current.checkValidity();
 
@@ -378,16 +395,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 dataRecord = {
                     recordStatus: 'A',
                     institutionStatus: '1',
-                    processingCodeList: [
-                        "00", "01", "02", "09",
-                        "10", "11", "17", "18",
-                        "20", "21", "22", "23", "24", "26", "28",
-                        "30", "34", "39",
-                        "40",
-                        "50", "53",
-                        "70", "72",
-                        "90", "91", "92",
-                    ],
+                    processingCodeList: [],
                     shutdownFlag1: true,
                     shutdownFlag2: true,
                     shutdownFlag3: true,
@@ -517,8 +525,9 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 if (result1 && result1.flag) {
                     formObject.dirty = false;
 
-                    let message = sl.m_record_created;
-                    showInfoDialogBox(message, () => navigate(-1));
+                    // let message = sl.m_record_created;
+                    // showInfoDialogBox(message, () => navigate(-1));
+                    setShowAttachModal(true);
                 }
                 else throw result1;
             }
@@ -922,7 +931,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
         return s;
     };
 
-
     function createPopover() {
         try {
             let list1 = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
@@ -939,6 +947,68 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     function disposePopover() {
         popoverList = [];
     };
+
+    function getPcodeOptionList() {
+        let list = [];
+
+        for (let key in pcodeMap) {
+            if (!Object.prototype.hasOwnProperty.call(pcodeMap, key)) continue;
+
+            const normalized = String(key).padStart(2, "0");
+
+            list.push({
+                code: normalized,
+                label: pcodeMap[key]?.value || "-"
+            });
+        }
+
+        const map = new Map();
+        list.forEach(item => {
+            if (!map.has(item.code)) map.set(item.code, item);
+        });
+
+        return Array.from(map.values()).sort((a, b) => a.code.localeCompare(b.code));
+    }
+
+    const filteredPcodeList = getPcodeOptionList().filter(item => {
+        const keyword = searchPcode.trim().toLowerCase();
+        if (!keyword) return true;
+
+        return (
+            item.code.toLowerCase().includes(keyword) ||
+            item.label.toLowerCase().includes(keyword)
+        );
+    });
+
+    function togglePcodeSelection(code) {
+        const normalized = String(code).padStart(2, "0");
+
+        setSelectedPcodeList(prev => {
+            if (prev.includes(normalized)) {
+                return prev.filter(item => item !== normalized);
+            }
+            return [...prev, normalized].sort();
+        });
+    }
+
+    function applySelectedPcodes() {
+        inputData.processingCodeList = [...selectedPcodeList].sort();
+        formObject.dirty = true;
+        setShowPcodeDrawer(false);
+        setRedraw(v => v + 1);
+    }
+
+    function removeSelectedPcode(code) {
+        const normalized = String(code).padStart(2, "0");
+
+        inputData.processingCodeList = (inputData.processingCodeList || [])
+            .map(item => String(item).padStart(2, "0"))
+            .filter(item => item !== normalized);
+
+        setSelectedPcodeList(inputData.processingCodeList);
+        formObject.dirty = true;
+        setRedraw(v => v + 1);
+    }
 
     // 👉 Render Stepper (only in Add mode)
     const renderStepper = () => {
@@ -988,8 +1058,8 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             </div>
 
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
-                ${editMode === 0 ? "justify-content-left" : "justify-content-center"}`}>
-                {renderStepper()}
+                ${step === 8 ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
+                {step !== 8 && renderStepper()}
                 <div className="col-7" style={{ minHeight: "50vh" }}>
                     {editMode === 1 && step === 1 ? (
                         <>
@@ -1848,6 +1918,47 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 </button>
                             </div>
 
+                            {/* Attach Model */}
+                            {showAttachModal && (
+                                <div className="modal fade show d-block" tabIndex="-1" role="dialog" style={{ backgroundColor: "rgba(0,0,0,0.4)" }}>
+                                    <div className="modal-dialog modal-dialog-centered" role="document">
+                                        <div className="modal-content border-0 shadow rounded-3" style={{padding: "24px 32px"}}>
+                                            <div className="modal-body p-0">
+                                                <div className="d-flex align-items-center mb-3">
+                                                    <span className="material-icons text-primary me-2" style={{ width: "24px", height: "24px" }}>info</span>
+                                                    <div className="fw-bold mb-0 fs-unity-18">{sl.l_attach_txn_type}</div>
+                                                </div>
+                                                <p>
+                                                    {sl.l_your} <strong>{inputData?.institutionId}</strong> {sl.l_has_been_saved} 🎉
+                                                    <br />
+                                                    {sl.l_would_you_like}
+                                                </p>
+                                            </div>
+                                            <div className="modal-footer p-0 border-0 d-flex justify-content-end">
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-skip"
+                                                    onClick={() => {
+                                                    setShowAttachModal(false);
+                                                    navigate(-1); // Skip for now
+                                                    }}>
+                                                    {sl.b_skip_for_now}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={() => {
+                                                        setShowAttachModal(false);
+                                                        setStep(8);
+                                                    }}>
+                                                    {sl.b_attach_now}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Drawer component */}
                             {showRoutingIdDrawer && (
                                 <div className="drawer-overlay" onClick={() => setShowRoutingIdDrawer(false)}>
@@ -1917,7 +2028,164 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                         </>
                     )}
 
+                    {/* {step === 8 && (
+                        <>
+                            <div className="mb-24">
+                                <div className="edit-title-font">
+                                    {sl.l_transaction_type}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.t_transaction_type}
+                                </div>
+                            </div>
+                            <div className="txn_type_box">
+                                <div>
+                                    <div className="table-key pb-8">
+                                        {sl.l_set_txn_type}
+                                    </div>
+                                    <button className="btn btn-ghost-unity">
+                                        <span className="material-icons">add_circle</span>
+                                        {sl.b_add_processing_code}
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="d-flex justify-content-center align-items-center" style={{paddingTop: "330px"}}>
+                                <button className="btn btn-primary">
+                                    {sl.b_attach_txn_type}
+                                </button>
+                            </div>
+                        </>
+                    )} */}
+                    {step === 8 && (
+                        <>
+                            <div className="pb-3">
+                                <div className="edit-title-font">
+                                    {sl.l_transaction_type || "Transaction Type"}
+                                </div>
+                                <div className="edit-desc-font">
+                                    {sl.l_transaction_type_desc || "Optional section for input the processing code for the institution"}
+                                </div>
+                            </div>
 
+                            <div className="px-4 mt-4">
+                                <AttachPcodeSelector
+                                    processingCodes={inputData?.processingCodeList || []}
+                                    onOpenDrawer={() => {
+                                        setSelectedPcodeList(
+                                            (inputData?.processingCodeList || []).map(code =>
+                                                String(code).padStart(2, "0")
+                                            )
+                                        );
+                                        setShowPcodeDrawer(true);
+                                    }}
+                                    onRemoveCode={removeSelectedPcode}
+                                />
+
+                                <div className="mt-4" style={{ paddingTop: "300px" }}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        style={{ width: "100%" }}
+                                        disabled={!inputData?.processingCodeList || inputData.processingCodeList.length === 0}
+                                        onClick={click4AddRecord}
+                                    >
+                                        {sl.b_attach_transaction_type || "Attach Transaction Type"}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {showPcodeDrawer && (
+                                <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
+                                    <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                        <div className="drawer-title">
+                                            {sl.l_set_processing_code || "Set Processing Code"}
+                                        </div>
+
+                                        <div className="drawer-description">
+                                            {sl.l_select_transaction_type_desc || "Select the transaction type that you would like be available for this institution."}
+                                        </div>
+
+                                        <div className="input-group mt-16">
+                                            <span
+                                                className="input-group-text border-0"
+                                                style={{ backgroundColor: "#F3F3F4" }}
+                                            >
+                                                <span className="material-icons" style={{ color: "#494D4F" }}>
+                                                    search
+                                                </span>
+                                            </span>
+
+                                            <input
+                                                type="text"
+                                                className="form-control border-0"
+                                                placeholder={sl.p_select_processing_code || "Select Processing Code"}
+                                                value={searchPcode}
+                                                onChange={(e) => setSearchPcode(e.target.value)}
+                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }}
+                                            />
+                                        </div>
+
+                                        <div
+                                            className="institution-list"
+                                            style={{
+                                                borderTop: "1px solid #E5E7EB",
+                                                borderBottom: "1px solid #E5E7EB",
+                                                paddingTop: "16px",
+                                                marginTop: "16px"
+                                            }}
+                                        >
+                                            {filteredPcodeList.map((item, idx) => (
+                                                <label
+                                                    key={`${item.code}-${idx}`}
+                                                    className="d-flex align-items-center mb-3"
+                                                    style={{ cursor: "pointer" }}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="form-check-input me-3"
+                                                        checked={selectedPcodeList.includes(item.code)}
+                                                        onChange={() => togglePcodeSelection(item.code)}
+                                                    />
+                                                    <span className="default-font" style={{ paddingLeft: 0 }}>
+                                                        {item.code}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+
+                                        {/* <button
+                                            type="button"
+                                            className="btn btn-outline-dark mt-16"
+                                            onClick={applySelectedPcodes}
+                                            disabled={selectedPcodeList.length === 0}
+                                        >
+                                            {sl.l_add_processing_code || "Add Processing Code"}
+                                        </button> */}
+
+                                        <div style={{ marginTop: "auto" }}>
+                                            <button
+                                                type="button"
+                                                className="btn btn-primary btn-width-100 mb-16"
+                                                onClick={applySelectedPcodes}
+                                                disabled={selectedPcodeList.length === 0}
+                                            >
+                                                {sl.b_add || "Add"}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="btn btn-light btn-width-100"
+                                                style={{ background: "transparent", border: "none" }}
+                                                onClick={() => setShowPcodeDrawer(false)}
+                                            >
+                                                {sl.b_cancel || "Cancel"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </>
+                    )}
                 </div>
             </form >
 
