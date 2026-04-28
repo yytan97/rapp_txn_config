@@ -28,84 +28,80 @@ export function AttachPcodeSelector({ processingCodes = [], onOpenDrawer, onRemo
     }
 
     return (
-        <div className="txn_type_box">
+        <>
             {processingCodes.length === 0 ? (
-                <div className="txn_type_empty_box">
-                    <div className="edit-desc-font text-center mb-16" style={{ fontSize: "14px" }}>
-                        {sl.l_set_transaction_type || "Set transaction type via processing code for the Institution."}
-                        <span style={{ color: "#FF6B45" }}>*</span>
-                    </div>
+                <div className="txn_type_box">
+                    <div className="txn_type_empty_box">
+                        <div className="edit-desc-font text-center mb-16 fs-unity-14">
+                            {sl.l_set_txn_type}
+                            <span style={{ color: "#FF6B45" }}>*</span>
+                        </div>
 
-                    <button
-                        type="button"
-                        className="btn btn-light"
-                        style={{ border: "none", background: "transparent" }}
-                        onClick={onOpenDrawer}
-                    >
-                        <span className="material-icons" style={{ color: "#494D4F" }}>
-                            add_circle
-                        </span>
-                        <span className="attach_ins-add-button-font pl-4">
-                            {sl.l_add_processing_code || "Add Processing Code"}
-                        </span>
-                    </button>
+                        <button
+                            type="button"
+                            className="btn btn-light"
+                            style={{ border: "none", background: "transparent" }}
+                            onClick={onOpenDrawer}
+                        >
+                            <span className="material-icons dark-grey-font">
+                                add_circle
+                            </span>
+                            <span className="attach_ins-add-button-font pl-4">
+                                {sl.b_add_processing_code}
+                            </span>
+                        </button>
+                    </div>
                 </div>
             ) : (
                 <>
+                <div className="txn_type_box">   
                     <div className="txn_type_selected_box">
-                        <div className="d-flex justify-content-between align-items-start mb-12">
-                            <div className="dark-grey-font-700 pb-8">
-                                {sl.l_processing_code || "Processing Code"}
+                            <div className="d-flex justify-content-between align-items-start mb-12">
+                                <div className="dark-grey-font-700 pb-8">
+                                    {sl.l_processing_code}
+                                </div>
+
+                                <span
+                                    className="material-icons"
+                                    style={{ color: "#494D4F", cursor: "pointer" }}
+                                    onClick={onOpenDrawer}
+                                >
+                                    more_vert
+                                </span>
                             </div>
 
-                            <span
-                                className="material-icons"
-                                style={{ color: "#494D4F", cursor: "pointer" }}
-                                onClick={onOpenDrawer}
-                            >
-                                more_vert
-                            </span>
-                        </div>
+                            <div className="row">
+                                {processingCodes.map((code, index) => (
+                                    <div key={`${code}-${index}`} className="col-6 mb-12">
+                                        <div className="d-flex align-items-center pb-8">
+                                            <span className="material-icons tick-icon-green">
+                                                check_circle
+                                            </span>
 
-                        <div className="row">
-                            {processingCodes.map((code, index) => (
-                                <div key={`${code}-${index}`} className="col-6 mb-12">
-                                    <div className="d-flex align-items-center pb-8">
-                                        <span
-                                            className="material-icons"
-                                            style={{
-                                                color: "#36B37E",
-                                                fontSize: "20px",
-                                                marginRight: "8px"
-                                            }}
-                                        >
-                                            check_circle
-                                        </span>
-
-                                        <span className="default-font" style={{ paddingLeft: 0, fontSize: "14px" }}>
-                                            ({String(code).padStart(2, "0")}) {formatPcodeLabel(code)}
-                                        </span>
+                                            <span className="default-font fs-unity-14" style={{ paddingLeft: 0}}>
+                                                ({String(code).padStart(2, "0")}) {formatPcodeLabel(code)}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
                     </div>
-
                     <button
                         type="button"
-                        className="btn btn-light mt-16"
+                        className="btn btn-light mt-16 add-pcode-button"
                         onClick={onOpenDrawer}
-                        style={{ border: "none", background: "transparent", padding: 0 }}
                     >
                         <span className="material-icons" style={{ color: "#494D4F" }}>
                             add_circle
                         </span>
                         <span className="attach_ins-add-button-font pl-4">
-                            {sl.l_add_processing_code || "Add Processing Code"}
+                            {sl.b_add_processing_code}
                         </span>
                     </button>
+  
                 </>
             )}
-        </div>
+        </>
     );
 }

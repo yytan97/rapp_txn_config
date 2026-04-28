@@ -499,7 +499,6 @@ body {
 	font-weight: 400px;
 	font-size: 14px;
 	color: #6D7172;
-
 }
 
 .detail-title-font {
@@ -509,10 +508,10 @@ body {
 }
 
 .char-count {
-	bottom: 5px; /* Adjust for desired spacing from bottom */
-	right: 5px;  /* Adjust for desired spacing from right */
-	color: gray; /* Style the text color */
-	font-size: 0.8em; /* Adjust font size */
+	bottom: 5px; 
+	right: 5px;  
+	color: gray; 
+	font-size: 0.8em; 
 }
 
 .owner-text {
@@ -649,7 +648,10 @@ body {
 	overflow-y: auto;
 	margin-top: 10px;
 	margin-bottom: 20px;
-	padding-left: 5px;
+	/* padding-left: 5px; */
+	border-top: "1px solid #E5E7EB";
+	border-bottom: "1px solid #E5E7EB";
+	padding: "16px";
 }
 
 /* drawer component */
@@ -854,7 +856,7 @@ body {
 	color: #494D4F;
 }
 
-/* institution attach txn type - pcode list box */
+/* institution attach txn type - processing code list box */
 
 .txn_type_box {
     border: 1px solid #DBDBDC;
@@ -871,17 +873,21 @@ body {
     justify-content: center;
 }
 
-/* .txn_type_selected_box {
-    border: 1px solid #DBDBDC;
-    border-radius: 24px;
-    padding: 20px 24px;
-    background: #fff;
-} */
-
 .dark-grey-font-700 {
 	color: #494D4F;
 	font-size: 14px;
 	font-weight: 700;
 }
 
+.tick-icon-green {
+	color: #36B37E;
+	font-size: 20px;
+	margin-right: 8px;
+}
+
+.add-pcode-button {
+	border: none;
+	padding: 4px 16px;
+	background: transparent;
+}
 

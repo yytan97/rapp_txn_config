@@ -2028,42 +2028,14 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                         </>
                     )}
 
-                    {/* {step === 8 && (
-                        <>
-                            <div className="mb-24">
-                                <div className="edit-title-font">
-                                    {sl.l_transaction_type}
-                                </div>
-                                <div className="edit-desc-font">
-                                    {sl.t_transaction_type}
-                                </div>
-                            </div>
-                            <div className="txn_type_box">
-                                <div>
-                                    <div className="table-key pb-8">
-                                        {sl.l_set_txn_type}
-                                    </div>
-                                    <button className="btn btn-ghost-unity">
-                                        <span className="material-icons">add_circle</span>
-                                        {sl.b_add_processing_code}
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="d-flex justify-content-center align-items-center" style={{paddingTop: "330px"}}>
-                                <button className="btn btn-primary">
-                                    {sl.b_attach_txn_type}
-                                </button>
-                            </div>
-                        </>
-                    )} */}
                     {step === 8 && (
                         <>
                             <div className="pb-3">
                                 <div className="edit-title-font">
-                                    {sl.l_transaction_type || "Transaction Type"}
+                                    {sl.l_transaction_type}
                                 </div>
                                 <div className="edit-desc-font">
-                                    {sl.l_transaction_type_desc || "Optional section for input the processing code for the institution"}
+                                    {sl.l_transaction_type_desc}
                                 </div>
                             </div>
 
@@ -2089,7 +2061,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         disabled={!inputData?.processingCodeList || inputData.processingCodeList.length === 0}
                                         onClick={click4AddRecord}
                                     >
-                                        {sl.b_attach_transaction_type || "Attach Transaction Type"}
+                                        {sl.b_attach_transaction_type}
                                     </button>
                                 </div>
                             </div>
@@ -2098,11 +2070,11 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
                                     <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
                                         <div className="drawer-title">
-                                            {sl.l_set_processing_code || "Set Processing Code"}
+                                            {sl.l_set_processing_code}
                                         </div>
 
                                         <div className="drawer-description">
-                                            {sl.l_select_transaction_type_desc || "Select the transaction type that you would like be available for this institution."}
+                                            {sl.l_select_transaction_type_desc}
                                         </div>
 
                                         <div className="input-group mt-16">
@@ -2118,26 +2090,18 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                             <input
                                                 type="text"
                                                 className="form-control border-0"
-                                                placeholder={sl.p_select_processing_code || "Select Processing Code"}
+                                                placeholder={sl.p_select_processing_code}
                                                 value={searchPcode}
                                                 onChange={(e) => setSearchPcode(e.target.value)}
-                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }}
+                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px", paddingLeft: "0px" }}
                                             />
                                         </div>
 
-                                        <div
-                                            className="institution-list"
-                                            style={{
-                                                borderTop: "1px solid #E5E7EB",
-                                                borderBottom: "1px solid #E5E7EB",
-                                                paddingTop: "16px",
-                                                marginTop: "16px"
-                                            }}
-                                        >
+                                        <div className="institution-list">
                                             {filteredPcodeList.map((item, idx) => (
                                                 <label
                                                     key={`${item.code}-${idx}`}
-                                                    className="d-flex align-items-center mb-3"
+                                                    className="d-flex align-items-center pb-8"
                                                     style={{ cursor: "pointer" }}
                                                 >
                                                     <input
@@ -2146,21 +2110,12 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                         checked={selectedPcodeList.includes(item.code)}
                                                         onChange={() => togglePcodeSelection(item.code)}
                                                     />
-                                                    <span className="default-font" style={{ paddingLeft: 0 }}>
+                                                    <span className="filename-font" style={{ paddingLeft: 0 }}>
                                                         {item.code}
                                                     </span>
                                                 </label>
                                             ))}
                                         </div>
-
-                                        {/* <button
-                                            type="button"
-                                            className="btn btn-outline-dark mt-16"
-                                            onClick={applySelectedPcodes}
-                                            disabled={selectedPcodeList.length === 0}
-                                        >
-                                            {sl.l_add_processing_code || "Add Processing Code"}
-                                        </button> */}
 
                                         <div style={{ marginTop: "auto" }}>
                                             <button
@@ -2169,7 +2124,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                 onClick={applySelectedPcodes}
                                                 disabled={selectedPcodeList.length === 0}
                                             >
-                                                {sl.b_add || "Add"}
+                                                {sl.b_add}
                                             </button>
 
                                             <button
@@ -2178,7 +2133,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                 style={{ background: "transparent", border: "none" }}
                                                 onClick={() => setShowPcodeDrawer(false)}
                                             >
-                                                {sl.b_cancel || "Cancel"}
+                                                {sl.b_cancel}
                                             </button>
                                         </div>
                                     </div>
