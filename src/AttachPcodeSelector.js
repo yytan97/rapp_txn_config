@@ -78,7 +78,7 @@ export function AttachPcodeSelector({ processingCodes = [], onOpenDrawer, onRemo
                                                 check_circle
                                             </span>
 
-                                            <span className="default-font fs-unity-14" style={{ paddingLeft: 0}}>
+                                            <span className="default-font" style={{ paddingLeft: 0, fontSize: "14px" }}>
                                                 ({String(code).padStart(2, "0")}) {formatPcodeLabel(code)}
                                             </span>
                                         </div>

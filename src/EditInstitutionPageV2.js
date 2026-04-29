@@ -408,7 +408,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 };
                 inputData = dataRecord;
             }
-
         }
         catch (e) {
             console.warn("Error", e);
@@ -421,7 +420,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             window.scrollTo(0, 0);
             setRedraw((v) => v + 1);
         }
-
     };
 
     function getLabel(sl, value, prefix = "") {
@@ -503,16 +501,18 @@ export function EditInstitutionPageV2({ debugMode = true }) {
     function callback4BlockerProceed() {
         if (debugMode) console.log("Callback for blocker proceed", blocker);
         blocker?.proceed();
+
         return;
     };
 
     function callback4BlockerReset() {
         if (debugMode) console.log("Callback for blocker reset", blocker);
         blocker?.reset();
+
         return;
     };
 
-    function click4AddRecord(e) {
+    function click4AddRecordWithAttachModal(e) {
         if (debugMode) console.log("Click for add record", e);
         let message = sl.m_confirm_create_record;
         message = message.replace("__parameter_1", inputData.institutionId);
@@ -528,6 +528,41 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                     // let message = sl.m_record_created;
                     // showInfoDialogBox(message, () => navigate(-1));
                     setShowAttachModal(true);
+                }
+                else throw result1;
+            }
+            catch (e) {
+                console.warn("Error", e);
+                let message = tBox.getErrorMessage(e, sl);
+                showInfoDialogBox(message);
+                if (tBox.isBlockErrorCode(e)) updateUser(undefined);
+            }
+            finally {
+                closeStateDialogBox();
+            }
+        });
+
+        return;
+    };
+
+    function click4AddRecord(e) {
+        if (debugMode) console.log("Click for add record", e);
+
+        let message = sl.m_confirm_create_record;
+        message = message.replace("__parameter_1", inputData.institutionId);
+
+        showConfirmDialogBox(message, async function () {
+            showStateDialogBox();
+            try {
+                // await tBox.sleep(1000 * 1);
+
+                let result1 = await addInstitutionRecord();
+                if (result1 && result1.flag) {
+                    formObject.dirty = false;
+
+                    let message = sl.m_record_created;
+                    showInfoDialogBox(message, () => navigate(-1));
+                    // setShowAttachModal(true);
                 }
                 else throw result1;
             }
@@ -637,6 +672,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
     function click4UpdateRecord(e) {
         if (debugMode) console.log("Click for update record", e);
+
         let message = sl.m_confirm_update_record;
         message = message.replace("__parameter_1", inputData.institutionId);
         showConfirmDialogBox(message, async function () {
@@ -811,10 +847,12 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
     function click4AddRoutingRecord() {
         if (debugMode) console.log("Click for add routing record");
+
         let data = {
             mode: 0,
             routingOrder: 1,
         };
+
         showInputRoutingRecordDialogBox(data, inputData?.routingList, callback4EditRoutingRecord);
     };
 
@@ -829,24 +867,28 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             // update page ui
             setRedraw((v) => v + 1);
         });
+
         return;
     };
 
     function click4RoutingRecord(record, index) {
         if (debugMode) console.log("Click for routing record");
+
         let data = JSON.parse(JSON.stringify(record));
 
         data.mode = 1;
         data.index = index;
+
         showInputRoutingRecordDialogBox(data, inputData?.routingList, callback4EditRoutingRecord);
     };
 
     function callback4EditRoutingRecord(data) {
         if (debugMode) console.log("Callback for edit routing record", data);
-        formObject.dirty = true;
 
+        formObject.dirty = true;
         data.routingFlags = buildRoutingFlags(data);
         data.connectorMode = buildConnectorMode(data);
+
         if (data.mode === 1) {
             // edit mode
             inputData.routingList[data.index] = data;
@@ -1693,7 +1735,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 </div>
                             </div>
                             <div>
-                                <InputLabel label={sl.l_institution_timer_id} required />
+                                <InputLabel label={sl.l_institution_timer_id} />
                                 <input name="institutionTimerId"
                                     type="text"
                                     readOnly
@@ -1701,7 +1743,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     placeholder={sl.l_leave_blank}
                                     value={inputData?.institutionTimerId || ""}
                                     onClick={() => setShowTimerIdDrawer(true)}
-                                    required
                                     disabled={editMode === 1 && fromTab === 2} />
                                 <ErrorLine message={tBox.getFieldErrorMessage2('institutionTimerId', sl, formObject)} />
                             </div>
@@ -1795,7 +1836,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 </div>
                             </div>
                             <div>
-                                <InputLabel label={sl.l_cryptogram_id} required />
+                                <InputLabel label={sl.l_cryptogram_id} />
                                 <input name="institutionCryptoId"
                                     type="text"
                                     readOnly
@@ -1803,7 +1844,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     placeholder={sl.l_leave_blank}
                                     value={inputData?.institutionCryptoId || ""}
                                     onClick={() => setShowCryptoIdDrawer(true)}
-                                    required
                                     disabled={editMode === 1 && fromTab === 2} />
                                 <ErrorLine message={tBox.getFieldErrorMessage2('institutionCryptoId', sl, formObject)} />
                             </div>
@@ -1897,7 +1937,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 </div>
                             </div>
                             <div>
-                                <InputLabel label={sl.l_routing_id} required />
+                                <InputLabel label={sl.l_routing_id} />
                                 <input name="institutionRoutingId"
                                     type="text"
                                     readOnly
@@ -1905,7 +1945,6 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                     placeholder={sl.l_leave_blank}
                                     value={inputData?.institutionRoutingId || ""}
                                     onClick={() => setShowRoutingIdDrawer(true)}
-                                    required
                                     disabled={editMode === 1 && fromTab === 2} />
                                 <ErrorLine message={tBox.getFieldErrorMessage2('institutionRoutingId', sl, formObject)} />
                             </div>
@@ -1913,7 +1952,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                 <button type="button" className="btn btn-outline-dark" onClick={goBack}>
                                     {sl.b_back}
                                 </button>
-                                <button type="button" className="btn btn-primary" onClick={click4AddRecord} disabled={!formObject?.valid || !formObject?.dirty}>
+                                <button type="button" className="btn btn-primary" onClick={click4AddRecordWithAttachModal} disabled={!formObject?.valid || !formObject?.dirty}>
                                     {sl.b_create_institution}
                                 </button>
                             </div>
@@ -2106,7 +2145,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                                 >
                                                     <input
                                                         type="checkbox"
-                                                        className="form-check-input me-3"
+                                                        className="form-check-input me-3 ml-4px"
                                                         checked={selectedPcodeList.includes(item.code)}
                                                         onChange={() => togglePcodeSelection(item.code)}
                                                     />
