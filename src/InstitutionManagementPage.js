@@ -28,6 +28,7 @@ const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
 export let dataList = [];
+let dataRecord = [];
 let fieldList = [];
 
 let tableName = "kswitchinstitution";
@@ -90,6 +91,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
     const [totalRecord, setTotalRecord] = react.useState(0);
     const [activeRecord, setActiveRecord] = react.useState(0);
+    const [lastUpdatedRecord, setLastUpdatedRecord] = react.useState(0);
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
@@ -188,11 +190,25 @@ export function InstitutionManagementPage({ debugMode = true }) {
                 dataList = [...list1];
 
                 setTotalRecord(pageObject.totalRecord);
-                const activeCount = list1.filter(item => item.recordData.institutionStatus === "1").length;
-                setActiveRecord(activeCount);
             }
             else throw (result4);
 
+            let result5 = await apiBox.getRecord(getSessionToken(), databaseName, tableName);
+
+            if (result5.flag) {
+                let allRecords = result5.data.records || [];
+
+                // Total Institution
+                setTotalRecord(allRecords.length);
+
+                // Active Institution
+                let activeCount = allRecords.filter(
+                    item => item.institutionStatus === "1"
+                ).length;
+
+                setActiveRecord(activeCount);
+            }
+            else throw (result5);
         }
         catch (e) {
             console.warn("Error", e);

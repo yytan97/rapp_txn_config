@@ -1100,9 +1100,9 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             </div>
 
             <form ref={ref4Form} className={`d-flex mt-4 mb-5 ml-24 
-                ${step === 8 ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
-                {step !== 8 && renderStepper()}
-                <div className="col-7" style={{ minHeight: "50vh" }}>
+                ${(step === 1 || step === 8) ? "justify-content-center" : (editMode === 0 ? "justify-content-left" : "justify-content-center")}`}>
+                {(step !== 8 && step !== 1)  && renderStepper()}
+                <div className="col-6" style={{ minHeight: "50vh" }}>
                     {editMode === 1 && step === 1 ? (
                         <>
                             <div className="pb-3">
@@ -1369,10 +1369,10 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         )}
                                         
                                         <div className="mt-4 d-flex justify-content-between" style={{paddingTop: "250px"}}>
-                                            <button type="button" className="btn btn-outline-dark" onClick={goNext}>
+                                            <button type="button" className="btn btn-outline-dark mr-8 btn-width-100" onClick={goNext}>
                                                 {sl.b_next_advance}
                                             </button>
-                                            <button className="btn btn-primary"
+                                            <button className="btn btn-primary btn-width-100"
                                             type="button"
                                             onClick={click4AddRecord}
                                             disabled={!formObject?.valid || !formObject?.dirty}>
