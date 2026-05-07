@@ -207,6 +207,18 @@ export function InstitutionManagementPage({ debugMode = true }) {
                 ).length;
 
                 setActiveRecord(activeCount);
+
+                // Last Updated Institution
+                let now = new Date();
+                let startDate = new Date();
+                startDate.setUTCDate(now.getUTCDate() - 7);
+                let lastUpdatedCount = allRecords.filter(item => {
+                    if (!item.recordDate || item.recordDate === "DEFAULT") return false;
+                    let recordDate = new Date(item.recordDate.replace(" ", "T"));
+                    return recordDate >= startDate && recordDate <= now;
+                }).length;
+
+                setLastUpdatedRecord(lastUpdatedCount);
             }
             else throw (result5);
         }
@@ -443,7 +455,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
                         </div>
 
                         <div className="col-12 d-flex">
-                            <Card label={sl.l_institution_last_updated} tip={sl.t_insti_last} numCount="150"/>
+                            <Card label={sl.l_institution_last_updated} tip={sl.t_insti_last} numCount={lastUpdatedRecord} days={sl.l_last_7_days}/>
                             <Card label={sl.l_active_institution} tip={sl.t_insti_last} numCount={activeRecord}/>
                             <Card label={sl.l_total_institution} tip={sl.t_insti_last} numCount={totalRecord}/>
                         </div>

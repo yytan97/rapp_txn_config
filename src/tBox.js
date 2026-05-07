@@ -472,6 +472,12 @@ export function formatDate2Host(dt) {
     return s;
 };
 
+export function formatDateWithSeconds(dt) {
+    if (dt === undefined || dt === null || dt === "") return "-";
+
+    return moment(dt).format("DD MMM YYYY hh:mm:ss A");
+}
+
 export function parseFilePath(path) {
     let parts = (/^(.*[\\/])?(.*?)(\.[^.]*?|)$/gi).exec(path);
     return {
@@ -610,6 +616,14 @@ export function removeLocalData4AppComponentSetting() {
 
     return;
 };
+
+function parseLocalDateTimeToDate(dateTimeString) {
+    if (!dateTimeString || dateTimeString === "DEFAULT") return undefined;
+
+    // API format: "YYYY-MM-DD HH:mm:ss"
+    // Treat as local browser time
+    return new Date(dateTimeString.replace(" ", "T"));
+}
 
 function formatToUTCDateTime(date) {
     const pad = (n) => String(n).padStart(2, "0");

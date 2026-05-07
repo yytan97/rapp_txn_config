@@ -224,18 +224,18 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 let setterFn = null;
 
                 if (step === 5) {
-                    tableName = "kswitchinstitution";
-                    fieldName = "institutionTimerId";
+                    tableName = "kswitchinstitution_timers";
+                    fieldName = "institutionId";
                     setterFn = setTimerIdList;
                 }
                 else if (step === 6) {
-                    tableName = "kswitchinstitution";
-                    fieldName = "institutionCryptoId";
+                    tableName = "kswitchcryptograms";
+                    fieldName = "ownerId";
                     setterFn = setCrytoIdList;
                 }
                 else if (step === 7) {
-                    tableName = "kswitchinstitution";
-                    fieldName = "institutionRoutingId";
+                    tableName = "kswitchroute";
+                    fieldName = "linkType";
                     setterFn = setRoutingIdList;
                 }
                 else {
@@ -632,7 +632,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                     recordStatus: "A"
                 };
 
-                let result3 = await apiBox.addRecord(getSessionToken(), databaseName, "kswitchinstitution_txn", record3);
+                let result3 = await apiBox.addRecord(getSessionToken(), databaseName, "kswitchroute", record3);
                 console.log("Result 3", result3)
             }
 
@@ -669,6 +669,48 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             return e;
         }
     };
+
+    async function click4AttachTransactionType() {
+        showStateDialogBox();
+
+        try {
+            let list = inputData?.processingCodeList || [];
+
+            for (let n = 0; n < list.length; n++) {
+                let record = {
+                    institutionId: inputData.institutionId,
+                    institutionPcode: list[n],
+                    recordStatus: "A"
+                };
+
+                let result = await apiBox.addRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution_txn",
+                    record
+                );
+
+                if (!result?.flag) throw result;
+            }
+
+            formObject.dirty = false;
+
+            showInfoDialogBox(sl.m_record_created, () => {
+                navigate(-1);
+            });
+        }
+        catch (e) {
+            let message = tBox.getErrorMessage(e, sl);
+            showInfoDialogBox(message);
+
+            if (tBox.isBlockErrorCode(e)) {
+                updateUser(undefined);
+            }
+        }
+        finally {
+            closeStateDialogBox();
+        }
+    }
 
     function click4UpdateRecord(e) {
         if (debugMode) console.log("Click for update record", e);
@@ -724,9 +766,42 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                 institutionConsecutiveTimeoutCount: inputData.institutionConsecutiveTimeoutCount,
             };
 
-            let result1 = await apiBox.updateRecordWithId(getSessionToken(), databaseName, tableName, inputData.rowId, record1);
+            let result1 = await apiBox.updateRecordWithId(
+                getSessionToken(),
+                databaseName,
+                tableName,
+                inputData.rowId,
+                record1
+            );
 
             if (result1.flag === false) throw result1;
+
+            // Update Transaction Type / Processing Code
+            await apiBox.deleteRecord(
+                getSessionToken(),
+                databaseName,
+                "kswitchinstitution_txn",
+                `institutionId = '${inputData.institutionId}'`
+            );
+
+            let list = inputData?.processingCodeList || [];
+
+            for (let n = 0; n < list.length; n++) {
+                let record2 = {
+                    institutionId: inputData.institutionId,
+                    institutionPcode: list[n],
+                    recordStatus: "A"
+                };
+
+                let result2 = await apiBox.addRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution_txn",
+                    record2
+                );
+
+                if (result2.flag === false) throw result2;
+            }
 
             return result1;
         }
@@ -734,7 +809,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
             console.warn("Error", e);
             return e;
         }
-    };
+    }
 
     function click4RemoveProcessingCode(code, index) {
         if (debugMode) console.log("Click for remove processing code", code, index);
@@ -2098,7 +2173,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
                                         className="btn btn-primary"
                                         style={{ width: "100%" }}
                                         disabled={!inputData?.processingCodeList || inputData.processingCodeList.length === 0}
-                                        onClick={click4AddRecord}
+                                        onClick={click4AttachTransactionType}
                                     >
                                         {sl.b_attach_transaction_type}
                                     </button>

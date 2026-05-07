@@ -575,26 +575,26 @@ export function EditBINPrefixPageV2({ debugMode = true }) {
 
                                     <div>
                                         <InputLabel label={sl.l_cvv_offset_track1} />
-                                        <input name="cvvOffsetTrack1"
+                                        <input name="cvvOffsetT1"
                                             type="text"
-                                            className={`form-control ${tBox.getClass4IsInvalid2('cvvOffsetTrack1', formObject)}`}
+                                            className={`form-control ${tBox.getClass4IsInvalid2('cvvOffsetT1', formObject)}`}
                                             placeholder={sl.p_cvv_offset_track1}
                                             value={inputData?.cvvOffsetT1 || ""}
                                             onChange={change4Input} />
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('cvvOffsetTrack1', sl, formObject)} />
+                                        <ErrorLine message={tBox.getFieldErrorMessage2('cvvOffsetT1', sl, formObject)} />
                                     </div>
 
                                     <div>
                                         <InputLabel label={sl.l_cvv_offset_track2} />
-                                        <input name="cvvOffsetTrack2"
+                                        <input name="cvvOffsetT2"
                                             type="text"
-                                            className={`form-control ${tBox.getClass4IsInvalid2('cvvOffsetTrack2', formObject)}`}
+                                            className={`form-control ${tBox.getClass4IsInvalid2('cvvOffsetT2', formObject)}`}
                                             placeholder={sl.p_cvv_offset_track2}
                                             value={inputData?.cvvOffsetT2 || ""}
                                             onChange={change4Input} />
 
-                                        <ErrorLine message={tBox.getFieldErrorMessage2('cvvOffsetTrack2', sl, formObject)} />
+                                        <ErrorLine message={tBox.getFieldErrorMessage2('cvvOffsetT2', sl, formObject)} />
                                     </div>
                                     <div className="mt-4">
                                         {editMode === 0 ? (
