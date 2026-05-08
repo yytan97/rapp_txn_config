@@ -1145,207 +1145,213 @@ export function InstitutionDetailPage({ debugMode = true }) {
 
                                 {
                                     tabIndex === 4 ? (
-                                        <>       
-                                            <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
-                                                <div className="d-flex justify-content-end align-items-center">
-                                                    <div className="col-4 pe-3">
-                                                        <div className="input-group">
-                                                            <button className="btn border-0"
-                                                                style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
-                                                                type="button"
-                                                                onClick={click4Search}>
-                                                                <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
-                                                            </button>
-                                                            <input type="text" className="form-control border-0"
-                                                                placeholder={sl.p_search_query}
-                                                                value={searchObject.searchText || ""}
-                                                                onChange={change4SearchText}
-                                                                onKeyDown={keyPress4SearchText}
-                                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
-                                                        </div>
-                                                    </div>
-
-                                                    <div>
-                                                        {
-                                                            check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                                                <button
-                                                                    className="btn btn-unity"
-                                                                    role="button"
-                                                                    title={sl.t_add_processing_code}
-                                                                    onClick={() => {
-                                                                        setSelectedPcode(
-                                                                            processingCodeList.map(item =>
-                                                                                String(item.code).padStart(2, "0")
-                                                                            )
-                                                                        );
-                                                                        setShowPcodeDrawer(true);
-                                                                    }}
-                                                                >
-                                                                    {sl.b_add_processing_code}
+                                        <> 
+                                            {processingCodeList.length > 0 ? (
+                                                <RenderEmptyState
+                                                    title={sl.l_no_transaction_type_yet}
+                                                    description={sl.l_attach_transaction_type}
+                                                    buttonText={sl.b_attach_transaction_type}
+                                                    onButtonClick={() => {
+                                                        // optional action
+                                                        console.log("Adjust / Attach clicked");
+                                                    }}
+                                                />
+                                            ) : (
+                                                <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                                                    <div className="d-flex justify-content-end align-items-center">
+                                                        <div className="col-4 pe-3">
+                                                            <div className="input-group">
+                                                                <button className="btn border-0"
+                                                                    style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                                                    type="button"
+                                                                    onClick={click4Search}>
+                                                                    <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
                                                                 </button>
-                                                            ) : null
-                                                        }
-                                                    </div>
-                                                    {/* Drawer component */}
-                                                    {showPcodeDrawer && (
-                                                        <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
-                                                            <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
-                                                                <div className="drawer-title">
-                                                                    {sl.l_set_processing_code}
-                                                                </div>
-                                                                <div className="drawer-description pb-16">
-                                                                    {sl.l_select_pcode}
-                                                                </div>
-                                                                <div className="">
-                                                                    <div className="input-group">
-                                                                        <span className="input-group-text bg-light border-0">
-                                                                            <span className="material-icons" style={{ color: "#494D4F"}}>
-                                                                                search
-                                                                            </span>
-                                                                        </span>
-                                                                        <input
-                                                                            type="text"
-                                                                            className="form-control border-0"
-                                                                            placeholder={sl.p_search_query}
-                                                                            value={searchTerm}
-                                                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
-                                                                    </div>
-                                                                </div>
-                                                                <hr></hr>
-                                                                <div className="institution-list">
-                                                                    {filteredPcodes.map((item, idx) => (
-                                                                        <div key={item.code} className="form-check">
-                                                                            <input
-                                                                                type="checkbox"
-                                                                                id={`pcode-${item.code}`}
-                                                                                name="pcode"
-                                                                                className="form-check-input"
-                                                                                checked={selectedPcode.includes(item.code)}
-                                                                                onChange={() => {
-                                                                                    if (selectedPcode.includes(item.code)) {
-                                                                                        setSelectedPcode(selectedPcode.filter(c => c !== item.code));
-                                                                                    }
-                                                                                    else {
-                                                                                        setSelectedPcode([...selectedPcode, item.code]);
-                                                                                    }
-                                                                                }}
-                                                                            />
-                                                                            <label className="form-check-label" htmlFor={`pcode-${item.code}`}>
-                                                                                ({item.code}) {item.desc}
-                                                                            </label>
-                                                                        </div>
-                                                                    ))}
-
-                                                                    {filteredPcodes.length === 0 && (
-                                                                        <div className="text-muted">
-                                                                            {sl.l_no_result_found}
-                                                                        </div>
-                                                                    )}
-                                                                </div>
-
-                                                                <button className="btn btn-primary  mb-16"
-                                                                    disabled={selectedPcode.length === 0}
-                                                                    // onClick={() => {
-                                                                    //     inputData.processingCodes = [...selectedPcode]; // save multiple values
-                                                                    //     setShowPcodeDrawer(false);
-                                                                    //     setRedraw(v => v + 1); 
-                                                                    // }}>
-                                                                    onClick={async () => {
-                                                                        await click4UpdateProcessingCodes();
-                                                                        setShowPcodeDrawer(false);
-                                                                    }}>
-                                                                        {sl.b_apply}
-                                                                </button>
-                                                                <button className="btn btn-ghost-unity"
-                                                                    onClick={() => setShowPcodeDrawer(false)}>
-                                                                        {sl.b_cancel}
-                                                                </button>
+                                                                <input type="text" className="form-control border-0"
+                                                                    placeholder={sl.p_search_query}
+                                                                    value={searchObject.searchText || ""}
+                                                                    onChange={change4SearchText}
+                                                                    onKeyDown={keyPress4SearchText}
+                                                                    style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                                             </div>
                                                         </div>
-                                                    )}
-                                                </div>
 
-                                                <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
-                                                    <table className="table table-hover mb-0">
-                                                        <thead>
-                                                            <tr className="text-nowrap tableRow-title">
-                                                                <th className="">
-                                                                    {sl.h_processing_code}
-                                                                </th>
-                                                                <th className="">
-                                                                    {sl.h_last_updated}
-                                                                </th>
-                                                                <th className="" >
-                                                                    {sl.h_status}
-                                                                </th>
-                                                                <th className="" style={{ width: "24px" }} >
-                                                                </th>
-                                                            </tr>
-                                                        </thead>
-
-                                                        <tbody>
+                                                        <div>
                                                             {
-                                                                processingCodeList.map((record, index) => {
-                                                                    return (
-                                                                        <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                                            <td className="">
-                                                                                {record.code || "-"}
-                                                                            </td>
-                                                                            <td className="">
-                                                                                {tBox.formatDate(record.recordDate || "-")}
-                                                                            </td>
-                                                                            <td className="">
-                                                                                <div className={`${getStatusLabelClass(record.status)}`}
-                                                                                    style={{ width: "110px", height: "24px" }} >
-                                                                                    {getLabel(sl, record.status, "o_status_")}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div className="dropdown dropstart ">
-                                                                                    <span className="d-inline-flex align-items-center " role="button"
-                                                                                        data-bs-toggle="dropdown">
-                                                                                        <div className="d-flex align-items-center ">
-                                                                                            <span className="material-icons fs-18-unity">more_vert</span>
-                                                                                        </div>
-                                                                                    </span>
-
-                                                                                    <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
-                                                                                        style={{ borderRadius: "8px" }} >
-                                                                                        <ul className="list-unstyled p-2 mb-0">
-                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                                <button
-                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                                    type="button">
-                                                                                                    <span>{sl.b_change_status}</span>
-                                                                                                </button>
-                                                                                            </li>
-                                                                                            {
-                                                                                                check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                                        <button
-                                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                                            type="button"
-                                                                                                            onClick={(e) => click4RemoveProcessingCode(e, record, index)}>
-                                                                                                            <span>{sl.b_delete_pcode}</span>
-                                                                                                        </button>
-                                                                                                    </li>
-                                                                                                ) : null
-                                                                                            }
-                                                                                        </ul>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-
-                                                                        </tr>
-
-                                                                    );
-                                                                })
+                                                                check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                                    <button
+                                                                        className="btn btn-unity"
+                                                                        role="button"
+                                                                        title={sl.t_add_processing_code}
+                                                                        onClick={() => {
+                                                                            setSelectedPcode(
+                                                                                processingCodeList.map(item =>
+                                                                                    String(item.code).padStart(2, "0")
+                                                                                )
+                                                                            );
+                                                                            setShowPcodeDrawer(true);
+                                                                        }}
+                                                                    >
+                                                                        {sl.b_add_processing_code}
+                                                                    </button>
+                                                                ) : null
                                                             }
-                                                        </tbody>
-                                                    </table>
+                                                        </div>
+                                                        {/* Drawer component */}
+                                                        {showPcodeDrawer && (
+                                                            <div className="drawer-overlay" onClick={() => setShowPcodeDrawer(false)}>
+                                                                <div className="drawer-panel" onClick={(e) => e.stopPropagation()}>
+                                                                    <div className="drawer-title">
+                                                                        {sl.l_set_processing_code}
+                                                                    </div>
+                                                                    <div className="drawer-description pb-16">
+                                                                        {sl.l_select_pcode}
+                                                                    </div>
+                                                                    <div className="">
+                                                                        <div className="input-group">
+                                                                            <span className="input-group-text bg-light border-0">
+                                                                                <span className="material-icons" style={{ color: "#494D4F"}}>
+                                                                                    search
+                                                                                </span>
+                                                                            </span>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control border-0"
+                                                                                placeholder={sl.p_search_query}
+                                                                                value={searchTerm}
+                                                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                                                style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr></hr>
+                                                                    <div className="institution-list">
+                                                                        {filteredPcodes.map((item, idx) => (
+                                                                            <div key={item.code} className="form-check">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    id={`pcode-${item.code}`}
+                                                                                    name="pcode"
+                                                                                    className="form-check-input"
+                                                                                    checked={selectedPcode.includes(item.code)}
+                                                                                    onChange={() => {
+                                                                                        if (selectedPcode.includes(item.code)) {
+                                                                                            setSelectedPcode(selectedPcode.filter(c => c !== item.code));
+                                                                                        }
+                                                                                        else {
+                                                                                            setSelectedPcode([...selectedPcode, item.code]);
+                                                                                        }
+                                                                                    }}
+                                                                                />
+                                                                                <label className="form-check-label" htmlFor={`pcode-${item.code}`}>
+                                                                                    ({item.code}) {item.desc}
+                                                                                </label>
+                                                                            </div>
+                                                                        ))}
+
+                                                                        {filteredPcodes.length === 0 && (
+                                                                            <div className="text-muted">
+                                                                                {sl.l_no_result_found}
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+
+                                                                    <button className="btn btn-primary  mb-16"
+                                                                        disabled={selectedPcode.length === 0}
+                                                                        onClick={async () => {
+                                                                            await click4UpdateProcessingCodes();
+                                                                            setShowPcodeDrawer(false);
+                                                                        }}>
+                                                                            {sl.b_apply}
+                                                                    </button>
+                                                                    <button className="btn btn-ghost-unity"
+                                                                        onClick={() => setShowPcodeDrawer(false)}>
+                                                                            {sl.b_cancel}
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
+                                                        <table className="table table-hover mb-0">
+                                                            <thead>
+                                                                <tr className="text-nowrap tableRow-title">
+                                                                    <th className="">
+                                                                        {sl.h_processing_code}
+                                                                    </th>
+                                                                    <th className="">
+                                                                        {sl.h_last_updated}
+                                                                    </th>
+                                                                    <th className="" >
+                                                                        {sl.h_status}
+                                                                    </th>
+                                                                    <th className="" style={{ width: "24px" }} >
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+
+                                                            <tbody>
+                                                                {
+                                                                    processingCodeList.map((record, index) => {
+                                                                        return (
+                                                                            <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                                <td className="">
+                                                                                    {`(${record.code}) ${pcodeMap[parseInt(record.code, 10)]?.value || "-"}`}
+                                                                                </td>
+                                                                                <td className="">
+                                                                                    {tBox.formatDate(record.recordDate || "-")}
+                                                                                </td>
+                                                                                <td className="">
+                                                                                    <div className={`${getStatusLabelClass(record.status)}`}
+                                                                                        style={{ width: "110px", height: "24px" }} >
+                                                                                        {getLabel(sl, record.status, "o_status_")}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div className="dropdown dropstart ">
+                                                                                        <span className="d-inline-flex align-items-center " role="button"
+                                                                                            data-bs-toggle="dropdown">
+                                                                                            <div className="d-flex align-items-center ">
+                                                                                                <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                            </div>
+                                                                                        </span>
+
+                                                                                        <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                            style={{ borderRadius: "8px" }} >
+                                                                                            <ul className="list-unstyled p-2 mb-0">
+                                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                                    <button
+                                                                                                        className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                        type="button">
+                                                                                                        <span>{sl.b_change_status}</span>
+                                                                                                    </button>
+                                                                                                </li>
+                                                                                                {
+                                                                                                    check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                                            <button
+                                                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                                type="button"
+                                                                                                                onClick={(e) => click4RemoveProcessingCode(e, record, index)}>
+                                                                                                                <span>{sl.b_delete_pcode}</span>
+                                                                                                            </button>
+                                                                                                        </li>
+                                                                                                    ) : null
+                                                                                                }
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </td>
+
+                                                                            </tr>
+                                                                        );
+                                                                    })
+                                                                }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            )}      
                                         </>
                                     ) : null
                                 }
