@@ -695,7 +695,7 @@ export function EditInstitutionPageV2({ debugMode = true }) {
 
             formObject.dirty = false;
 
-            showInfoDialogBox(sl.m_record_created, () => {
+            showInfoDialogBox(sl.m_txn_type_attached, () => {
                 navigate(-1);
             });
         }

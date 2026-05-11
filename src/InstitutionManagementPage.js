@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -541,8 +540,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {/* {tBox.formatDate(record.recordData.recordDate || "-")} */}
-                                                            {record.recordData.recordDate && record.recordData.recordDate !== "DEFAULT" ? tBox.formatDate(record.recordData.recordDate) : "-"}
+                                                            {record.recordData.recordDate && record.recordData.recordDate !== "DEFAULT" ? tBox.formatDateWithSeconds(record.recordData.recordDate) : "-"}
                                                         </td> 
                                                         <td className=""
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
