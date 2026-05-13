@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -89,6 +88,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
     const [totalCrypto, setTotalCrypto] = react.useState(0);
     const [activeCrypto, setActiveCrypto] = react.useState(0);
+    const [lastUpdatedRecord, setLastUpdatedRecord] = react.useState(0);
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
@@ -110,6 +110,16 @@ export function CryptogramManagementPage({ debugMode = true }) {
             clearTimeout(timer);
         };
     }, [refresh]);
+
+    react.useEffect(() => {
+        const tooltipTriggerList = document.querySelectorAll(
+            '[data-bs-toggle="tooltip"]'
+        );
+
+        tooltipTriggerList.forEach((el) => {
+            new window.bootstrap.Tooltip(el);
+        });
+    }, []);
 
     // event handling function here ...
 
@@ -164,12 +174,40 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 */
 
                 dataList = [...list1];
-                setTotalCrypto(pageObject.totalRecord);
-                const activeCrypto = list1.filter(item => item.recordData.recordStatus === 'A').length;
-                setActiveCrypto(activeCrypto);
+                // setTotalCrypto(pageObject.totalRecord);
+                // const activeCrypto = list1.filter(item => item.recordData.recordStatus === 'A').length;
+                // setActiveCrypto(activeCrypto);
             }
             else throw (result4);
 
+            let result5 = await apiBox.getRecord(getSessionToken(), databaseName, tableName);
+
+            if (result5.flag) {
+                let allRecords = result5.data.records || [];
+
+                // Total Institution
+                setTotalCrypto(allRecords.length);
+
+                // Active Institution
+                let activeCount = allRecords.filter(
+                    item => item.recordStatus === "A"
+                ).length;
+
+                setActiveCrypto(activeCount);
+
+                // Last Updated Institution
+                let now = new Date();
+                let startDate = new Date();
+                startDate.setUTCDate(now.getUTCDate() - 7);
+                let lastUpdatedCount = allRecords.filter(item => {
+                    if (!item.recordDate || item.recordDate === "DEFAULT") return false;
+                    let recordDate = new Date(item.recordDate.replace(" ", "T"));
+                    return recordDate >= startDate && recordDate <= now;
+                }).length;
+
+                setLastUpdatedRecord(lastUpdatedCount);
+            }
+            else throw (result5);
         }
         catch (e) {
             console.warn("Error", e);
@@ -184,7 +222,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
             window.scrollTo(0, 0);
         }
-
     };
 
     function fixPage() {
@@ -394,7 +431,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                         </div>
 
                         <div className="col-12 d-flex">
-                            <Card label={sl.l_crypto_created} tip={sl.t_insti_last} numCount="150"/>
+                            <Card label={sl.l_crypto_created} tip={sl.t_insti_last} numCount={lastUpdatedRecord} days={sl.l_last_7_days}/>
                             <Card label={sl.l_active_cryto} tip={sl.t_insti_last} numCount={activeCrypto}/>
                             <Card label={sl.l_total_crypto} tip={sl.t_insti_last} numCount={totalCrypto}/>
                         </div>
@@ -489,7 +526,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
+                                                            {tBox.formatDateWithSeconds(record.recordData.recordDate || "-")}
                                                         </td>
                                                         <td className=" "
                                                             onClick={(e) => click4RecordDetail(e, record, index)}>

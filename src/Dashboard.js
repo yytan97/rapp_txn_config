@@ -128,7 +128,7 @@ export function Dashboard({ debugMode = false }) {
 
     function callback4SystemConfigurationDashboard(e) {
         if (debugMode) console.log("Callback for System Configuration Dashboard", e);
-        navigate("/systemConfigurationDashboard");
+        window.open("/#/systemConfigurationDashboard", "_blank");
 
         return;
     };

@@ -131,7 +131,7 @@ export function LoginPage({ debugMode = true }) {
             // navigate to dashboard or home; give the update user some time ...
             setTimeout(() => {
                 if (debugMode) console.log("Navigate to home");
-                navigate("/systemConfigurationDashboard");
+                navigate("/");
             }, 100 * 2);
 
             /*
