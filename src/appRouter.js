@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -68,6 +67,10 @@ import { EditRoutePageV2 } from "./EditRoutePageV2.js";
 
 import { HotCardManagementPage } from "./HotCardManagementPage.js";
 import { EditHotCardPage } from "./EditHotCardPage.js";
+
+import { TransactionHistoryOverviewPageV2 } from "./TransactionHistoryOverviewPageV2.js";
+import { TransactionHistoryDetailPageV2 } from "./TransactionHistoryDetailPageV2.js";
+import { SearchBox } from "./SearchBox.js";
 
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
@@ -246,6 +249,18 @@ export let appRouterDefination = [
             {
                 path: "editHotCard",
                 Component: EditHotCardPage,
+            },
+            {
+                path: "transactionHistoryV2",
+                Component: TransactionHistoryOverviewPageV2,
+            },
+            {
+                path: "transactionHistoryDetailV2",
+                Component: TransactionHistoryDetailPageV2,
+            },
+            {
+                path: "searchBox",
+                Component: SearchBox,
             },
             {
                 path: "testDashboard",

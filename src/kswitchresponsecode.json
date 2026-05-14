@@ -1,0 +1,542 @@
+{
+  "0": {
+    "code": "RcSuccess",
+    "value": "Approved"
+  },
+  "1": {
+    "code": "RcReferIssuer",
+    "value": "Refer to Issuer"
+  },
+  "2": {
+    "code": "RcReferal",
+    "value": "Refer to Issuer"
+  },
+  "3": {
+    "code": "RcInvalidMerchant",
+    "value": "Invalid Merchant"
+  },
+  "4": {
+    "code": "RcDoNotHonour",
+    "value": "Do Not Honour"
+  },
+  "5": {
+    "code": "RcFailed",
+    "value": "Declined"
+  },
+  "6": {
+    "code": "RcError",
+    "value": "Generic error"
+  },
+  "7": {
+    "code": "RcHonourWithID",
+    "value": "Approved with ID"
+  },
+  "8": {
+    "code": "RcTxnTimeOut",
+    "value": "Timeout"
+  },
+  "9": {
+    "code": "RcNoOriginalRequest",
+    "value": "No Original Transaction"
+  },
+  "10": {
+    "code": "RcPartialApproval",
+    "value": "Partially Approved"
+  },
+  "11": {
+    "code": "RcUnableToReverse",
+    "value": "Unable to Reverse"
+  },
+  "12": {
+    "code": "RcInvalidTransaction",
+    "value": "Invalid Transaction"
+  },
+  "13": {
+    "code": "RcInvalidAmount",
+    "value": "Invalid Amount"
+  },
+  "14": {
+    "code": "RcInvalidPan",
+    "value": "Invalid Card Number"
+  },
+  "15": {
+    "code": "RcMissingPan",
+    "value": "Missing Card Number"
+  },
+  "16": {
+    "code": "RcInvalidCardExpiry",
+    "value": "Invalid Expiry"
+  },
+  "17": {
+    "code": "RcCustomerCancel",
+    "value": "Cancelled by Customer"
+  },
+  "18": {
+    "code": "RcInvalidTrackData",
+    "value": "Invalid or missing magstripe track data"
+  },
+  "19": {
+    "code": "RcReenterTxn",
+    "value": "Re-enter Transaction"
+  },
+  "20": {
+    "code": "RcNoFromAccount",
+    "value": "From Account Not Found"
+  },
+  "21": {
+    "code": "RcNoToAccount",
+    "value": "To Account Not Found"
+  },
+  "22": {
+    "code": "RcNoCheckingAccount",
+    "value": "Checking Account Not Found"
+  },
+  "23": {
+    "code": "RcNoSavingAccount",
+    "value": "Savings Account Not Found"
+  },
+  "24": {
+    "code": "RcNoCreditAccount",
+    "value": "Credit Account Not Found"
+  },
+  "30": {
+    "code": "RcFormatError",
+    "value": "Format Error"
+  },
+  "32": {
+    "code": "RcPartialReversal",
+    "value": "Partially Reversed"
+  },
+  "34": {
+    "code": "RcChipDeclined",
+    "value": "Chip Declined"
+  },
+  "38": {
+    "code": "RcFallbackNotAllowed",
+    "value": "Fallback Not Allowed"
+  },
+  "39": {
+    "code": "RcProcessCodeNotAllowed",
+    "value": "Process Code Not Allowed"
+  },
+  "41": {
+    "code": "RcLostCardPickup",
+    "value": "Lost Card - Pickup"
+  },
+  "42": {
+    "code": "RcSpecialPickup",
+    "value": "Special Pickup"
+  },
+  "43": {
+    "code": "RcHotCardPickup",
+    "value": "Stolen Card - Pickup"
+  },
+  "44": {
+    "code": "RcPickupCard",
+    "value": "Pickup Card"
+  },
+  "46": {
+    "code": "RcAccountClosed",
+    "value": "Account Closed"
+  },
+  "51": {
+    "code": "RcInsufficientFunds",
+    "value": "Insufficient Funds"
+  },
+  "52": {
+    "code": "RcOverCreditLimit",
+    "value": "Credit Limit Exceeded"
+  },
+  "53": {
+    "code": "RcCardNotActivated",
+    "value": "Card Not Activated"
+  },
+  "54": {
+    "code": "RcCardExpired",
+    "value": "Card Expired"
+  },
+  "55": {
+    "code": "RcInvalidPIN",
+    "value": "Invalid PIN"
+  },
+  "56": {
+    "code": "RcInvalidTxnTerminal",
+    "value": "Invalid Terminal"
+  },
+  "57": {
+    "code": "RcTransactionNoAllowed",
+    "value": "Transaction Not Permitted"
+  },
+  "58": {
+    "code": "RcTxnNotPermittedOnTerm",
+    "value": "Not Allowed at Terminal"
+  },
+  "59": {
+    "code": "RcSuspectedFraud",
+    "value": "Suspected Fraud"
+  },
+  "60": {
+    "code": "RcMcLimitExceeded",
+    "value": "Approval Limit Exceeded"
+  },
+  "61": {
+    "code": "RcChAmountExceeded",
+    "value": "Amount Limit Exceeded"
+  },
+  "62": {
+    "code": "RcRestrictedCard",
+    "value": "Restricted Card"
+  },
+  "63": {
+    "code": "RcMACKeyError",
+    "value": "MAC Key Error"
+  },
+  "64": {
+    "code": "RcMACValidationError",
+    "value": "MAC Validation Failed"
+  },
+  "65": {
+    "code": "RcFrequencyLimit",
+    "value": "Frequency Limit"
+  },
+  "66": {
+    "code": "RcAcquirerLimitExceeded",
+    "value": "Acquirer Limit Exceeded"
+  },
+  "68": {
+    "code": "RcLateResponse",
+    "value": "Late Response"
+  },
+  "69": {
+    "code": "RcAuthenticationRequired",
+    "value": "Authentication Required"
+  },
+  "70": {
+    "code": "RcSurchargeNotAllowed",
+    "value": "Surcharge Not Allowed"
+  },
+  "71": {
+    "code": "RcPINNotChanged",
+    "value": "PIN Change Failed"
+  },
+  "72": {
+    "code": "RcUnacceptablePIN",
+    "value": "Unacceptable PIN"
+  },
+  "75": {
+    "code": "RcPINRetryExceeded",
+    "value": "PIN Attempts Exceeded"
+  },
+  "76": {
+    "code": "RcInvalidAccount",
+    "value": "Invalid Account"
+  },
+  "77": {
+    "code": "RcNoIssuerRecord",
+    "value": "No Issuer Record"
+  },
+  "78": {
+    "code": "RcFunctionNotAvailable",
+    "value": ""
+  },
+  "79": {
+    "code": "RcKeyValidationError",
+    "value": "Key Validation Error"
+  },
+  "80": {
+    "code": "RcPurchaseAmountOnly",
+    "value": "Purchase Approved"
+  },
+  "81": {
+    "code": "RcUnableToVerifyPIN",
+    "value": "PIN validation not possible may due to system error"
+  },
+  "82": {
+    "code": "RcInvalidCVV",
+    "value": "Invalid CVV"
+  },
+  "83": {
+    "code": "RcNotDeclined",
+    "value": "Zero Amount Approved"
+  },
+  "84": {
+    "code": "RcInvalidLifeCycle",
+    "value": "Invalid Life Cycle"
+  },
+  "85": {
+    "code": "RcNoKeysToUse",
+    "value": "No Keys Available"
+  },
+  "86": {
+    "code": "RcKeySyncError",
+    "value": "Key Sync Error"
+  },
+  "87": {
+    "code": "RcPINKeyError",
+    "value": "PIN Key Error"
+  },
+  "88": {
+    "code": "RcMACSyncError",
+    "value": "MAC Sync Error"
+  },
+  "89": {
+    "code": "RcSecurityViolation",
+    "value": "Security Violation"
+  },
+  "91": {
+    "code": "RcIssuerNotAvailable",
+    "value": "Issuer Unavailable"
+  },
+  "92": {
+    "code": "RcNoIssuerInRequest",
+    "value": "No Issuer in Request"
+  },
+  "93": {
+    "code": "RcNoDefaultIssuer",
+    "value": "No Default Issuer"
+  },
+  "94": {
+    "code": "RcNoAcquirerRecord",
+    "value": "No Acquirer Record"
+  },
+  "95": {
+    "code": "RcNoAcquirerInRequest",
+    "value": "No Acquirer in Request"
+  },
+  "96": {
+    "code": "RcSystemError",
+    "value": "System Error"
+  },
+  "98": {
+    "code": "RcDuplicateReversal",
+    "value": "Duplicate Reversal"
+  },
+  "99": {
+    "code": "RcDuplicateTransaction",
+    "value": "Duplicate Transaction"
+  },
+  "103": {
+    "code": "RcCashServiceNotAvailable",
+    "value": "Cash Service Not Available"
+  },
+  "104": {
+    "code": "RcCashBackExceedIssuerLimit",
+    "value": "Cashback Limit Exceeded"
+  },
+  "107": {
+    "code": "RcInvalidCVV2",
+    "value": "Invalid CVV2"
+  },
+  "108": {
+    "code": "RcARQCValidationFalied",
+    "value": "ARQC Validation Failed"
+  },
+  "109": {
+    "code": "RcTVRValidationFailed",
+    "value": "TVR Validation Failed"
+  },
+  "110": {
+    "code": "RcStopPaymentOrder",
+    "value": "Stop Payment Order"
+  },
+  "111": {
+    "code": "RcAuthOrderRevoked",
+    "value": "Authorisation Revoked"
+  },
+  "113": {
+    "code": "RcAllAuthOrderRevoked",
+    "value": "All Authorisations Revoked"
+  },
+  "117": {
+    "code": "RcMissingTrackData",
+    "value": "Missing Track Data"
+  },
+  "120": {
+    "code": "RcUnableToValidateARQC",
+    "value": "ARQC Validation Unavailable"
+  },
+  "121": {
+    "code": "RcCAVVResultNotAllowed",
+    "value": "CAVV Not Allowed"
+  },
+  "122": {
+    "code": "RcInvalidATC",
+    "value": "Invalid ATC"
+  },
+  "123": {
+    "code": "RcARPCGenerationFailed",
+    "value": "ARPC Generation Failed"
+  },
+  "130": {
+    "code": "RcTrack2TooShort",
+    "value": "Track 2 Too Short"
+  },
+  "131": {
+    "code": "RcInvalidTrack2",
+    "value": "Invalid Track 2"
+  },
+  "132": {
+    "code": "RcTrack1TooShort",
+    "value": "Track 1 Too Short"
+  },
+  "133": {
+    "code": "RcInvalidTrack1",
+    "value": "Invalid Track 1t"
+  },
+  "134": {
+    "code": "RcPanTrackMismatched",
+    "value": "PAN Track Mismatch"
+  },
+  "140": {
+    "code": "RcSanctionCountry",
+    "value": "Sanctioned Country"
+  },
+  "191": {
+    "code": "RcInterleaveDecline",
+    "value": "SAF Decline"
+  },
+  "295": {
+    "code": "RcMismatchedTotals",
+    "value": "Totals Mismatch"
+  },
+  "308": {
+    "code": "RcRedirectPending",
+    "value": "Redirect Pending"
+  },
+  "309": {
+    "code": "RcInvalidMobileNumber",
+    "value": "Invalid Mobile"
+  },
+  "400": {
+    "code": "RcUnableToLocateRecord",
+    "value": "Record Not Found"
+  },
+  "401": {
+    "code": "RcFileUpdateEditError",
+    "value": "File Update Edit Error"
+  },
+  "402": {
+    "code": "RcRecordAlreadyExists",
+    "value": "Record Already Exists"
+  },
+  "403": {
+    "code": "RcFileUpdateFailed",
+    "value": "File Update Failed"
+  },
+  "500": {
+    "code": "RcAuthCompletion",
+    "value": "Pre-Auth Completed"
+  },
+  "1000": {
+    "code": "Error",
+    "value": "Error"
+  },
+  "1001": {
+    "code": "Continue",
+    "value": "Continue"
+  },
+  "1002": {
+    "code": "TransactionKey",
+    "value": "Transaction Key Generated"
+  },
+  "1003": {
+    "code": "GenerateResponse",
+    "value": "Immediate Response Required"
+  },
+  "1004": {
+    "code": "ErrorEventCreate",
+    "value": "Event Creation Failed"
+  },
+  "1005": {
+    "code": "ErrorSafWrite",
+    "value": "SAF Write Failed"
+  },
+  "1006": {
+    "code": "ErrorShutdown",
+    "value": "Shutdown Error"
+  },
+  "1007": {
+    "code": "ErrorNoAvailableRoute",
+    "value": "No Route Available"
+  },
+  "1008": {
+    "code": "ErrorNoClassifier",
+    "value": "No Classifier Found"
+  },
+  "1009": {
+    "code": "ErrorInvalidInstitutionType",
+    "value": "Invalid Institution Type"
+  },
+  "1010": {
+    "code": "ErrorNoRecordForRoutingKey",
+    "value": "No Routing Record"
+  },
+  "1011": {
+    "code": "ErrorNoRoutingKey",
+    "value": "Missing Routing Key"
+  },
+  "1012": {
+    "code": "ErrorNoRequestPacket",
+    "value": "No Request Packet"
+  },
+  "1013": {
+    "code": "ErrorNoOriginalTransaction",
+    "value": "No Original Transaction"
+  },
+  "1014": {
+    "code": "ErrorInvalidMessageType",
+    "value": "Invalid Message Type"
+  },
+  "1015": {
+    "code": "ErrorInvalidLink",
+    "value": "Invalid Link"
+  },
+  "1016": {
+    "code": "ErrorInvalidCustomerIdOrMobileNumber",
+    "value": "Invalid Customer ID"
+  },
+  "1017": {
+    "code": "ErrorKWHOverLimit",
+    "value": "Usage Limit Exceeded"
+  },
+  "1018": {
+    "code": "ErrorIdSuspended",
+    "value": "ID Suspended"
+  },
+  "1019": {
+    "code": "ErrorBillPaid",
+    "value": "Bill Already Paid"
+  },
+  "1020": {
+    "code": "ErrorBillUnavailable",
+    "value": "Bill Unavailable"
+  },
+  "1021": {
+    "code": "ErrorNoAvailableInterface",
+    "value": "No Interface Available"
+  },
+  "1022": {
+    "code": "ErrorInterfaceInactive",
+    "value": "Interface Inactive"
+  },
+  "1023": {
+    "code": "ErrorInterfacePending",
+    "value": "Interface Pending"
+  },
+  "1024": {
+    "code": "ErrorInterfaceLoadingFail",
+    "value": "Interface Load Failure"
+  },
+  "1025": {
+    "code": "ErrorUnableToDeliver",
+    "value": "Unable to Deliver"
+  },
+  "2002": {
+    "code": "RcIndTxnVoid",
+    "value": "Transaction Voided"
+  },
+  "2004": {
+    "code": "RcIndTxnReversed",
+    "value": "Transaction Reversed"
+  }
+}

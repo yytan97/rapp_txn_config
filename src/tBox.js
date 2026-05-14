@@ -631,3 +631,8 @@ function formatToUTCDateTime(date) {
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ` +
         `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`;
 }
+
+export function formatDateOnly(date) {
+  if (!date) return "-";
+  return moment(date, "YYYY-MM-DD").format("DD MMM YYYY");
+}

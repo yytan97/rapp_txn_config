@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -37,7 +36,7 @@ export function Dashboard({ debugMode = false }) {
     const menuList = [
         { name: "merchant", content: "merchant_content", icon: "images/merchant.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
         { name: "authenticate", content: "auth_content", icon: "images/authenticate.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
-        { name: "trans_history", content: "trans_content", icon: "images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
+        { name: "trans_history", content: "trans_content", callback: callback4TransactionHistory, icon: "images/transaction.svg", accessObject: "webapp_configuration_access", accessAction: "timer_management.access" },
         { name: "sys_config", content: "config_content", callback: callback4SystemConfigurationDashboard, icon: "images/sys_configuration.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
         { name: "sys_monitoring", content: "monitoring_content", icon: "images/monitoring.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" },
         { name: "ui_workspace", content: "ui_content", icon: "images/ui_workspace.svg", accessObject: "webapp_configuration_access", accessAction: "bin_prefix_management.access" }
@@ -71,13 +70,6 @@ export function Dashboard({ debugMode = false }) {
 
     function click4Echo(e) {
         if (debugMode) console.log("Click for echo ", e);
-
-        return;
-    };
-
-    function click4TransactionHistory(e) {
-        if (debugMode) console.log("Click for transaction history", e);
-        navigate("/transactionHistory");
 
         return;
     };
@@ -129,6 +121,13 @@ export function Dashboard({ debugMode = false }) {
     function callback4SystemConfigurationDashboard(e) {
         if (debugMode) console.log("Callback for System Configuration Dashboard", e);
         window.open("/#/systemConfigurationDashboard", "_blank");
+
+        return;
+    };
+
+    function callback4TransactionHistory(e) {
+        if (debugMode) console.log("Callback for System Configuration Dashboard", e);
+        window.open("/#/searchBox", "_blank");
 
         return;
     };
