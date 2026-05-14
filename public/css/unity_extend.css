@@ -1093,3 +1093,10 @@ body {
 .dark-blue-font {
 	color: #3A5F7A;
 }
+
+.my-label.active {
+    color: #619FCB;
+    font-weight: 400;
+    background-color: #F5F8FA;
+    border-radius: 8px;
+}

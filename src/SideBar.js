@@ -31,17 +31,51 @@ export function SideBar({ debugMode = false }) {
 
     const isDashboardPage = location.pathname === "/";
 
+    const institutionSettingPathList = [
+        "/institutionSettingsDashboard",
+        "/institutionManagement",
+        "/institutionDetail",
+        "/cryptogramManagement",
+        "/cryptogramDetail",
+        "/timerManagement",
+        "/binPrefixManagement",
+        "/binPrefixDetail",
+        "/routeManagement",
+        "/routeDetail",
+    ];
+
+    const systemConfigurationPathList = [
+        "/systemConfigurationDashboard",
+        ...institutionSettingPathList,
+        "/tableListManagement",
+        "/tableManagement",
+        "/configurationFileManagement",
+        "/hotCardManagement",
+        "/editHotCard",
+    ];
+
+const isInstitutionSettingPage = institutionSettingPathList.includes(location.pathname);
+const isSystemConfigurationPage = systemConfigurationPathList.includes(location.pathname);
+
     //submenu
     const [isSubmenuExpand, setIsSubmenuExpand] = react.useState(false);
+    const [isAuthenticateSubmenuExpand, setIsAuthenticateSubmenuExpand] = react.useState(false);
 
     const toggleSubmenu = () => {
         setIsSubmenuExpand(!isSubmenuExpand);
-      };
+    };
 
+    const toggleAuthenticateSubmenu = () => {
+        setIsAuthenticateSubmenuExpand(!isAuthenticateSubmenuExpand);
+    };
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
-    }, []);
+
+        if (isSystemConfigurationPage) {
+            setIsSubmenuExpand(true);
+        }
+    }, [location.pathname]);
 
     function toggle4MenuMode() {
         toggleMenuMode();
@@ -140,6 +174,54 @@ export function SideBar({ debugMode = false }) {
         return;
     };
 
+    function click4TeamManagement(e) {
+        let target = "/teamManagement";
+
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
+    function click4UserManagement(e) {
+        let target = "/userManagement";
+
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
+    function click4ObjectManagement(e) {
+        let target = "/objectManagement";
+
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
+    function click4SessionManagement(e) {
+        let target = "/sessionManagement";
+
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
     // Figma UI 
     return (
         <div className={`my-sidebar ${class4MenuMode()} ${isPinned ? 'pinned' : ''}`}>
@@ -195,7 +277,7 @@ export function SideBar({ debugMode = false }) {
                                     ) : null
                             }
 
-                            {
+                            {/* {
                                 check4Right('webapp_configuration_access', 'crypto_management.access') ?
                                     (
                                         <>
@@ -209,6 +291,93 @@ export function SideBar({ debugMode = false }) {
                                                 <span className={`short-mode-label ${class4Active('/cryptogramManagement')}`}>{sl.l_authenticate}</span>
                                             )}
                                         </>
+                                    ) : null
+                            } */}
+                            {
+                                check4Right('webapp_configuration_access', 'crypto_management.access') ?
+                                    (
+                                        <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}>
+                                            <div
+                                                className={`my-link ${
+                                                    (
+                                                        class4Active('/teamManagement') ||
+                                                        class4Active('/userManagement') ||
+                                                        class4Active('/objectManagement') ||
+                                                        class4Active('/sessionManagement')
+                                                    ) ? 'active' : ''
+                                                } ${isAuthenticateSubmenuExpand ? 'submenu-open' : ''}`}
+                                                role="button"
+                                                onClick={toggleAuthenticateSubmenu}
+                                            >
+                                                <span className="material-icons-outlined fs-24-unity">
+                                                    manage_accounts
+                                                </span>
+
+                                                {menuMode === 1 && (
+                                                    <>
+                                                        <span className="ms-2 long-mode-label">
+                                                            {sl.l_authenticate}
+                                                        </span>
+                                                        <span className="material-icons-outlined submenu-icon">
+                                                            {isAuthenticateSubmenuExpand ? 'expand_less' : 'expand_more'}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            {menuMode === 1 && (
+                                                <div>
+                                                    <div className={`my-submenu-items ${isAuthenticateSubmenuExpand ? 'open' : ''}`}>
+                                                        <ul>
+                                                            <li>
+                                                                <div>
+                                                                    <span className="my-label" onClick={click4TeamManagement}>
+                                                                        {sl.l_team_management}
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div>
+                                                                    <span className="my-label" onClick={click4UserManagement}>
+                                                                        {sl.l_user_management}
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div>
+                                                                    <span className="my-label" onClick={click4ObjectManagement}>
+                                                                        {sl.l_object_management || "Object Management"}
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+
+                                                            <li>
+                                                                <div>
+                                                                    <span className="my-label" onClick={click4SessionManagement}>
+                                                                        {sl.l_session_management || "Session Management"}
+                                                                    </span>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {menuMode === 0 && (
+                                                <span className={`short-mode-label ${
+                                                    (
+                                                        class4Active('/teamManagement') ||
+                                                        class4Active('/userManagement') ||
+                                                        class4Active('/objectManagement') ||
+                                                        class4Active('/sessionManagement')
+                                                    ) ? 'active' : ''
+                                                }`}>
+                                                    {sl.l_authenticate}
+                                                </span>
+                                            )}
+                                        </div>
                                     ) : null
                             }
 
@@ -233,11 +402,7 @@ export function SideBar({ debugMode = false }) {
                                 check4Right('webapp_configuration_access', 'configuration.access') ?
                                     (
                                         <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}> 
-                                            <div className={`my-link ${(class4Active('/systemConfigurationDashboard') || class4Active('/institutionSettingsDashboard') || class4Active('/institutionManagement') || class4Active('/institutionDetail') || class4Active('/tableListManagement') || class4Active('/tableManagement') || class4Active('/configurationFileManagement') || class4Active('/cryptogramManagement') || class4Active('/cryptogramDetail') || class4Active('/timerManagement') || class4Active('/binPrefixManagement') || class4Active('/binPrefixDetail') || class4Active('/routeManagement') || class4Active('/routeDetail')) || class4Active('/hotCardManagement') || class4Active('/editHotCard') ? 'active' : ''} 
-                                            ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => {
-                                                toggleSubmenu();
-                                                click4SystemConfigurationDashboard(e); 
-                                            }}>
+                                            <div className={`my-link ${isSystemConfigurationPage ? 'active' : ''} ${isSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => { toggleSubmenu(); click4SystemConfigurationDashboard(e); }}>
                                                 <span className="material-icons-outlined fs-24-unity">build</span>
                                                 {menuMode === 1 && (
                                                     <>
@@ -254,28 +419,28 @@ export function SideBar({ debugMode = false }) {
                                                         <ul>
                                                             <li>
                                                                 <div>
-                                                                    <span class="my-label" onClick={click4InstitutionManagement}>
+                                                                    <span className={`my-label ${isInstitutionSettingPage ? 'active' : ''}`} onClick={click4InstitutionManagement}>
                                                                         {sl.l_institution_setting}
                                                                     </span>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div>
-                                                                    <span class="my-label" onClick={click4Table}>
+                                                                    <span className={`my-label ${class4Active('/tableListManagement') || class4Active('/tableManagement') ? 'active' : ''}`} onClick={click4Table}>
                                                                         {sl.l_table_management}
                                                                     </span>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div>
-                                                                    <span class="my-label" onClick={click4Configuration}>
+                                                                    <span className={`my-label ${class4Active('/configurationFileManagement') ? 'active' : ''}`} onClick={click4Configuration}>
                                                                         {sl.l_configuration_file}
                                                                     </span>
                                                                 </div>
                                                             </li>
                                                             <li>
                                                                 <div>
-                                                                    <span class="my-label">
+                                                                    <span className={`my-label ${class4Active('/hotCardManagement') || class4Active('/editHotCard') ? 'active' : ''}`}>
                                                                         {sl.l_hot_card}
                                                                     </span>
                                                                 </div>
