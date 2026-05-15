@@ -72,6 +72,10 @@ import { TransactionHistoryOverviewPageV2 } from "./TransactionHistoryOverviewPa
 import { TransactionHistoryDetailPageV2 } from "./TransactionHistoryDetailPageV2.js";
 import { SearchBox } from "./SearchBox.js";
 
+import { AuthenticateDashboard } from "./AuthenticateDashboard.js"
+import { TeamManagementPage } from "./TeamManagementPage.js";
+import { TeamDetailPage } from "./TeamDetailPage.js";
+
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
 
@@ -261,6 +265,18 @@ export let appRouterDefination = [
             {
                 path: "searchBox",
                 Component: SearchBox,
+            },
+            {
+                path: "authenticateDashboard",
+                Component: AuthenticateDashboard,
+            },
+            {
+                path: "teamManagement",
+                Component: TeamManagementPage,
+            },
+            {
+                path: "teamDetail",
+                Component: TeamDetailPage,
             },
             {
                 path: "testDashboard",

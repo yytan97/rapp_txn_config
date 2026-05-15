@@ -294,7 +294,7 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
                                     ) : null
                             } */}
                             {
-                                check4Right('webapp_configuration_access', 'crypto_management.access') ?
+                                check4Right('webapp_configuration_access', 'authenticate_management.access') ?
                                     (
                                         <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}>
                                             <div
