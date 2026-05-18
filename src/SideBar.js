@@ -54,8 +54,41 @@ export function SideBar({ debugMode = false }) {
         "/editHotCard",
     ];
 
-const isInstitutionSettingPage = institutionSettingPathList.includes(location.pathname);
-const isSystemConfigurationPage = systemConfigurationPathList.includes(location.pathname);
+   const teamManagementPathList = [
+        "/teamManagement",
+        "/teamDetail",
+    ];
+
+    const userManagementPathList = [
+        "/userManagement",
+        "/userDetail",
+    ];
+
+    const objectManagementPathList = [
+        "/objectManagement",
+        "/objectDetail",
+    ];
+
+    const sessionManagementPathList = [
+        "/sessionManagement",
+        "/sessionDetail",
+    ];
+
+    const authenticatePathList = [
+        "/authenticateDashboard",
+        ...teamManagementPathList,
+        ...userManagementPathList,
+        ...objectManagementPathList,
+        ...sessionManagementPathList,
+    ];
+
+    const isInstitutionSettingPage = institutionSettingPathList.includes(location.pathname);
+    const isSystemConfigurationPage = systemConfigurationPathList.includes(location.pathname);
+    const isAuthenticatePage = authenticatePathList.includes(location.pathname);
+    const isTeamManagementPage = teamManagementPathList.includes(location.pathname);
+    const isUserManagementPage = userManagementPathList.includes(location.pathname);
+    const isObjectManagementPage = objectManagementPathList.includes(location.pathname);
+    const isSessionManagementPage = sessionManagementPathList.includes(location.pathname);
 
     //submenu
     const [isSubmenuExpand, setIsSubmenuExpand] = react.useState(false);
@@ -75,6 +108,11 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
         if (isSystemConfigurationPage) {
             setIsSubmenuExpand(true);
         }
+
+        if (isAuthenticatePage) {
+            setIsAuthenticateSubmenuExpand(true);
+        }
+
     }, [location.pathname]);
 
     function toggle4MenuMode() {
@@ -165,6 +203,17 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
 
     function click4SystemConfigurationDashboard(e) {
         let target = "/systemConfigurationDashboard";
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
+    function click4AuthenticateDashboard(e) {
+        let target = "/authenticateDashboard";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
@@ -298,16 +347,7 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
                                     (
                                         <div className={`${menuMode === 1 ? 'long-mode-label' : 'short-mode-center'}`}>
                                             <div
-                                                className={`my-link ${
-                                                    (
-                                                        class4Active('/teamManagement') ||
-                                                        class4Active('/userManagement') ||
-                                                        class4Active('/objectManagement') ||
-                                                        class4Active('/sessionManagement')
-                                                    ) ? 'active' : ''
-                                                } ${isAuthenticateSubmenuExpand ? 'submenu-open' : ''}`}
-                                                role="button"
-                                                onClick={toggleAuthenticateSubmenu}
+                                                className={`my-link ${isAuthenticatePage ? 'active' : ''} ${isAuthenticateSubmenuExpand ? 'submenu-open' : ''}`} role="button" onClick={(e) => { toggleAuthenticateSubmenu(); click4AuthenticateDashboard(e); }}
                                             >
                                                 <span className="material-icons-outlined fs-24-unity">
                                                     manage_accounts
@@ -331,7 +371,7 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
                                                         <ul>
                                                             <li>
                                                                 <div>
-                                                                    <span className="my-label" onClick={click4TeamManagement}>
+                                                                    <span className={`my-label ${isTeamManagementPage ? 'active' : ''}`} onClick={click4TeamManagement}>
                                                                         {sl.l_team_management}
                                                                     </span>
                                                                 </div>
@@ -339,7 +379,7 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
 
                                                             <li>
                                                                 <div>
-                                                                    <span className="my-label" onClick={click4UserManagement}>
+                                                                    <span className={`my-label ${isUserManagementPage ? 'active' : ''}`} onClick={click4UserManagement}>
                                                                         {sl.l_user_management}
                                                                     </span>
                                                                 </div>
@@ -347,16 +387,16 @@ const isSystemConfigurationPage = systemConfigurationPathList.includes(location.
 
                                                             <li>
                                                                 <div>
-                                                                    <span className="my-label" onClick={click4ObjectManagement}>
-                                                                        {sl.l_object_management || "Object Management"}
+                                                                    <span className={`my-label ${isObjectManagementPage ? 'active' : ''}`} onClick={click4ObjectManagement}>
+                                                                        {sl.l_object_management}
                                                                     </span>
                                                                 </div>
                                                             </li>
 
                                                             <li>
                                                                 <div>
-                                                                    <span className="my-label" onClick={click4SessionManagement}>
-                                                                        {sl.l_session_management || "Session Management"}
+                                                                    <span className={`my-label ${isSessionManagementPage ? 'active' : ''}`} onClick={click4SessionManagement}>
+                                                                        {sl.l_session_management}
                                                                     </span>
                                                                 </div>
                                                             </li>

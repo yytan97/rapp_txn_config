@@ -29,10 +29,10 @@ export function AuthenticateDashboard({ debugMode = false }) {
     if (debugMode) console.log(`${componentName} component start ...`);
 
     const menuList = [
-        { name: "team_management", icon: "images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "user_management", icon: "images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
-        { name: "object_management", icon: "images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "session_management", icon: "images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "team_management", callback: callback4TeamManagement, icon: "images/team_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
+        { name: "user_management", icon: "images/user_management.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "object_management", icon: "images/object_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
+        { name: "session_management", icon: "images/session_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -66,6 +66,18 @@ export function AuthenticateDashboard({ debugMode = false }) {
         if (record.callback !== undefined) {
             record.callback(e);
         }
+
+        return;
+    };
+
+    function callback4TeamManagement(e) {
+        if (debugMode) console.log("Callback for create new institution", e);
+
+        let sp = new URLSearchParams({
+            editMode: 0
+        });
+
+        navigate("/teamManagement");
 
         return;
     };
