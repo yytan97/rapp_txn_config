@@ -62,6 +62,11 @@ export function SideBar({ debugMode = false }) {
     const userManagementPathList = [
         "/userManagement",
         "/userDetail",
+        "/editUser",
+        "/editProfile",
+        "/editEmail",
+        "/editMobile",
+        "/editAddress",
     ];
 
     const objectManagementPathList = [

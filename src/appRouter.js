@@ -77,6 +77,14 @@ import { TeamManagementPage } from "./TeamManagementPage.js";
 import { TeamDetailPage } from "./TeamDetailPage.js";
 import { EditTeamPage } from "./EditTeamPage.js";
 
+import { UserManagementPage } from "./UserManagementPage.js";
+import { UserDetailPage } from "./UserDetailPage.js";
+import { EditUserPage } from "./EditUserPage.js";
+import { EditUserProfilePage } from "./EditUserProfilePage.js";
+import { EditEmailPage } from "./EditEmailPage.js";
+import { EditMobilePage } from "./EditMobilePage.js";
+import { EditAddressPage } from "./EditAddressPage.js";
+
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
 
@@ -282,6 +290,34 @@ export let appRouterDefination = [
             {
                 path: "editTeam",
                 Component: EditTeamPage,
+            },
+            {
+                path: "userManagement",
+                Component: UserManagementPage,
+            },
+            {
+                path: "userDetail",
+                Component: UserDetailPage,
+            },
+            {
+                path: "editUser",
+                Component: EditUserPage,
+            },
+            {
+                path: "editProfile",
+                Component: EditUserProfilePage,
+            },
+            {
+                path: "editEmail",
+                Component: EditEmailPage,
+            },
+            {
+                path: "editMobile",
+                Component: EditMobilePage,
+            },
+            {
+                path: "editAddress",
+                Component: EditAddressPage,
             },
             {
                 path: "testDashboard",
