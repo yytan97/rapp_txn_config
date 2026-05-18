@@ -75,6 +75,7 @@ import { SearchBox } from "./SearchBox.js";
 import { AuthenticateDashboard } from "./AuthenticateDashboard.js"
 import { TeamManagementPage } from "./TeamManagementPage.js";
 import { TeamDetailPage } from "./TeamDetailPage.js";
+import { EditTeamPage } from "./EditTeamPage.js";
 
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
@@ -277,6 +278,10 @@ export let appRouterDefination = [
             {
                 path: "teamDetail",
                 Component: TeamDetailPage,
+            },
+            {
+                path: "editTeam",
+                Component: EditTeamPage,
             },
             {
                 path: "testDashboard",
