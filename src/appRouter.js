@@ -89,6 +89,9 @@ import { ObjectManagementPage } from "./ObjectManagementPage.js";
 import { ObjectDetailPage } from "./ObjectDetailPage.js";
 import { EditObjectPage } from "./EditObjectPage.js";
 
+import { SessionManagementPage } from "./SessionManagementPage.js";
+import { SessionDetailPage } from "./SessionDetailPage.js";
+
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
 
@@ -334,6 +337,14 @@ export let appRouterDefination = [
             {
                 path: "editObject",
                 Component: EditObjectPage,
+            },
+            {
+                path: "sessionManagement",
+                Component: SessionManagementPage,
+            },
+            {
+                path: "sessionDetail",
+                Component: SessionDetailPage,
             },
             {
                 path: "testDashboard",
