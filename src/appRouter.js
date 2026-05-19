@@ -85,6 +85,10 @@ import { EditEmailPage } from "./EditEmailPage.js";
 import { EditMobilePage } from "./EditMobilePage.js";
 import { EditAddressPage } from "./EditAddressPage.js";
 
+import { ObjectManagementPage } from "./ObjectManagementPage.js";
+import { ObjectDetailPage } from "./ObjectDetailPage.js";
+import { EditObjectPage } from "./EditObjectPage.js";
+
 import { TestGraphPage } from "./TestGraphPage.js";
 import { TestGraphPage2 } from "./TestGraphPage2.js";
 
@@ -318,6 +322,18 @@ export let appRouterDefination = [
             {
                 path: "editAddress",
                 Component: EditAddressPage,
+            },
+            {
+                path: "objectManagement",
+                Component: ObjectManagementPage,
+            },
+            {
+                path: "objectDetail",
+                Component: ObjectDetailPage,
+            },
+            {
+                path: "editObject",
+                Component: EditObjectPage,
             },
             {
                 path: "testDashboard",

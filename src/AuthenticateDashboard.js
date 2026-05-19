@@ -30,9 +30,9 @@ export function AuthenticateDashboard({ debugMode = false }) {
 
     const menuList = [
         { name: "team_management", callback: callback4TeamManagement, icon: "images/team_management.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
-        { name: "user_management", icon: "images/user_management.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
-        { name: "object_management", icon: "images/object_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "session_management", icon: "images/session_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        { name: "user_management", callback: callback4UserManagement, icon: "images/user_management.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
+        { name: "object_management", callback: callback4ObjectManagement, icon: "images/object_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
+        { name: "session_management", callback: callback4SessionManagement, icon: "images/session_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
@@ -78,6 +78,42 @@ export function AuthenticateDashboard({ debugMode = false }) {
         });
 
         navigate("/teamManagement");
+
+        return;
+    };
+
+    function callback4UserManagement(e) {
+        if (debugMode) console.log("Callback for create new institution", e);
+
+        let sp = new URLSearchParams({
+            editMode: 0
+        });
+
+        navigate("/userManagement");
+
+        return;
+    };
+
+    function callback4ObjectManagement(e) {
+        if (debugMode) console.log("Callback for create new institution", e);
+
+        let sp = new URLSearchParams({
+            editMode: 0
+        });
+
+        navigate("/objectManagement");
+
+        return;
+    };
+
+    function callback4SessionManagement(e) {
+        if (debugMode) console.log("Callback for create new institution", e);
+
+        let sp = new URLSearchParams({
+            editMode: 0
+        });
+
+        navigate("/sessionManagement");
 
         return;
     };
