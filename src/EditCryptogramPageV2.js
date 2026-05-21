@@ -364,6 +364,154 @@ export function EditCryptogramPageV2({ debugMode = true }) {
         return;
     };
 
+    // async function click4AttachInstitution() {
+    //     showStateDialogBox();
+
+    //     try {
+    //         let list = institutions.filter(item => item?.id);
+
+    //         if (list.length === 0) {
+    //             throw { errorCode: "Please select at least one institution." };
+    //         }
+
+    //         for (let n = 0; n < list.length; n++) {
+    //             let institutionRowId = list[n].id;
+
+    //             let result1 = await apiBox.getRecord(
+    //                 getSessionToken(),
+    //                 databaseName,
+    //                 "kswitchinstitution",
+    //                 `rowId = ${institutionRowId}`
+    //             );
+
+    //             if (!result1?.flag) throw result1;
+
+    //             let institutionRecord = result1.data.records?.[0];
+
+    //             if (!institutionRecord) {
+    //                 throw { errorCode: "Institution record not found." };
+    //             }
+
+    //             // Update institution with cryptogram ownerId
+    //             let record = {
+    //                 ...institutionRecord,
+    //                 institutionCryptoId: inputData.ownerId
+    //             };
+
+    //             let result2 = await apiBox.updateRecordWithId(
+    //                 getSessionToken(),
+    //                 databaseName,
+    //                 "kswitchinstitution",
+    //                 institutionRowId,
+    //                 record
+    //             );
+
+    //             if (!result2?.flag) throw result2;
+
+    //             formObject.dirty = false;
+
+    //             showInfoDialogBox(sl.m_institution_attached, () => {
+    //                 navigate(-1);
+    //             });
+    //         }
+    //     }
+    //     catch (e) {
+    //         let message = tBox.getErrorMessage(e, sl);
+    //         showInfoDialogBox(message);
+
+    //         if (tBox.isBlockErrorCode(e)) {
+    //             updateUser(undefined);
+    //         }
+    //     }
+    //     finally {
+    //         closeStateDialogBox();
+    //     }
+    // }
+
+    function click4AttachInstitution() {
+        let list = institutions.filter(item => item?.id);
+
+        if (list.length === 0) {
+            showInfoDialogBox("Please select at least one institution.");
+            return;
+        }
+
+        let institutionNameList = list
+            .map(item => item.name)
+            .filter(Boolean)
+            .join(", ");
+
+        let message = sl.m_sure_attach;
+        message = message.replace("__parameter_1", institutionNameList);
+
+        message += "\n\n" + sl.m_replace_new_institution;
+
+        showConfirmDialogBox(
+            message,
+            async function () {
+                await confirm4AttachInstitution(list);
+            },
+            sl.b_attach
+        );
+    }
+
+    async function confirm4AttachInstitution(list) {
+        showStateDialogBox();
+
+        try {
+            for (let n = 0; n < list.length; n++) {
+                let institutionRowId = list[n].id;
+
+                let result1 = await apiBox.getRecord(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution",
+                    `rowId = ${institutionRowId}`
+                );
+
+                if (!result1?.flag) throw result1;
+
+                let institutionRecord = result1.data.records?.[0];
+
+                if (!institutionRecord) {
+                    throw { errorCode: "Institution record not found." };
+                }
+
+                let record = {
+                    ...institutionRecord,
+                    institutionCryptoId: inputData.ownerId
+                };
+
+                let result2 = await apiBox.updateRecordWithId(
+                    getSessionToken(),
+                    databaseName,
+                    "kswitchinstitution",
+                    institutionRowId,
+                    record
+                );
+
+                if (!result2?.flag) throw result2;
+            }
+
+            formObject.dirty = false;
+
+            showInfoDialogBox(sl.m_institution_attached, () => {
+                navigate(-1);
+            });
+        }
+        catch (e) {
+            let message = tBox.getErrorMessage(e, sl);
+            showInfoDialogBox(message);
+
+            if (tBox.isBlockErrorCode(e)) {
+                updateUser(undefined);
+            }
+        }
+        finally {
+            closeStateDialogBox();
+        }
+    }
+
     function click4UpdateRecord(e) {
         if (debugMode) console.log("Click for update record", e);
 
@@ -915,7 +1063,7 @@ export function EditCryptogramPageV2({ debugMode = true }) {
                                             className="btn btn-primary"
                                             disabled={!institutions.some(i => i.id)}
                                             style={{width: "100%"}}
-                                            // onClick={}
+                                            onClick={click4AttachInstitution}
                                         >
                                             {sl.b_attach}
                                         </button>
