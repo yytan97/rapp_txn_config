@@ -38,6 +38,7 @@ export function SideBar({ debugMode = false }) {
         "/cryptogramManagement",
         "/cryptogramDetail",
         "/timerManagement",
+        "/timerDetail",
         "/binPrefixManagement",
         "/binPrefixDetail",
         "/routeManagement",

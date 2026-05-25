@@ -1,4 +1,3 @@
-
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -22,6 +21,8 @@ import { showInfoDialogBox } from "./InfoDialogBox.js";
 import { cleanUp as cleanUp4Detail } from "./TimerDetailPage.js";
 import { ToastMessage } from "./ToastMessage.js";
 import { ChangeStatusModal } from "./ChangeStatusModal.js";
+
+import { RenderEmptyState } from "./RenderEmptyState.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -88,6 +89,7 @@ export function TimerManagementPage({ debugMode = true }) {
     let [reset, setReset] = react.useState(true);
     const [totalRecord, setTotalRecord] = react.useState(0);
     const [activeRecord, setActiveRecord] = react.useState(0);
+    const [lastUpdatedRecord, setLastUpdatedRecord] = react.useState(0);
 
     const [toastShow, setToastShow] = react.useState(false);
     const [toastMessage, setToastMessage] = react.useState("");
@@ -163,12 +165,38 @@ export function TimerManagementPage({ debugMode = true }) {
                 */
 
                 dataList = [...list1];
-                console.log("Data list", dataList);
-                setTotalRecord(pageObject.totalRecord);
-                const activeCount = list1.filter(item => item.recordData.recordStatus === "A").length;
-                setActiveRecord(activeCount);
             }
             else throw (result4);
+
+            let result5 = await apiBox.getRecord(getSessionToken(), databaseName, tableName);
+
+            if (result5.flag) {
+                let allRecords = result5.data.records || [];
+
+                // Total Institution
+                setTotalRecord(allRecords.length);
+
+                // Active Institution
+                let activeCount = allRecords.filter(
+                    item => item.recordStatus === "A"
+                ).length;
+
+                setActiveRecord(activeCount);
+
+                // Last Updated Institution
+                let now = new Date();
+                let startDate = new Date();
+                startDate.setUTCDate(now.getUTCDate() - 7);
+                let lastUpdatedCount = allRecords.filter(item => {
+                    if (!item.recordDate || item.recordDate === "DEFAULT") return false;
+                    let recordDate = new Date(item.recordDate.replace(" ", "T"));
+                    return recordDate >= startDate && recordDate <= now;
+                }).length;
+
+                setLastUpdatedRecord(lastUpdatedCount);
+            }
+            else throw (result5);
+
         }
         catch (e) {
             console.warn("Error", e);
@@ -199,26 +227,6 @@ export function TimerManagementPage({ debugMode = true }) {
 
         return;
     };
-
-    /*
-    function buildSearchString(v) {
-        if (debugMode) console.log("Build search string", v);
-
-        if (v === undefined || v === "") return undefined;
-
-        let list = fieldList;
-        let s = "";
-        for (let n = 0; n < list.length; n++) {
-            let name = list[n].name;
-
-            if (s !== "") s += " or ";
-            s += `${name} like '%%${v}%%'`;
-
-        }
-        if (debugMode) console.log("Search string", s);
-        return s;
-    };
-    */
 
     function getLabel(sl, value, prefix = "") {
         if (debugMode) console.log("Get label ", value, prefix);
@@ -404,7 +412,7 @@ export function TimerManagementPage({ debugMode = true }) {
                         </div>
 
                         <div className="col-12 d-flex">
-                            <Card label={sl.l_timer_last_updated} tip={sl.t_insti_last} numCount="150"/>
+                            <Card label={sl.l_timer_last_updated} tip={sl.t_insti_last} numCount={lastUpdatedRecord} days={sl.l_last_7_days}/>
                             <Card label={sl.l_active_timer} tip={sl.t_insti_last} numCount={activeRecord}/>
                             <Card label={sl.l_total_timer} tip={sl.t_insti_last} numCount={totalRecord}/>
                         </div>
@@ -441,130 +449,142 @@ export function TimerManagementPage({ debugMode = true }) {
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
-                                <table className="table table-hover mb-0">
-                                    <thead>
-                                        <tr className="text-nowrap tableRow-title">
-                                            {/* <th className="">
-                                                {sl.h_row_id}
-                                            </th> */}
-                                            <th className="">
-                                                {sl.h_timer_id}
-                                            </th>
-                                            <th className="text-center">
-                                                {sl.h_chrono_unit}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_last_updated}
-                                            </th>
-                                            <th className="">
-                                                {sl.h_status}
-                                            </th>
-                                            <th className="" style={{ width: "24px" }}>
-                                            </th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {
-                                            dataList.map((record, index) => {
-                                                console.log("Build row", record, index);
-                                                return (
-                                                    <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                        {/* <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.rowId}
-                                                        </td> */}
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.institutionId}
-                                                        </td>
-                                                        <td className=" text-center"
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {record.recordData.chronoUnit || "-"}
-                                                        </td>
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            {tBox.formatDate(record.recordData.recordDate || "-")}
-                                                        </td>
-                                                      
-                                                        <td className=" "
-                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                            <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
-                                                                style={{ width: "110px", height: "24px" }} >
-                                                                {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
-                                                            </div>
-                                                        </td>
-                                                        <td className="">
-                                                            <div className="dropdown dropstart ">
-                                                                <span className="d-inline-flex align-items-center " role="button"
-                                                                    data-bs-toggle="dropdown">
-                                                                    <div className="d-flex align-items-center ">
-                                                                        <span className="material-icons fs-18-unity">more_vert</span>
-                                                                    </div>
-                                                                </span>
-
-                                                                <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
-                                                                    style={{ borderRadius: "8px" }} >
-                                                                    <ul className="list-unstyled p-2 mb-0">
-                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                            <button
-                                                                                className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                type="button"
-                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span>{sl.l_view_detail}</span>
-                                                                            </button>
-                                                                        </li>
-                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                            <button
-                                                                                className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                type="button"
-                                                                                onClick={(e) => {
-                                                                                    e.stopPropagation();
-                                                                                    e.target.closest(".dropdown-menu")?.classList.remove("show");
-                                                                                    setSelectedRecordForStatus(record);
-                                                                                    setShowChangeStatusModal(true);
-                                                                                }}>
-                                                                                <span>{sl.l_change_status}</span>
-                                                                            </button>
-                                                                        </li>
-                                                                        {/* <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                            <button
-                                                                                className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                type="button"
-                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                <span>{sl.l_duplicate}</span>
-                                                                            </button>
-                                                                        </li> */}
-                                                                        {
-                                                                            check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                    <button
-                                                                                        className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                        type="button"
-                                                                                        onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                        <span>{sl.l_delete_timer}</span>
-                                                                                    </button>
-                                                                                </li>
-                                                                            ) : null
-                                                                        }
-                                                                        <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                            <button
-                                                                                className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                type="button"
-                                                                                onClick={(e) => click4CopyID(e, record, index)}>
-                                                                                <span>{sl.l_copy_id}</span>
-                                                                            </button>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                {
+                                    dataList.length === 0 ? (
+                                        <RenderEmptyState
+                                            title={sl.l_no_records_yet}
+                                            description={sl.l_havent_created_yet}
+                                            buttonText={sl.b_add_timer}
+                                            onButtonClick={click4AddRecord}
+                                        />
+                                    ) : (
+                                        <>
+                                            <table className="table table-hover mb-0">
+                                                <thead>
+                                                    <tr className="text-nowrap tableRow-title">
+                                                        {/* <th className="">
+                                                            {sl.h_row_id}
+                                                        </th> */}
+                                                        <th className="">
+                                                            {sl.h_timer_id}
+                                                        </th>
+                                                        <th className="text-center">
+                                                            {sl.h_chrono_unit}
+                                                        </th>
+                                                        <th className="">
+                                                            {sl.h_last_updated}
+                                                        </th>
+                                                        <th className="">
+                                                            {sl.h_status}
+                                                        </th>
+                                                        <th className="" style={{ width: "24px" }}>
+                                                        </th>
                                                     </tr>
-                                                );
-                                            })
-                                        }
-                                    </tbody>
-                                </table>
+                                                </thead>
+
+                                                <tbody>
+                                                    {
+                                                        dataList.map((record, index) => {
+                                                            console.log("Build row", record, index);
+                                                            return (
+                                                                <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                                    {/* <td className=" "
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        {record.recordData.rowId}
+                                                                    </td> */}
+                                                                    <td className=" "
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        {record.recordData.institutionId}
+                                                                    </td>
+                                                                    <td className=" text-center"
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        {record.recordData.chronoUnit || "-"}
+                                                                    </td>
+                                                                    <td className=" "
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        {tBox.formatDate(record.recordData.recordDate || "-")}
+                                                                    </td>
+                                                                    <td className=" "
+                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                        <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
+                                                                            style={{ width: "110px", height: "24px" }} >
+                                                                            {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td className="">
+                                                                        <div className="dropdown dropstart ">
+                                                                            <span className="d-inline-flex align-items-center " role="button"
+                                                                                data-bs-toggle="dropdown">
+                                                                                <div className="d-flex align-items-center ">
+                                                                                    <span className="material-icons fs-18-unity">more_vert</span>
+                                                                                </div>
+                                                                            </span>
+
+                                                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                                style={{ borderRadius: "8px" }} >
+                                                                                <ul className="list-unstyled p-2 mb-0">
+                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                        <button
+                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                            type="button"
+                                                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                            <span>{sl.l_view_detail}</span>
+                                                                                        </button>
+                                                                                    </li>
+                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                        <button
+                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                            type="button"
+                                                                                            onClick={(e) => {
+                                                                                                e.stopPropagation();
+                                                                                                e.target.closest(".dropdown-menu")?.classList.remove("show");
+                                                                                                setSelectedRecordForStatus(record);
+                                                                                                setShowChangeStatusModal(true);
+                                                                                            }}>
+                                                                                            <span>{sl.l_change_status}</span>
+                                                                                        </button>
+                                                                                    </li>
+                                                                                    {/* <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                        <button
+                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                            type="button"
+                                                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                            <span>{sl.l_duplicate}</span>
+                                                                                        </button>
+                                                                                    </li> */}
+                                                                                    {
+                                                                                        check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                                <button
+                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                                    type="button"
+                                                                                                    onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                                    <span>{sl.l_delete_timer}</span>
+                                                                                                </button>
+                                                                                            </li>
+                                                                                        ) : null
+                                                                                    }
+                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
+                                                                                        <button
+                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                            type="button"
+                                                                                            onClick={(e) => click4CopyID(e, record, index)}>
+                                                                                            <span>{sl.l_copy_id}</span>
+                                                                                        </button>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        })
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </>
+                                    )
+                                }
                             </div>
 
                             <div className="mt-3">
