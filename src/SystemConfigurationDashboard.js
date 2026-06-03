@@ -36,7 +36,7 @@ export function SystemConfigurationDashboard({ debugMode = false }) {
         { name: "institution_settings", callback: callback4InstitutionSettings, icon: "images/institution.svg", accessObject: "webapp_configuration_access", accessAction: "institution_management.add" },
         { name: "table_management", callback: callback4TableListManagement, icon: "images/table.svg", accessObject: "webapp_configuration_access", accessAction: "table_management.access" },
         { name: "configuration_file", callback: callback4ConfigurationFileManagement, icon: "images/configuration.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
-        { name: "hot_card", callback: callback4HotCardManagement, icon: "images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
+        // { name: "hot_card", callback: callback4HotCardManagement, icon: "images/hotcard.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
