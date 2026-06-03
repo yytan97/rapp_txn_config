@@ -240,26 +240,23 @@ export function TableListManagementPage({ debugMode = true }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-                    <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
-                        <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
+
+                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
+                        <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate("/systemConfigurationDashboard")}>
                             <i className="fas fa-chevron-left fa-fw"></i>
                             {sl.l_system_configuration}
                         </div>
-
-                        <div className="col-12 pt-12 pb-16">
-                            <div className="title-font fw-bold">
-                                {sl.l_table_list}
-                            </div>
-                            <div className="fs-14-unity grey-font">
-                                {sl.l_table_config}
-                            </div>
+                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
+                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                         </div>
+
+                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_table_list}</div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <div className="col-12">
                                     <div className="input-group">
-                                        <input type="text" className="form-control border-0" placeholder={sl.p_search_query}
+                                        <input type="text" className="form-control border-0" placeholder={sl.p_filter}
                                             value={filterText}
                                             onChange={change4FilterText}
                                             style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
@@ -270,6 +267,7 @@ export function TableListManagementPage({ debugMode = true }) {
                                         </button>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "50vh" }} >
@@ -279,11 +277,11 @@ export function TableListManagementPage({ debugMode = true }) {
                                             <th className="text-end" style={{ width: "40px" }}>
                                                 {sl.h_no}
                                             </th>
-                                            <th role="button" onClick={(e) => toggle4Order(e, order, 'databaseName')}>
-                                                {sl.h_database_name} {getOrderIndicator(order, 'databaseName')}
-                                            </th>
                                             <th role="button" onClick={(e) => toggle4Order(e, order, 'tableName')}>
                                                 {sl.h_table_name} {getOrderIndicator(order, 'tableName')}
+                                            </th>
+                                            <th role="button" onClick={(e) => toggle4Order(e, order, 'databaseName')}>
+                                                {sl.h_database_name} {getOrderIndicator(order, 'databaseName')}
                                             </th>
                                         </tr>
                                     </thead>
@@ -310,11 +308,11 @@ export function TableListManagementPage({ debugMode = true }) {
                                                             {index + 1}
                                                         </td>
                                                         <td >
-                                                            {record.databaseName}
+                                                            {record.tableName}
                                                         </td>
                                                         <td >
-                                                            {record.tableName}
-                                                        </td>  
+                                                            {record.databaseName}
+                                                        </td>
                                                     </tr>
                                                 );
                                             })
@@ -322,7 +320,10 @@ export function TableListManagementPage({ debugMode = true }) {
                                     </tbody>
                                 </table>
                             </div>
+
                         </div>
+
+
                     </div>
 
                     <DumpPanel dataList={[

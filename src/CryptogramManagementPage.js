@@ -1,3 +1,4 @@
+
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -7,7 +8,6 @@ import { globalContext } from "./globalContext.js";
 
 // import { ErrorLine } from "./ErrorLine.js";
 import { DumpPanel } from "./DumpPanel.js";
-import { Card } from "./Card.js";
 
 import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
@@ -19,10 +19,7 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./CryptogramDetailPage.js";
-import { ToastMessage } from "./ToastMessage.js";
-import { ChangeStatusModal } from "./ChangeStatusModal.js";
 
-import { RenderEmptyState } from "./RenderEmptyState.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -38,13 +35,13 @@ const accessObjectName = "webapp_configuration_access";
 const accessActionPrefix = "cryptogram_management";
 
 let cursorId = undefined;
-export let pageObject = {
+let pageObject = {
     totalRecord: 0,
     pageSize: 10,
     page: 1
 };
 
-export let searchObject = {
+let searchObject = {
     searchText: ""
 };
 
@@ -88,15 +85,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
-    const [totalCrypto, setTotalCrypto] = react.useState(0);
-    const [activeCrypto, setActiveCrypto] = react.useState(0);
-    const [lastUpdatedRecord, setLastUpdatedRecord] = react.useState(0);
-
-    const [toastShow, setToastShow] = react.useState(false);
-    const [toastMessage, setToastMessage] = react.useState("");
-
-    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
-    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
 
@@ -112,16 +100,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
             clearTimeout(timer);
         };
     }, [refresh]);
-
-    react.useEffect(() => {
-        const tooltipTriggerList = document.querySelectorAll(
-            '[data-bs-toggle="tooltip"]'
-        );
-
-        tooltipTriggerList.forEach((el) => {
-            new window.bootstrap.Tooltip(el);
-        });
-    }, []);
 
     // event handling function here ...
 
@@ -158,7 +136,6 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
-                    setTotalCrypto(result2.data?.cursor?.totalRecords || 0);
                 }
                 else throw (result2);
             }
@@ -176,40 +153,10 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 */
 
                 dataList = [...list1];
-                // setTotalCrypto(pageObject.totalRecord);
-                // const activeCrypto = list1.filter(item => item.recordData.recordStatus === 'A').length;
-                // setActiveCrypto(activeCrypto);
+                console.log("Data list", dataList);
             }
             else throw (result4);
 
-            let result5 = await apiBox.getRecord(getSessionToken(), databaseName, tableName);
-
-            if (result5.flag) {
-                let allRecords = result5.data.records || [];
-
-                // Total Institution
-                setTotalCrypto(allRecords.length);
-
-                // Active Institution
-                let activeCount = allRecords.filter(
-                    item => item.recordStatus === "A"
-                ).length;
-
-                setActiveCrypto(activeCount);
-
-                // Last Updated Institution
-                let now = new Date();
-                let startDate = new Date();
-                startDate.setUTCDate(now.getUTCDate() - 7);
-                let lastUpdatedCount = allRecords.filter(item => {
-                    if (!item.recordDate || item.recordDate === "DEFAULT") return false;
-                    let recordDate = new Date(item.recordDate.replace(" ", "T"));
-                    return recordDate >= startDate && recordDate <= now;
-                }).length;
-
-                setLastUpdatedRecord(lastUpdatedCount);
-            }
-            else throw (result5);
         }
         catch (e) {
             console.warn("Error", e);
@@ -224,6 +171,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
 
             window.scrollTo(0, 0);
         }
+
     };
 
     function fixPage() {
@@ -300,7 +248,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editCryptogramV2",
+            pathname: "/editCryptogram",
             search: sp.toString(),
         };
         navigate(path);
@@ -383,32 +331,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 closeStateDialogBox();
             }
         });
-
         return;
-    };
-
-    function triggerToast(msg) {
-        setToastMessage(msg);
-        setToastShow(true);
-
-        setTimeout(() => {
-            setToastShow(false);
-        }, 2500);
-    };
-
-    function click4CopyID(e, record, index) {
-        e.stopPropagation();
-
-        const value = record.recordData.ownerId;
-
-        navigator.clipboard.writeText(value)
-            .then(() => {
-                triggerToast(`"${value}" cryptogram ID copied to clipboard`);
-                e.target.closest(".dropdown-menu").classList.remove("show");
-            })
-            .catch(() => {
-                triggerToast("Failed to copy cryptogram ID");
-            });
     };
 
     return (
@@ -420,199 +343,163 @@ export function CryptogramManagementPage({ debugMode = true }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-                    <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
+
+                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
                         <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                             <i className="fas fa-chevron-left fa-fw"></i>
                             {sl.l_institution_settings}
                         </div>
-
-                        <div className="col-12 pt-12 pb-16">
-                            <div className="title-font fw-bold">
-                                {sl.l_title}
-                            </div>
+                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
+                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                         </div>
 
-                        <div className="col-12 d-flex">
-                            <Card label={sl.l_crypto_created} tip={sl.t_insti_last} numCount={lastUpdatedRecord} days={sl.l_last_7_days}/>
-                            <Card label={sl.l_active_cryto} tip={sl.t_insti_last} numCount={activeCrypto}/>
-                            <Card label={sl.l_total_crypto} tip={sl.t_insti_last} numCount={totalCrypto}/>
-                        </div>
+                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_title} </div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
-                            <div className="d-flex justify-content-end align-items-center">
-                                <div className="col-4 pe-3">
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div className="col-7 pe-3">
                                     <div className="input-group">
+                                        <input type="text" className="form-control border-0"
+                                            placeholder={sl.p_search}
+                                            value={searchObject.searchText || ""}
+                                            onChange={change4SearchText}
+                                            onKeyDown={keyPress4SearchText}
+                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                         <button className="btn border-0"
                                             style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
                                             type="button"
                                             onClick={click4Search}>
-                                            <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
+                                            <span className="material-icons " style={{ color: "#A4A6A7" }} >search</span>
                                         </button>
-                                        <input type="text" className="form-control border-0"
-                                            placeholder={sl.p_search_query}
-                                            value={searchObject.searchText || ""}
-                                            onChange={change4SearchText}
-                                            onKeyDown={keyPress4SearchText}
-                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} 
-                                            />                                       
                                     </div>
                                 </div>
 
                                 <div>
                                     {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                            <button className="btn btn-unity " role="button" title={sl.t_add_record}
+                                            <button className="btn btn-ghost-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                {sl.b_add_crypto}
+                                                <span className="material-icons-outlined">add</span>
                                             </button>
                                         ) : null
                                     }
+
                                 </div>
+
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
-                                {
-                                    dataList.length === 0 ? (
-                                        <RenderEmptyState
-                                            title={sl.l_no_records_yet}
-                                            description={sl.l_havent_created_yet}
-                                            buttonText={sl.b_add_institution}
-                                            onButtonClick={click4AddRecord}
-                                        />
-                                    ) : (
-                                        <>
-                                            <table className="table table-hover mb-0">
-                                                <thead>
-                                                    <tr className="text-nowrap tableRow-title">
-                                                        {/* <th className="">
-                                                            {sl.h_row_id}
-                                                        </th> */}
-                                                        <th className="">
-                                                            {sl.h_cryptogram_id}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_key_function}
-                                                        </th>
-                                                        <th className="text-end" >
-                                                            {sl.h_key_algo}
-                                                        </th>
-                                                        <th className="text-end" >
-                                                            {sl.h_bit_size}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_last_updated}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_record_status}
-                                                        </th>
-                                                        <th className="" style={{ width: "24px" }} >
-                                                        </th>
+                                <table className="table table-hover mb-0">
+                                    <thead>
+                                        <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
+                                            <th className="">
+                                                {sl.h_row_id}
+                                            </th>
+                                            <th className="">
+                                                {sl.h_owner_id}
+                                            </th>
+                                            <th className="">
+                                                {sl.h_key_function}
+                                            </th>
+                                            <th className="text-end" >
+                                                {sl.h_key_algo}
+                                            </th>
+                                            <th className="text-end" >
+                                                {sl.h_bit_size}
+                                            </th>
+                                            <th className="">
+                                                {sl.h_record_status}
+                                            </th>
+                                            <th className="" style={{ width: "24px" }} >
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {
+                                            dataList.map((record, index) => {
+                                                console.log("Build row", record, index);
+                                                return (
+                                                    <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.rowId}
+                                                        </td>
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.ownerId}
+                                                        </td>
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.keyFunction || "-"}
+                                                        </td>
+                                                        <td className=" text-end"
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.keyAlgo || "-"}
+                                                        </td>
+                                                        <td className=" text-end"
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.bitSize || "-"}
+                                                        </td>
+                                                        <td className=" "
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
+                                                                style={{ width: "110px", height: "24px" }} >
+                                                                {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
+                                                            </div>
+                                                        </td>
+                                                        <td className=" " >
+
+                                                            <div className="dropdown dropstart ">
+                                                                <span className="d-inline-flex align-items-center " role="button"
+                                                                    data-bs-toggle="dropdown">
+                                                                    <div className="d-flex align-items-center ">
+                                                                        <span className="material-icons fs-18-unity">more_vert</span>
+                                                                    </div>
+                                                                </span>
+
+                                                                <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                    style={{ borderRadius: "8px" }} >
+                                                                    <ul className="list-unstyled p-2 mb-0">
+                                                                        <li style={{marginLeft: "0px", borderLeft: "none"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                <span
+                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                <span>{sl.l_view_detail}</span>
+                                                                            </button>
+                                                                        </li>
+                                                                        {
+                                                                            check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                <li style={{marginLeft: "0px"}}>
+                                                                                    <button
+                                                                                        className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                        type="button"
+                                                                                        onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                        <span
+                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                        <span>{sl.l_delete}</span>
+                                                                                    </button>
+                                                                                </li>
+                                                                            ) : null
+                                                                        }
+
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+
                                                     </tr>
-                                                </thead>
 
-                                                <tbody>
-                                                    {
-                                                        dataList.map((record, index) => {
-                                                            console.log("Build row", record, index);
-                                                            return (
-                                                                <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                                    {/* <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.rowId}
-                                                                    </td> */}
-                                                                    <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.ownerId}
-                                                                    </td>
-                                                                    <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.keyFunction || "-"}
-                                                                    </td>
-                                                                    <td className=" text-end"
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.keyAlgo || "-"}
-                                                                    </td>
-                                                                    <td className=" text-end"
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.bitSize || "-"}
-                                                                    </td>
-                                                                    <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {tBox.formatDateWithSeconds(record.recordData.recordDate || "-")}
-                                                                    </td>
-                                                                    <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        <div className={`${getStatusLabelClass(record.recordData.recordStatus)}`}
-                                                                            style={{ width: "110px", height: "24px" }} >
-                                                                            {getLabel(sl, record.recordData.recordStatus, "o_record_status_")}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td className=" ">
-                                                                        <div className="dropdown dropstart ">
-                                                                            <span className="d-inline-flex align-items-center " role="button"
-                                                                                data-bs-toggle="dropdown">
-                                                                                <div className="d-flex align-items-center ">
-                                                                                    <span className="material-icons fs-18-unity">more_vert</span>
-                                                                                </div>
-                                                                            </span>
+                                                );
+                                            })
+                                        }
 
-                                                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
-                                                                                style={{ borderRadius: "8px" }} >
-                                                                                <ul className="list-unstyled p-2 mb-0">
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                            <span>{sl.l_view_detail}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => {
-                                                                                                e.stopPropagation();
-                                                                                                e.target.closest(".dropdown-menu")?.classList.remove("show");
-                                                                                                setSelectedRecordForStatus(record);
-                                                                                                setShowChangeStatusModal(true);
-                                                                                            }}>
-                                                                                            <span>{sl.l_change_status}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                    {
-                                                                                        check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                                <button
-                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                                    type="button"
-                                                                                                    onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                                    <span>{sl.l_delete}</span>
-                                                                                                </button>
-                                                                                            </li>
-                                                                                        ) : null
-                                                                                    }
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => click4CopyID(e, record, index)}>
-                                                                                            <span>{sl.b_copy_id}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        })
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    )
-                                }
+                                    </tbody>
+                                </table>
                             </div>
 
                             <div className="mt-3">
@@ -622,6 +509,7 @@ export function CryptogramManagementPage({ debugMode = true }) {
                             </div>
 
                         </div>
+
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -632,27 +520,10 @@ export function CryptogramManagementPage({ debugMode = true }) {
                     ]} debugMode={debugMode} />
 
                 </div> {/* end of right panel */}
+
             </div> {/* end of top part */}
 
             <FooterPanel />
-
-            <ToastMessage
-                show={toastShow}
-                message={toastMessage}
-                onClose={() => setToastShow(false)}
-            />
-
-            <ChangeStatusModal
-                show={showChangeStatusModal}
-                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
-                record={selectedRecordForStatus}
-                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
-
-                tableName = "kswitchcryptograms"
-                databaseName = "kdb"
-                accessObjectName = "webapp_configuration_access"
-                accessActionPrefix = "cryptogram_management"
-            />
         </div>
     );
 }

@@ -1,3 +1,4 @@
+
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -16,10 +17,9 @@ import { PaginationPanel } from "./PaginationPanel.js";
 import { showConfirmDialogBox } from "./ConfirmDialogBox.js";
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
-import { showTableSchemaDialogBox, TableSchemaDialogBox } from "./TableSchemaDialogBox.js";
-
 
 // import { cleanUp as cleanUp4Detail } from "./EditTablePage.js";
+
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -252,6 +252,7 @@ export function TableManagementPage({ debugMode = true }) {
         return s;
     };
 
+    /*
     function getStatusLabelClass(v) {
         if (debugMode) console.log("Get status label class", v);
 
@@ -261,6 +262,7 @@ export function TableManagementPage({ debugMode = true }) {
         if (v == "P") return s + "bg-warning";
         return s + "bg-danger";
     };
+    */
 
     function click4RecordDetail(e, record, index) {
         if (debugMode) console.log("Click for record detail", e, record, index);
@@ -396,16 +398,10 @@ export function TableManagementPage({ debugMode = true }) {
         return;
     };
 
-    function click4ShowSchema(e) {
-        if (debugMode) console.log("Click for show schema ", e);
 
-        showTableSchemaDialogBox(fieldList);
-        console.log("schema fieldlist:",fieldList)
-        return;
-    };
 
     return (
-        <div className="container-fluid px-0 bg-synap-3">
+        <div className="container-fluid px-0 bg-unity-1">
             <TitlePanel />
             <div className="d-flex ">
                 <div style={{ ...(dataset?.sideBarWidth) }}>
@@ -414,75 +410,43 @@ export function TableManagementPage({ debugMode = true }) {
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
 
-                    <div className="mt-2 mb-4 pl-24 pr-24" style={{ minHeight: "100vh", }}>
-                        {/* <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
+                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
+                        <div className="col-12 col-md-6 previous-font"
+                            onClick={() => navigate("/tableListManagement")} >
+                            <i className="fas fa-chevron-left fa-fw"></i>
+                            {sl.l_table_management}
+                        </div>
+                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
                             {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                         </div>
 
-                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_table} {tableName}</div> */}
-
-                        <div className=" d-flex justify-content-between">
-                            <div className="col-12 col-md-6 previous-font"
-                                onClick={() => navigate(-1)} >
-                                <i className="fas fa-chevron-left fa-fw"></i>
-                                {sl.l_table_management}
-                            </div>
-                        </div>
-
-                        <div className="d-flex justify-content-center">
-                            <div className="col-11 col-xl-12">
-                                <div>
-                                    <div className="d-flex align-items-center pt-16">
-                                        <div className="fs-14-unity pr-8">
-                                            {sl.l_table}
-                                        </div>
-                                        {/* <div className={`${getStatusLabelClass(institutionRecord?.institutionStatus)}`}
-                                            style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
-                                            <span >
-                                            {getLabel(sl, institutionRecord?.institutionStatus, "o_status_")}
-                                            </span>
-                                        </div> */}
-                                    </div>
-                                    <div className="detail-title">
-                                        {sl.l_table_s} {tableName}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_table} {tableName}</div>
 
                         <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
                             <div className="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <button className="btn btn-ghost-unity" role="button" title={sl.t_schema} onClick={click4ShowSchema}>
-                                        <span class="material-symbols-outlined">
-                                        fact_check
-                                        </span>
-                                        {sl.l_schema}
-                                    </button>
-                                </div>
-                                <div className="col-9 pe-3">
+                                <div className="col-7 pe-3">
                                     <div className="input-group">
+                                        <input type="text" className="form-control border-0"
+                                            placeholder={sl.p_search}
+                                            value={searchObject.searchText || ""}
+                                            onChange={change4SearchText}
+                                            onKeyDown={keyPress4SearchText}
+                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                         <button className="btn border-0"
                                             style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
                                             type="button"
                                             onClick={click4Search}>
                                             <span className="material-icons " style={{ color: "#A4A6A7" }} >search</span>
                                         </button>
-                                        <input type="text" className="form-control border-0"
-                                            placeholder={sl.p_search_query}
-                                            value={searchObject.searchText || ""}
-                                            onChange={change4SearchText}
-                                            onKeyDown={keyPress4SearchText}
-                                            style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
                                     </div>
                                 </div>
 
                                 <div>
                                     {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                            <button className="btn btn-unity " role="button" title={sl.t_add_record}
+                                            <button className="btn btn-ghost-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                {sl.b_add_new_record}
+                                                <span className="material-icons-outlined">add</span>
                                             </button>
                                         ) : null
                                     }
@@ -524,10 +488,14 @@ export function TableManagementPage({ debugMode = true }) {
                                                                 )
                                                             })
                                                         }
+
                                                     </tr>
+
+
                                                 );
                                             })
                                         }
+
                                     </tbody>
                                 </table>
                             </div>
@@ -537,10 +505,10 @@ export function TableManagementPage({ debugMode = true }) {
                                     callback4ChangePage={callback4ChangePage}
                                     callback4ChangePageSize={callback4ChangePageSize} />
                             </div>
-                        </div>
-                    </div>  {/* end of content panel */}
 
-                    <TableSchemaDialogBox debugMode={debugMode} />
+                        </div>
+
+                    </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
                         { name: "pageObject", data: pageObject },

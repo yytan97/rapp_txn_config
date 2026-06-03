@@ -16,7 +16,6 @@ import { ClosablePanel } from "./ClosablePanel.js";
 
 import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
-import { institutionRecord } from "./InstitutionDetailPage.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
@@ -31,14 +30,12 @@ const accessActionPrefix = "bin_prefix_management";
 let dataRecord = undefined;
 let rowId = undefined;
 let closePanel = {};
-let tabIndex = 1;
 
 export function cleanUp() {
     console.log(`Clean up for ${componentName}`);
     dataRecord = undefined;
     rowId = undefined;
     closePanel = {};
-    tabIndex = 1;
     return;
 };
 
@@ -171,25 +168,16 @@ export function BINPrefixDetailPage({ debugMode = true }) {
         return;
     };
 
-    function click4Tab(n) {
-        if (debugMode) console.log("Click for tab ", n);
-
-        tabIndex = n;
-        setRedraw((v) => v + 1);
-        return;
-    };
-
-    function click4EditRecord(e, record, step = 1) {
+    function click4EditRecord(e, record) {
         if (debugMode) console.log("Click for edit record", e, record);
 
         let sp = new URLSearchParams({
             rowId: record.rowId,
-            editMode: 1, 
-            step: step
+            editMode: 1
         });
 
         let path = {
-            pathname: "/editBINPrefixV2",
+            pathname: "/editBINPrefix",
             search: sp.toString(),
         };
         navigate(path);
@@ -202,7 +190,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
     };
 
     return (
-        <div className="container-fluid px-0 bg-synap-3">
+        <div className="container-fluid px-0 bg-unity-3">
             <TitlePanel />
             <div className="d-flex ">
                 <div style={{ ...(dataset?.sideBarWidth) }}>
@@ -210,180 +198,86 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                 </div>
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
-                    <div className="mt-2 mb-4 pl-24 pr-24" style={{ minHeight: "100vh", }}>
+
+                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
+
                         <div className=" d-flex justify-content-between">
-                            <div className="col-12 col-md-6 previous-font"
+                            <div className="col-12 col-md-6 text-white"
+                                style={{ fontSize: "12px", color: "#76797B", cursor: "pointer" }}
                                 onClick={() => navigate(-1)} >
-                                <i className="fas fa-chevron-left fa-fw"></i>
-                                {sl.l_bin_prefix_management}
+                                <i className="fas fa-chevron-left fa-fw"></i>{sl.l_previous_page}
+                            </div>
+                            <div className="text-end text-white" style={{ fontSize: "12px", color: "#76797B" }}>
+                                {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                             </div>
                         </div>
 
                         <div className="d-flex justify-content-center">
-                            <div className="col-11 col-xl-12">
-                                <div>
-                                    <div className="d-flex justify-content-between align-items-center">
-                                        <div className="d-flex align-items-center pt-16">
-                                            <div className="fs-14-unity pr-8">
-                                                {sl.l_bin_prefix}
-                                            </div>
-                                            <div className={`${getStatusLabelClass(dataRecord?.recordStatus)}`}
-                                                style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
-                                                <span >
-                                                {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {/* <div className="dropdown dropstart">
-                                            <span className="d-inline-flex align-items-center " role="button" data-bs-toggle="dropdown">
-                                                <div className="btn-more p-2">
-                                                    <span className="material-icons fs-18-unity">more_vert</span>
-                                                </div>
-                                            </span>
-                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0" style={{ borderRadius: "8px" }}>
-                                                <ul className="list-unstyled p-2 mb-0">
-                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
-                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
-                                                            <span>{sl.b_delete_bin_prefix}</span>
-                                                        </button>
-                                                    </li>
-                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
-                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
-                                                            <span>{sl.b_change_status}</span>
-                                                        </button>
-                                                    </li>
-                                                    <li style={{borderLeft: "0px", marginLeft: "0px"}}>
-                                                        <button className="dropdown-item border-bottom d-flex align-items-center" type="button">
-                                                            <span>{sl.b_copy_id}</span>
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div> */}
-                                    </div>
-                                    
-                                    <div className="detail-title">
-                                        {dataRecord?.prefix}
-                                    </div>
-                                    <div className="d-flex justify-content-center align-items-center bg-white upper-card-box mb-24">
-                                        <div style={{ width: "100%" }}>
+                            <div className="col-11 col-xl-9">
+
+                                <div className="" style={{ marginTop: "64px" }}>
+                                    <div className="d-flex align-items-center justify-content-center bg-white px-5"
+                                        style={{ borderRadius: "16px 16px 16px 16px", border: "1px solid #ebebeb", minHeight: "154px" }}>
+                                        <div style={{ width: "100%" }} >
                                             <div className="d-flex justify-content-between">
-                                                <div className="fs-14-unity info-synap">
-                                                    <div className="fw-normal pb-4px">
-                                                        {sl.l_last_updated}
-                                                    </div>
-                                                    <div className="fw-semibold">
-                                                        {tBox.getLastUpdatedDate()}
-                                                    </div>
+                                                <div style={{ color: "#494D4F", fontSize: "14px" }} >
+                                                    {sl.l_last_updated}: {dataRecord?.recordDate}
                                                 </div>
-                                                <div className="fs-14-unity info-synap">
-                                                    <div className="fw-normal pb-4px">
-                                                        {sl.l_institution}
-                                                    </div>
-                                                    <div className="fw-semibold">
-                                                        {dataRecord?.institutionId}
-                                                    </div>
+                                                <div className={`${getStatusLabelClass(dataRecord?.recordStatus)}`}
+                                                    style={{ color: "#494D4F", fontSize: "14px", width: "110px", height: "24px" }} >
+                                                    <span >
+                                                        {getLabel(sl, dataRecord?.recordStatus, "o_record_status_")}
+                                                    </span>
                                                 </div>
-                                                <div className="fs-14-unity info-synap">
-                                                    <div className="fw-normal pb-4px">
-                                                        {sl.l_priority}
-                                                    </div>
-                                                    <div className="fw-semibold">
-                                                        {dataRecord?.priority ||"-"}
-                                                    </div>
-                                                </div>
+                                            </div>
+                                            <div style={{ color: "#494D4F", fontSize: "32px", fontWeight: "bold" }} >
+                                                {dataRecord?.institutionId}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="tab-wrapper">
-                                    <div className="tab-bar">
-                                        <div className="col-12 d-flex">
-                                            <div className={`tab-item ${tabIndex === 1 ? 'active' : ''}`} onClick={() => click4Tab(1)}>
-                                                {sl.l_bin_prefix_sm}
-                                            </div>
-                                            <div className={`tab-item ${tabIndex === 2 ? 'active' : ''}`} onClick={() => click4Tab(2)}>
-                                                {sl.l_assign_prefix}
+                                <div>
+                                    <ClosablePanel name="bin_prefix_information"
+                                        title={sl.l_bin_prefix_information}
+                                        closeFlag={closePanel?.bin_prefix_information}
+                                        callback4Toggle={callback4TogglePanel}>
+                                        <div className="d-flex flex-column align-items-center justify-content-center border-top"
+                                            style={{ minHeight: "168px" }} >
+                                            <div className="px-5 py-1 w-100">
+
+                                                <DisplayLine label={sl.l_row_id} value={dataRecord?.rowId} />
+                                                <DisplayLine label={sl.l_institution_id} value={dataRecord?.institutionId} />
+                                                <DisplayLine label={sl.l_prefix} value={dataRecord?.prefix} />
+                                                <DisplayLine label={sl.l_description} value={dataRecord?.description} />
+                                                <DisplayLine label={sl.l_filename} value={dataRecord?.filename} />
+                                                <DisplayLine label={sl.l_product_code} value={dataRecord?.productCode} />
+                                                <DisplayLine label={sl.l_priority} value={dataRecord?.priority} />
+
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
 
-                                <div className="d-flex justify-content-center">
-                                    <div className="col-12">
                                         {
-                                            tabIndex === 1 ? (
-                                                <ClosablePanel name="bin_prefix_information"
-                                                    title={sl.l_bin_prefix_information}
-                                                    closeFlag={closePanel?.bin_prefix_information}
-                                                    callback4Toggle={callback4TogglePanel}>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center border-top"
-                                                        style={{ minHeight: "168px" }} >
-                                                        <div className="px-5 py-1 w-100">
-                                                            <DisplayLine label={sl.l_prefix} value={dataRecord?.prefix} />
-                                                            <DisplayLine label={sl.l_description} value={dataRecord?.description} />
-                                                            <DisplayLine label={sl.l_filename} value={dataRecord?.filename} />
-                                                            <DisplayLine label={sl.l_product_code} value={dataRecord?.productCode} />
-                                                            <DisplayLine label={sl.l_product_category} value={dataRecord?.productCatagory ||"-"} />
-                                                            <DisplayLine label={sl.l_cvv} value={"-"} />
-                                                        </div>
-                                                    </div>
-
-                                                    {
-                                                        check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                                            <div className="d-flex justify-content-end align-items-center px-4 border-top"
-                                                                style={{ minHeight: "56px" }}>
-                                                                <button className="btn btn-ghost-unity d-flex align-items-center"
-                                                                    style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 1)}>
-                                                                    <span className="material-icons-outlined fs-24-unity me-2">edit</span>
-                                                                    {sl.b_edit}
-                                                                </button>
-                                                            </div>
-                                                        ) : null
-                                                    }
-                                                </ClosablePanel>
+                                            check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
+                                                <div className="d-flex justify-content-end align-items-center px-4 border-top"
+                                                    style={{ minHeight: "56px" }}>
+                                                    <button className="btn btn-ghost-unity d-flex align-items-center"
+                                                        style={{ color: "#494D4F", fontWeight: "500" }}
+                                                        onClick={(e) => click4EditRecord(e, dataRecord)}>
+                                                        <span className="material-icons-outlined fs-24-unity me-2">edit</span>
+                                                        {sl.b_edit}
+                                                    </button>
+                                                </div>
                                             ) : null
                                         }
 
-                                        {
-                                            tabIndex === 2 ? (
-                                                <ClosablePanel name="assign_prefix_infomation"
-                                                    title={sl.l_assign_prefix_infomation}
-                                                    closeFlag={closePanel?.assign_prefix_infomation}
-                                                    callback4Toggle={callback4TogglePanel}>
-                                                    <div className="d-flex flex-column align-items-center justify-content-center border-top"
-                                                        style={{ minHeight: "168px" }} >
-                                                        <div className="px-5 py-1 w-100">
+                                    </ClosablePanel>
 
-                                                            <DisplayLine label={sl.l_institution} value={dataRecord?.institutionId} />
-                                                            <DisplayLine label={sl.l_priority} value={dataRecord?.priority} />
-                                                            <DisplayLine label={sl.l_status} value={getLabel(sl, dataRecord?.recordStatus, "o_record_status_")} />
-
-                                                        </div>
-                                                    </div>
-
-                                                    {
-                                                        check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                                            <div className="d-flex justify-content-end align-items-center px-4 border-top"
-                                                                style={{ minHeight: "56px" }}>
-                                                                <button className="btn btn-ghost-unity d-flex align-items-center"
-                                                                    style={{ color: "#494D4F", fontWeight: "500" }}
-                                                                    onClick={(e) => click4EditRecord(e, dataRecord, 2)}>
-                                                                    <span className="material-icons-outlined fs-24-unity me-2">edit</span>
-                                                                    {sl.b_edit}
-                                                                </button>
-                                                            </div>
-                                                        ) : null
-                                                    }
-                                                </ClosablePanel>
-                                            ) : null
-                                        }
-                                    </div>
                                 </div>
+
                             </div>
                         </div>
+
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -392,6 +286,7 @@ export function BINPrefixDetailPage({ debugMode = true }) {
                     ]} debugMode={debugMode} />
 
                 </div> {/* end of right panel */}
+
             </div> {/* end of top part */}
 
             <FooterPanel />
@@ -400,12 +295,13 @@ export function BINPrefixDetailPage({ debugMode = true }) {
 };
 
 export function DisplayLine({ label, value, debugMode = false }) {
+
     return (
         <div className="d-flex justify-content-between align-items-center my-3">
-            <div className="col-4 table-key">
+            <div style={{ color: "#76797B", fontSize: "14px" }}>
                 {label}
             </div>
-            <div className="col-8 table-value">
+            <div style={{ color: "#494D4F", fontSize: "16px" }}>
                 {value || "-"}
             </div>
         </div>

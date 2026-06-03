@@ -148,7 +148,7 @@ export function SideBar({ debugMode = false }) {
     };
 
     function click4InstitutionManagement(e) {
-        let target = "/institutionManagement";
+        let target = "/institutionSettingsDashboard";
         if (target === location.pathname) {
             console.log("Same path name not action taken ...", target);
             return;
@@ -277,6 +277,18 @@ export function SideBar({ debugMode = false }) {
         return;
     };
 
+    function click4TransactionHistory(e) {
+        let target = "/searchBox";
+
+        if (target === location.pathname) {
+            console.log("Same path name not action taken ...", target);
+            return;
+        }
+
+        navigate(target);
+        return;
+    };
+
     // Figma UI 
     return (
         <div className={`my-sidebar ${class4MenuMode()} ${isPinned ? 'pinned' : ''}`}>
@@ -315,7 +327,7 @@ export function SideBar({ debugMode = false }) {
                 {
                     !isDashboardPage && (
                         <>
-                            {
+                            {/* {
                                 check4Right('webapp_configuration_access', 'institution_management.access') ?
                                     (
                                         <>
@@ -330,24 +342,8 @@ export function SideBar({ debugMode = false }) {
                                             )}
                                         </>
                                     ) : null
-                            }
-
-                            {/* {
-                                check4Right('webapp_configuration_access', 'crypto_management.access') ?
-                                    (
-                                        <>
-                                            <div className={`my-link ${class4Active('')}`} role="button">
-                                                <span className="material-icons-outlined fs-24-unity">manage_accounts</span>
-                                                {menuMode === 1 && (
-                                                    <span className="ms-2 long-mode-label">{sl.l_authenticate}</span>
-                                                )}
-                                            </div>
-                                            {menuMode === 0 && (
-                                                <span className={`short-mode-label ${class4Active('/cryptogramManagement')}`}>{sl.l_authenticate}</span>
-                                            )}
-                                        </>
-                                    ) : null
                             } */}
+
                             {
                                 check4Right('webapp_configuration_access', 'authenticate_management.access') ?
                                     (
@@ -431,7 +427,7 @@ export function SideBar({ debugMode = false }) {
                                 check4Right('webapp_configuration_access', 'table.access') ?
                                     (
                                         <>
-                                            <div className={`my-link ${class4Active('')}`} role="button">
+                                            <div className={`my-link ${class4Active('/searchBox') || class4Active('/transactionHistoryV2') || class4Active('/transactionHistoryDetailV2') }`} role="button" onClick={click4TransactionHistory}>
                                                 <span className="material-icons-outlined fs-24-unity">request_quote</span>
                                                 {menuMode === 1 && (
                                                     <span className="ms-2 long-mode-label">{sl.l_transaction_history}</span>
@@ -484,13 +480,13 @@ export function SideBar({ debugMode = false }) {
                                                                     </span>
                                                                 </div>
                                                             </li>
-                                                            <li>
+                                                            {/* <li>
                                                                 <div>
                                                                     <span className={`my-label ${class4Active('/hotCardManagement') || class4Active('/editHotCard') ? 'active' : ''}`}>
                                                                         {sl.l_hot_card}
                                                                     </span>
                                                                 </div>
-                                                            </li>
+                                                            </li> */}
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -503,7 +499,7 @@ export function SideBar({ debugMode = false }) {
                                     ) : null
                             }
 
-                            {
+                            {/* {
                                 check4Right('webapp_configuration_access', 'configuration.access') ?
                                     (
                                         <>
@@ -518,9 +514,9 @@ export function SideBar({ debugMode = false }) {
                                             )}
                                         </>
                                     ) : null
-                            }
+                            } */}
 
-                            {
+                            {/* {
                                 check4Right('webapp_configuration_access', 'configuration.access') ?
                                     (
                                         <>
@@ -535,7 +531,7 @@ export function SideBar({ debugMode = false }) {
                                             )}
                                         </>
                                     ) : null
-                            }
+                            } */}
                         </>
                     )
                 }

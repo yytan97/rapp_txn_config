@@ -1,3 +1,4 @@
+
 import * as react from "react";
 import * as reactRouter from "react-router-dom";
 
@@ -7,7 +8,6 @@ import { globalContext } from "./globalContext.js";
 
 // import { ErrorLine } from "./ErrorLine.js";
 import { DumpPanel } from "./DumpPanel.js";
-import { Card } from "./Card.js";
 
 import { SideBar } from "./SideBar.js";
 import { TitlePanel } from "./TitlePanel.js";
@@ -19,33 +19,29 @@ import { showStateDialogBox, closeStateDialogBox } from "./StateDialogBox.js";
 import { showInfoDialogBox } from "./InfoDialogBox.js";
 
 import { cleanUp as cleanUp4Detail } from "./InstitutionDetailPage.js";
-import { ToastMessage } from "./ToastMessage.js";
-import { ChangeStatusModal } from "./ChangeStatusModal.js";
 
-import { RenderEmptyState } from "./RenderEmptyState.js";
 
 // Map loaded lib here ...
 const uuidv4 = window.uuidv4;
 const moment = window.moment;
 
-export let dataList = [];
-let dataRecord = [];
+let dataList = [];
 let fieldList = [];
 
 let tableName = "kswitchinstitution";
 let databaseName = "kdb";
 
-export const accessObjectName = "webapp_configuration_access";
-export const accessActionPrefix = "institution_management";
+const accessObjectName = "webapp_configuration_access";
+const accessActionPrefix = "cryptogram_management";
 
 let cursorId = undefined;
-export let pageObject = {
+let pageObject = {
     totalRecord: 0,
     pageSize: 10,
     page: 1
 };
 
-export let searchObject = {
+let searchObject = {
     searchText: ""
 };
 
@@ -90,17 +86,16 @@ export function InstitutionManagementPage({ debugMode = true }) {
     let [redraw, setRedraw] = react.useState(0);
     let [refresh, setRefresh] = react.useState(true);
     let [reset, setReset] = react.useState(true);
-    const [totalRecord, setTotalRecord] = react.useState(0);
-    const [activeRecord, setActiveRecord] = react.useState(0);
-    const [lastUpdatedRecord, setLastUpdatedRecord] = react.useState(0);
-
-    const [toastShow, setToastShow] = react.useState(false);
-    const [toastMessage, setToastMessage] = react.useState("");
-
-    const [showChangeStatusModal, setShowChangeStatusModal] = react.useState(false);
-    const [selectedRecordForStatus, setSelectedRecordForStatus]= react.useState(undefined);
 
     const navigate = reactRouter.useNavigate();
+
+    /*
+    react.useEffect(() => {
+        if (debugMode) console.log(`Run ${componentName} on effect for app redraw`);
+        setRefresh(true);
+
+    }, [appRedraw]);
+    */
 
     react.useEffect(() => {
         if (debugMode) console.log(`Run ${componentName} on effect`);
@@ -114,16 +109,6 @@ export function InstitutionManagementPage({ debugMode = true }) {
             clearTimeout(timer);
         };
     }, [refresh]);
-
-    react.useEffect(() => {
-        const tooltipTriggerList = document.querySelectorAll(
-            '[data-bs-toggle="tooltip"]'
-        );
-
-        tooltipTriggerList.forEach((el) => {
-            new window.bootstrap.Tooltip(el);
-        });
-    }, []);
 
     // event handling function here ...
 
@@ -160,68 +145,27 @@ export function InstitutionManagementPage({ debugMode = true }) {
                 if (result2.flag && result2.data) {
                     cursorId = result2.data?.cursor?.identifier;
                     pageObject.totalRecord = result2.data?.cursor?.totalRecords;
-                    setTotalRecord(result2.data?.cursor?.totalRecords || 0);
                 }
                 else throw (result2);
             }
 
             // fetch data from cursor
             fixPage();
-
-            // let allRecords = [];
-            // let totalPages = Math.ceil(pageObject.totalRecord / pageObject.pageSize);
-
-            // for (let page = 1; page <= totalPages; page++) {
-            //     let result4 = await apiBox.rewindNFetch(getSessionToken(), cursorId, pageObject.page, pageObject.pageSize);
-            //     if (result4.flag && result4.data?.records) {
-            //         allRecords.push(...result4.data.records);
-            //     }
-            // }
-
-            // dataList = [...allRecords];
-            // setTotalRecord(pageObject.totalRecord);
-
-            // const activeCount = allRecords.filter(item => item.recordData?.institutionStatus === "1").length;
-            // setActiveRecord(activeCount);
-
             let result4 = await apiBox.rewindNFetch(getSessionToken(), cursorId, pageObject.page, pageObject.pageSize);
 
             if (result4.flag) {
                 let list1 = result4.data.records;
-                dataList = [...list1];
+                /* preprocess 
+                list1 = list1.map((item) => {
+                    return item
+                });
+                */
 
-                setTotalRecord(pageObject.totalRecord);
+                dataList = [...list1];
+                console.log("Data list", dataList);
             }
             else throw (result4);
 
-            let result5 = await apiBox.getRecord(getSessionToken(), databaseName, tableName);
-
-            if (result5.flag) {
-                let allRecords = result5.data.records || [];
-
-                // Total Institution
-                setTotalRecord(allRecords.length);
-
-                // Active Institution
-                let activeCount = allRecords.filter(
-                    item => item.institutionStatus === "1"
-                ).length;
-
-                setActiveRecord(activeCount);
-
-                // Last Updated Institution
-                let now = new Date();
-                let startDate = new Date();
-                startDate.setUTCDate(now.getUTCDate() - 7);
-                let lastUpdatedCount = allRecords.filter(item => {
-                    if (!item.recordDate || item.recordDate === "DEFAULT") return false;
-                    let recordDate = new Date(item.recordDate.replace(" ", "T"));
-                    return recordDate >= startDate && recordDate <= now;
-                }).length;
-
-                setLastUpdatedRecord(lastUpdatedCount);
-            }
-            else throw (result5);
         }
         catch (e) {
             console.warn("Error", e);
@@ -233,6 +177,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
             closeStateDialogBox();
             setRefresh(false);
             setReset(false);
+
             window.scrollTo(0, 0);
         }
 
@@ -283,7 +228,7 @@ export function InstitutionManagementPage({ debugMode = true }) {
         let s = "rounded-3 text-center fw-light text-capitalize text-white ";
 
         if (v == "1") return s + "bg-success";
-        if (v == "0") return s + "bg-warning";
+        if (v == "3") return s + "bg-warning";
         return s + "bg-danger";
     };
 
@@ -312,23 +257,10 @@ export function InstitutionManagementPage({ debugMode = true }) {
         });
 
         let path = {
-            pathname: "/editInstitutionV2",
+            pathname: "/editInstitution",
             search: sp.toString(),
         };
-
-        let passTimerID = dataList.map(item => item.recordData.institutionTimerId);
-        let passCryptoID = dataList.map(item => item.recordData.institutionCryptoId
-        );
-        let passRoutingID = dataList.map(item => item.recordData.institutionRoutingId);;
-
-        navigate(path, {
-            state: {
-                timerIDList: passTimerID,
-                crytoIDList: passCryptoID,
-                routingIDList: passRoutingID
-            }
-        });
-
+        navigate(path);
         return;
     };
 
@@ -409,30 +341,6 @@ export function InstitutionManagementPage({ debugMode = true }) {
         return;
     };
 
-    function triggerToast(msg) {
-        setToastMessage(msg);
-        setToastShow(true);
-
-        setTimeout(() => {
-            setToastShow(false);
-        }, 2500);
-    };
-
-    function click4CopyID(e, record, index) {
-        e.stopPropagation();
-
-        const value = record.recordData.institutionId;
-
-        navigator.clipboard.writeText(value)
-            .then(() => {
-                triggerToast(`"${value}" institution ID copied to clipboard`);
-                e.target.closest(".dropdown-menu").classList.remove("show");
-            })
-            .catch(() => {
-                triggerToast("Failed to copy institution ID");
-            }); 
-    };
-
     return (
         <div className="container-fluid px-0 bg-unity-1">
             <TitlePanel />
@@ -443,191 +351,162 @@ export function InstitutionManagementPage({ debugMode = true }) {
 
                 <div className="flex-fill" style={{ ...(dataset?.mainPanelWidth) }}>
 
-                    <div className="pl-24 pr-24" style={{ minHeight: "100vh", }}>
+                    <div className="mt-2 mb-4 mx-4" style={{ minHeight: "100vh", }}>
                         <div className="col-12 pt-8 fs-12-unity grey-font cursor" onClick={() => navigate(-1)}>
                             <i className="fas fa-chevron-left fa-fw"></i>
                             {sl.l_institution_settings}
                         </div>
-
-                        <div className="col-12 pt-12 pb-16">
-                            <div className="title-font fw-bold">
-                                {sl.l_title}
-                            </div>
+                        <div className="text-end" style={{ fontSize: "12px", color: "#76797B" }}>
+                            {sl.l_last_updated} {tBox.getLastUpdatedDate()}
                         </div>
 
-                        <div className="col-12 d-flex">
-                            <Card label={sl.l_institution_last_updated} tip={sl.t_insti_last} numCount={lastUpdatedRecord} days={sl.l_last_7_days}/>
-                            <Card label={sl.l_active_institution} tip={sl.t_insti_last} numCount={activeRecord}/>
-                            <Card label={sl.l_total_institution} tip={sl.t_insti_last} numCount={totalRecord}/>
-                        </div>
+                        <div style={{ fontSize: "24px", fontWeight: "bold" }}>{sl.l_title} </div>
 
-                        <div className="mt-16 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
-                            <div className="d-flex justify-content-end align-items-center">
-                                <div className="col-4 pe-3">
+                        <div className="mt-3 px-3 py-4 bg-white shadow" style={{ border: "1px solid #f3f3f3", borderRadius: "16px" }}>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <div className="col-7 pe-3">
                                     <div className="input-group">
-                                        <button className="btn border-0"
-                                            style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
-                                            type="button"
-                                            onClick={click4Search}>
-                                            <span className="material-icons " style={{ color: "#494D4F" }} >search</span>
-                                        </button>
                                         <input type="text" className="form-control border-0"
-                                            placeholder={sl.p_search_query}
+                                            placeholder={sl.p_search}
                                             value={searchObject.searchText || ""}
                                             onChange={change4SearchText}
                                             onKeyDown={keyPress4SearchText}
                                             style={{ backgroundColor: "#F3F3F4", fontSize: "14px" }} />
+                                        <button className="btn border-0"
+                                            style={{ backgroundColor: "#f3f3f4", "--bs-btn-focus-box-shadow": "0 0 0 0.25rem rgb(97 159 203 / 25%)" }}
+                                            type="button"
+                                            onClick={click4Search}>
+                                            <span className="material-icons " style={{ color: "#A4A6A7" }} >search</span>
+                                        </button>
                                     </div>
                                 </div>
 
                                 <div>
                                     {
                                         check4Right(accessObjectName, `${accessActionPrefix}.add`) ? (
-                                            <button className="btn btn-unity " role="button" title={sl.t_add_record}
+                                            <button className="btn btn-ghost-unity " role="button" title={sl.t_add_record}
                                                 onClick={click4AddRecord}>
-                                                {sl.b_add_institution}
+                                                <span className="material-icons-outlined">add</span>
                                             </button>
                                         ) : null
                                     }
+
                                 </div>
+
                             </div>
 
                             <div className="mt-4 table-responsive " style={{ minHeight: "45vh" }}>
-                                {
-                                    dataList.length === 0 ? (
-                                        <RenderEmptyState
-                                            title={sl.l_no_records_yet}
-                                            description={sl.l_havent_created_yet}
-                                            buttonText={sl.b_add_institution}
-                                            onButtonClick={click4AddRecord}
-                                        />
-                                    ) : (
-                                        <>
-                                            <table className="table table-hover mb-0">
-                                                <thead>
-                                                    <tr className="text-nowrap tableRow-title">
-                                                        <th className="">
-                                                            {sl.h_institution_id}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_institution_timer_id}
-                                                        </th>
-                                                        <th className="" >
-                                                            {sl.h_institution_crypto_id}
-                                                        </th>
-                                                        <th className="" >
-                                                            {sl.h_institution_routing_id}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_last_updated}
-                                                        </th>
-                                                        <th className="">
-                                                            {sl.h_status}
-                                                        </th>
-                                                        <th className="" style={{ width: "24px" }} >
-                                                        </th>
+                                <table className="table table-hover mb-0">
+                                    <thead>
+                                        <tr className="text-nowrap" style={{ fontSize: "12px", color: "#A4A6A7", fontWeight: "600" }} >
+                                            <th className="">
+                                                {sl.h_institution_id}
+                                            </th>
+
+                                            <th className="">
+                                                {sl.h_institution_timer_id}
+                                            </th>
+                                            <th className="" >
+                                                {sl.h_institution_crypto_id}
+                                            </th>
+                                            <th className="" >
+                                                {sl.h_institution_routing_id}
+                                            </th>
+                                            <th className="">
+                                                {sl.l_last_updated}
+                                            </th>
+                                            <th className="">
+                                                {sl.h_status}
+                                            </th>
+                                            <th className="" style={{ width: "24px" }} >
+                                            </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {
+                                            dataList.map((record, index) => {
+                                                return (
+                                                    <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.institutionId}
+                                                        </td>
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.institutionTimerId || "-"}
+                                                        </td>
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.institutionCryptoId || "-"}
+                                                        </td>
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.institutionRoutingId || "-"}
+                                                        </td>
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            {record.recordData.recordDate || "-"}
+                                                        </td>
+                                                        <td className=""
+                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                            <div className={`${getStatusLabelClass(record.recordData.institutionStatus)}`}
+                                                                style={{ width: "110px", height: "24px" }} >
+                                                                {getLabel(sl, record.recordData.institutionStatus, "o_status_")}
+                                                            </div>
+                                                        </td>
+                                                        <td >
+
+                                                            <div className="dropdown dropstart ">
+                                                                <span className="d-inline-flex align-items-center " role="button"
+                                                                    data-bs-toggle="dropdown">
+                                                                    <div className="d-flex align-items-center ">
+                                                                        <span className="material-icons fs-18-unity">more_vert</span>
+                                                                    </div>
+                                                                </span>
+
+                                                                <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
+                                                                    style={{ borderRadius: "8px" }} >
+                                                                    <ul className="list-unstyled p-2 mb-0">
+                                                                        <li style={{marginLeft: "0px", borderLeft: "none"}}>
+                                                                            <button
+                                                                                className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                type="button"
+                                                                                onClick={(e) => click4RecordDetail(e, record, index)}>
+                                                                                <span
+                                                                                    className="material-icons-outlined fs-24-unity me-2">find_in_page</span>
+                                                                                <span>{sl.l_view_detail}</span>
+                                                                            </button>
+                                                                        </li>
+                                                                        {
+                                                                            check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
+                                                                                <li style={{marginLeft: "0px"}}>
+                                                                                    <button
+                                                                                        className="dropdown-item border-bottom d-flex align-items-center"
+                                                                                        type="button"
+                                                                                        onClick={(e) => click4DeleteRecord(e, record, index)}>
+                                                                                        <span
+                                                                                            className="material-icons-outlined fs-24-unity me-2">delete</span>
+                                                                                        <span>{sl.l_delete}</span>
+                                                                                    </button>
+                                                                                </li>
+                                                                            ) : null
+                                                                        }
+
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+
+                                                        </td>
+
                                                     </tr>
-                                                </thead>
 
-                                                <tbody>
-                                                    {
-                                                        dataList.map((record, index) => {
-                                                            return (
-                                                                <tr key={index} className="text-nowrap" style={{ cursor: "pointer", fontSize: "14px" }} >
-                                                                    <td className=""
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.institutionId}
-                                                                    </td>
-                                                                    <td className=""
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.institutionTimerId || "-"}
-                                                                    </td>
-                                                                    <td className=""
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.institutionCryptoId || "-"}
-                                                                    </td>
-                                                                    <td className=""
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.institutionRoutingId || "-"}
-                                                                    </td>
-                                                                    <td className=" "
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        {record.recordData.recordDate && record.recordData.recordDate !== "DEFAULT" ? tBox.formatDateWithSeconds(record.recordData.recordDate) : "-"}
-                                                                    </td> 
-                                                                    <td className=""
-                                                                        onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                        <div className={`${getStatusLabelClass(record.recordData.institutionStatus)}`}
-                                                                            style={{ width: "110px", height: "24px" }} >
-                                                                            {getLabel(sl, record.recordData.institutionStatus, "o_status_")}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td >
+                                                );
+                                            })
+                                        }
 
-                                                                        <div className="dropdown dropstart ">
-                                                                            <span className="d-inline-flex align-items-center " role="button"
-                                                                                data-bs-toggle="dropdown">
-                                                                                <div className="d-flex align-items-center ">
-                                                                                    <span className="material-icons fs-18-unity">more_vert</span>
-                                                                                </div>
-                                                                            </span>
-
-                                                                            <div className="dropdown-menu fs-14-unity border-0 shadow p-0"
-                                                                                style={{ borderRadius: "8px" }} >
-                                                                                <ul className="list-unstyled p-2 mb-0">
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => click4RecordDetail(e, record, index)}>
-                                                                                            <span>{sl.l_view_detail}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => {
-                                                                                                e.stopPropagation();
-                                                                                                e.target.closest(".dropdown-menu")?.classList.remove("show");
-                                                                                                setSelectedRecordForStatus(record);
-                                                                                                setShowChangeStatusModal(true);
-                                                                                            }}>
-                                                                                            <span>{sl.l_change_status}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                    {
-                                                                                        check4Right(accessObjectName, `${accessActionPrefix}.delete`) ? (
-                                                                                            <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                                <button
-                                                                                                    className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                                    type="button"
-                                                                                                    onClick={(e) => click4DeleteRecord(e, record, index)}>
-                                                                                                    <span>{sl.l_delete}</span>
-                                                                                                </button>
-                                                                                            </li>
-                                                                                        ) : null
-                                                                                    }
-                                                                                    <li style={{borderLeft: "none", marginLeft: "0rem"}}>
-                                                                                        <button
-                                                                                            className="dropdown-item border-bottom d-flex align-items-center"
-                                                                                            type="button"
-                                                                                            onClick={(e) => click4CopyID(e, record, index)}>
-                                                                                            <span>{sl.l_copy_id}</span>
-                                                                                        </button>
-                                                                                    </li>
-                                                                                </ul>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        })
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </>
-                                    )
-                                }
+                                    </tbody>
+                                </table>
                             </div>
 
                             <div className="mt-3">
@@ -635,7 +514,9 @@ export function InstitutionManagementPage({ debugMode = true }) {
                                     callback4ChangePage={callback4ChangePage}
                                     callback4ChangePageSize={callback4ChangePageSize} />
                             </div>
+
                         </div>
+
                     </div>  {/* end of content panel */}
 
                     <DumpPanel dataList={[
@@ -650,34 +531,6 @@ export function InstitutionManagementPage({ debugMode = true }) {
             </div> {/* end of top part */}
 
             <FooterPanel />
-
-            <ToastMessage
-                show={toastShow}
-                message={toastMessage}
-                onClose={() => setToastShow(false)}
-            />
-
-            <ChangeStatusModal
-                show={showChangeStatusModal}
-                onClose={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); }}
-                record={selectedRecordForStatus}
-                onUpdated={() => { setShowChangeStatusModal(false); setSelectedRecordForStatus(undefined); setReset(true); setRefresh(true); }}
-
-                tableName="kswitchinstitution"
-                databaseName="kdb"
-                accessObjectName="webapp_configuration_access"
-                accessActionPrefix="institution_management"
-
-                statusField="institutionStatus"
-                statusOptions={[
-                    { value: 0, label: sl?.o_status_0 },
-                    { value: 1, label: sl?.o_status_1 },
-                    { value: 2, label: sl?.o_status_2 },
-                    { value: 3, label: sl?.o_status_3 },
-                    { value: 4, label: sl?.o_status_4 },
-                    { value: 5, label: sl?.o_status_5 },
-                ]}
-            />
         </div>
     );
 }

@@ -38,7 +38,7 @@ export function InstitutionSettingsDashboard({ debugMode = false }) {
         { name: "crytogram_management", callback: callback4CryptogramManagement, icon: "images/crypto_management.svg", accessObject: "webapp_configuration_access", accessAction: "cryptogram_management.access" },
         { name: "timer_management", callback: callback4TimerManagement, icon: "images/timer_management.svg", accessObject: "webapp_configuration_access", accessAction: "configuration_management.access" },
         { name: "bin_prefix_management", callback: callback4BINPrefixManagement, icon: "images/bin_management.svg", accessObject: "webapp_configuration_access", accessAction: "hotcard_management.access" },
-        { name: "route_management", callback: callback4RouteManagement, icon: "images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "route_management.access" },
+        // { name: "route_management", callback: callback4RouteManagement, icon: "images/route_management.svg", accessObject: "webapp_configuration_access", accessAction: "route_management.access" },
     ];
 
     // let data = reactRouter.useLoaderData();
